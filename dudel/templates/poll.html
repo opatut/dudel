@@ -9,30 +9,34 @@
         </div>
     </div>
 
-    <div class="table-padding">
-        <table class="table poll">
+    {% if poll.votes %}
+        <div class="table-padding">
+            <table class="table poll">
 
-            <thead><tr>
-                <th></th>
-                {% for choice in poll.get_choices() %}
-                    <th class="text-center">
-                        {{ choice.text or choice.date }}
-                    </th>
-                {% endfor %}
-            </tr></thead>
-            <tbody>
-                {% for vote in poll.votes %}
-                    <tr>
-                        <td>{{ vote.name }}</td>
-                        {% for choice in poll.get_choices() %}
-                            {% set vote_choice = poll.get_vote_choice(vote, choice) %}
-                            <td class="vote-choice text-center {{ vote_choice.value }}">
-                                <span class="icon-{{ {"yes": "ok", "no": "ban-circle", "maybe": "question"}[vote_choice.value] }}"></span>
-                            </td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                <thead><tr>
+                    <th></th>
+                    {% for choice in poll.choices %}
+                        <th class="text-center">
+                            {{ choice.text }}
+                        </th>
+                    {% endfor %}
+                </tr></thead>
+                <tbody>
+                    {% for vote in poll.votes %}
+                        <tr>
+                            <td>{{ vote.name }}</td>
+                            {% for choice in poll.choices %}
+                                {% set vote_choice = poll.get_vote_choice(vote, choice) %}
+                                <td class="vote-choice text-center {{ vote_choice.value }}">
+                                    <span class="icon-{{ {"yes": "ok", "no": "ban-circle", "maybe": "question"}[vote_choice.value] }}"></span>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted text-center">No-one voted yet. Be the first!</p>
+    {% endif %}
 {% endblock %}

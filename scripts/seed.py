@@ -13,6 +13,7 @@ poll = Poll()
 poll.title = "What is the best Coffee"
 poll.due_date = datetime.utcnow() + timedelta(days=5)
 poll.slug = "coffee"
+poll.type = "normal"
 db.session.add(poll)
 
 for x in range(5):
