@@ -1,13 +1,13 @@
 default: run
 
 setup:
-	pip install --upgrade flask flask-sqlalchemy flask-wtf flask-login flask-markdown
+	pip install --upgrade flask flask-sqlalchemy flask-wtf flask-login flask-markdown python-dateutil
 
 init:
-	python2 scripts/init.py 
+	python2 scripts/init.py
 
 seed:
-	python2 scripts/seed.py 
+	python2 scripts/seed.py
 
 run:
-	python2 scripts/run.py 
+	python2 scripts/run.py

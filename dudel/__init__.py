@@ -10,4 +10,5 @@ markdown = Markdown(app, safe_mode="escape")
 login_manager = LoginManager(app)
 
 import dudel.models
+import dudel.forms
 import dudel.views

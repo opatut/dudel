@@ -4,8 +4,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>dudel</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
+
         <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" media="screen">
+        <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" media="screen">
     </head>
 
     <body>
@@ -20,16 +21,17 @@
                         <input type="text" class="form-control" placeholder="Search...">
                     </div>
                     <button type="button" class="btn btn-default">Search</button>
-                </form> 
+                </form>
 
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a href="https://mafiasi.de">Mafiasi Hub</a>
                     </li>
                 </ul>
-            </div>            
+            </div>
         </nav>
         <div class="container">
+            {% include "_flashes.html" %}
             {% block content %}
             {% endblock %}
         </div>
