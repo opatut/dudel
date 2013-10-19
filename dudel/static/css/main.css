@@ -6,6 +6,7 @@
     margin: 0.5em 0;
 }
 
+<<<<<<< Updated upstream
 .vote-choice {
     border: 5px solid white;
     color: white;
@@ -53,4 +54,17 @@ table.poll .yes {
 table.poll .maybe {
     color: #777;
     background-color: #FFEA79;
+=======
+.help-inline {
+    color: #737373;
+}
+
+label + .help-inline {
+    margin-left: 1em;
+}
+
+.checkbox-cell {
+    background-color: #F6F6F6;
+    text-align: center;
+>>>>>>> Stashed changes
 }

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block content %}
+    <h1>Edit {{ poll.title }}</h1>
+    {% if poll.type == "normal" %}
+        boring!
+    {% elif poll.type == "date" %}
+        {% if step == 1 %}
+
+            <p>Please add the dates and times you want to allow to these
+                lists. In the next step, you will be asked to select which time
+                is available at which date.</p>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Selected dates</h2>
+                    <ul>
+                        {% for date in dates %}
+                            <li>{{ date }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <h2>Add another date</h2>
+                    <form class="form" method="POST">
+                        {{ date_form.hidden_tag() }}
+                        {{ form_errors(date_form) }}
+                        <div class="form-group">
+                            {{ date_form.date.label }}
+                            {{ date_form.date(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Add date" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h2>Selected times</h2>
+                    <ul>
+                        {% for time in times %}
+                            <li>{{ time }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <h2>Add another time</h2>
+                    <form class="form" method="POST">
+                        {{ time_form.hidden_tag() }}
+                        {{ form_errors(time_form) }}
+                        <div class="form-group">
+                            {{ time_form.time.label }}
+                            {{ time_form.time(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Add time" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <a href="{{ url_for('poll_edit_choices', slug=poll.slug, step=2) }}" class="btn btn-primary">Next</a>
+
+        {% elif step == 2 %}
+
+            <form class="form form-inline" method="POST">
+                <table class="table auto-width">
+                    <tr>
+                        <th></th>
+                        {% for time in times %}
+                        <th>{{ time }}</th>
+                        {% endfor %}
+                    </tr>
+                {% for date in dates %}
+                    {% set dateloop = loop %}
+                    <tr>
+                        <td>{{ date }}</td>
+                        {% for time in times %}
+                        <td class="checkbox-cell danger">
+                            <input type="checkbox" name="datetimes[]" value="{{date}} {{time}}"/>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </table>
+
+                <div class="form-group">
+                    <a href="{{ url_for('poll_edit_choices', slug=poll.slug, step=1) }}" class="btn btn-default">Back</a>
+                    <input type="submit" value="Save" class="btn btn-success" />
+                </div>
+
+            </form>
+        {% endif %}
+    {% endif %}
+{% endblock %}

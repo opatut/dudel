@@ -13,4 +13,16 @@ $(document).ready(function() {
         var slug_input = $($(this).attr("data-slug-field"));
         slug_input.val(slug);
     });
+
+    $(".checkbox-cell").on("click", function() {
+        $(this).find(":checkbox").each(function() {
+            $(this).prop("checked", !$(this).prop("checked"));
+        });
+        $(this).toggleClass("danger").toggleClass("success");
+    });
+
+    $(".checkbox-cell :checkbox").on("click", function(e){
+        e.stopPropagation();
+        $(this).nearest(".checkbox-cell").toggleClass("danger").toggleClass("success");
+    });
 });

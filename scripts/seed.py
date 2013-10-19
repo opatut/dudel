@@ -45,6 +45,7 @@ poll = Poll()
 poll.title = "AG-Treffen"
 poll.due_date = datetime.utcnow() - timedelta(days=1)
 poll.slug = "ag"
+poll.type = "date"
 db.session.add(poll)
 
 db.session.commit()

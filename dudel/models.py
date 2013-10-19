@@ -1,5 +1,5 @@
 from dudel import app, db
-from flask import url_for
+from flask import url_for, session
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,11 +14,22 @@ class Poll(db.Model):
     def get_vote_choice(self, vote, choice):
         return VoteChoice.query.filter_by(vote=vote, choice=choice).first()
 
+    def get_choices(self):
+        return Choice.query.filter_by(poll_id=self.id).all()
+
+    def get_choice_dates(self):
+        return list(set([choice.date.date for choice in self.choices]))
+
+    def get_choice_times(self):
+        return list(set([choice.date.time for choice in self.choices]))
+
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(80))
+    date = db.Column(db.DateTime)
     poll = db.relationship("Poll", backref="choices")
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
+    deleted = db.Column(db.Boolean, default=False)
 
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
