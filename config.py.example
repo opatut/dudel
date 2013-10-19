@@ -1,0 +1,9 @@
+# SQL-Alchemy Settings
+SQLALCHEMY_DATABASE_URI = "sqlite:///dudel.db"
+SQLALCHEMY_ECHO = False
+
+# Debug mode, set to False in productive environment
+DEBUG = True
+
+# Secret key, required for cookies etc.
+SECRET_KEY = "change me!!!"
