@@ -9,14 +9,29 @@
     </head>
 
     <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Dudle</h1>
-                    {% block content %}
-                    {% endblock %}
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="/" class="navbar-brand">Dudel</a>
                 </div>
-            </div>
+
+                <form class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search...">
+                    </div>
+                    <button type="button" class="btn btn-default">Search</button>
+                </form> 
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="https://mafiasi.de">Mafiasi Hub</a>
+                    </li>
+                </ul>
+            </div>            
+        </nav>
+        <div class="container">
+            {% block content %}
+            {% endblock %}
         </div>
 
     </body>
