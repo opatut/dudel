@@ -25,6 +25,10 @@ def poll(slug):
 
     return render_template("poll.html", poll=poll)
 
+@app.route("/<slug>/edit/", methods=("POST", "GET"))
+def poll_edit(slug, step=1):
+    return "edit"
+
 @app.route("/<slug>/choices/", methods=("POST", "GET"))
 @app.route("/<slug>/choices/<int:step>", methods=("POST", "GET"))
 def poll_edit_choices(slug, step=1):

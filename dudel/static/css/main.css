@@ -6,7 +6,6 @@
     margin: 0.5em 0;
 }
 
-<<<<<<< Updated upstream
 .vote-choice {
     border: 5px solid white;
     color: white;
@@ -24,6 +23,15 @@ table.poll td, table.poll th, table.poll tr {
 h1.inline {
     display: inline-block;
 }
+
+.page-header {
+    margin-top: 0;
+}
+
+h1 { font-size: 2em; }
+h2 { font-size: 1.75em; }
+h3 { font-size: 1.5em; }
+h1 small { font-size: 0.6em; margin-left: 1em; }
 
 .page-header .pull-right {
     margin: 20px 0;
@@ -54,7 +62,8 @@ table.poll .yes {
 table.poll .maybe {
     color: #777;
     background-color: #FFEA79;
-=======
+}
+
 .help-inline {
     color: #737373;
 }
@@ -66,5 +75,4 @@ label + .help-inline {
 .checkbox-cell {
     background-color: #F6F6F6;
     text-align: center;
->>>>>>> Stashed changes
 }

@@ -2,13 +2,20 @@
 {% from "_formhelpers.html" import form_errors %}
 
 {% block content %}
-    <h1>Edit {{ poll.title }}</h1>
+
+    <div class="page-header">
+        <h1 class="inline">
+            {{ poll.title }}
+            <small>Edit choices</small>
+        </h1>
+    </div>
+
     {% if poll.type == "normal" %}
         boring!
     {% elif poll.type == "date" %}
         {% if step == 1 %}
 
-            <p>Please add the dates and times you want to allow to these
+            <p class="well well-sm">Please add the dates and times you want to allow to these
                 lists. In the next step, you will be asked to select which time
                 is available at which date.</p>
 
