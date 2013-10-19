@@ -1,4 +1,5 @@
 from dudel import app, db
+from flask import url_for
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -6,6 +7,9 @@ class Poll(db.Model):
     slug = db.Column(db.String(80))
     due_date = db.Column(db.DateTime)
     type = db.Column(db.Enum("date", "normal"), default="normal")
+
+    def get_url(self):
+        return url_for("poll", slug=self.slug)
 
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)

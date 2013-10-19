@@ -17,3 +17,8 @@ def index():
     polls = Poll.query.all()
 
     return render_template("index.html", polls=polls, form=form)
+
+@app.route("/<slug>")
+def poll(slug):
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    return render_template("poll.html", poll=poll)

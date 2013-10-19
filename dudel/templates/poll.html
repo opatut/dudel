@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ poll.title }}</h1>
+    {% if poll.type == "normal" %}
+        <ul>
+            {% for choice in poll.choices %}
+                <li>{{ choice.text }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
