@@ -1,12 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ poll.title }}</h1>
+    <div class="page-header">
+        <h1 class="inline">{{ poll.title }}</h1>
+        <div class="pull-right">
+            <button type="button" class="btn btn-primary"><span class="icon-check"></span> Vote</button>
+            <button type="button" class="btn btn-default"><span class="icon-wrench"></span> Edit</button>
+        </div>
+    </div>
     {% if poll.type == "normal" %}
-        <ul>
-            {% for choice in poll.choices %}
-                <li>{{ choice.text }}</li>
-            {% endfor %}
-        </ul>
+        <div class="table-padding">
+        <table class="table poll">
+
+            <thead><tr>
+                <th></th>
+                {% for choice in poll.choices %}
+                    <th class="text-center">
+                        {{ choice.text }}
+                    </th>
+                {% endfor %}
+            </tr></thead>
+            <tbody>
+                {% for vote in poll.votes %}
+                    <tr>
+                        <td>{{ vote.name }}</td>
+                        {% for choice in poll.choices %}
+                            {% set vote_choice = poll.get_vote_choice(vote, choice) %}
+                            <td class="vote-choice text-center {{ vote_choice.value }}">
+                                <span class="icon-{{ {"yes": "ok", "no": "ban-circle", "maybe": "question"}[vote_choice.value] }}"></span>
+                            </td>                        
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
     {% endif %}
 {% endblock %}

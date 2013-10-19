@@ -5,3 +5,52 @@
 .form-errors {
     margin: 0.5em 0;
 }
+
+.vote-choice {
+    border: 5px solid white;
+    color: white;
+    font-size: 16px;
+}
+
+table.poll td, table.poll th, table.poll tr {
+    border: 5px solid white;
+}
+
+.auto-width {
+    width: auto;
+}
+
+h1.inline {
+    display: inline-block;
+}
+
+.page-header .pull-right {
+    margin: 20px 0;
+}
+
+table.poll {
+    margin-top: 50px;
+    font-size: 16px;
+}
+
+table.poll tr td:nth-of-type(1) {
+    width: 1px;
+    white-space: nowrap;
+}
+
+.table-padding {
+    padding: 0 10px;
+}
+
+table.poll .no {
+    background-color: #F85252;
+}
+
+table.poll .yes {
+    background-color: #99EE75;
+}
+
+table.poll .maybe {
+    color: #777;
+    background-color: #FFEA79;
+}

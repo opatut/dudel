@@ -11,6 +11,9 @@ class Poll(db.Model):
     def get_url(self):
         return url_for("poll", slug=self.slug)
 
+    def get_vote_choice(self, vote, choice):
+        return VoteChoice.query.filter_by(vote=vote, choice=choice).first()
+
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(80))
@@ -25,6 +28,8 @@ class Vote(db.Model):
 
 class VoteChoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    notice = db.Column(db.String(64))
+    value = db.Column(db.Enum("yes", "no", "maybe"), default="no")
     vote = db.relationship("Vote", backref="vote_choices")
     vote_id = db.Column(db.Integer, db.ForeignKey("vote.id"))
     choice = db.relationship("Choice", backref="vote_choices")
