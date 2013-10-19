@@ -11,13 +11,18 @@
 
             <div class="form-group">
                 {{ form.title.label }}
-                {{ form.title(class="form-control") }}
+                {{ form.title(class="form-control", **{'data-slug-field':"#slug"}) }}
                 {{ field_error(form.title) }}
             </div>
             <div class="form-group">
                 {{ form.slug.label }}
-                {{ form.slug(class="form-control") }}
+                <div class="input-group">
+                    <span class="input-group-addon">{{ url_for('poll', slug='', _external=True) }}</span>
+                    {{ form.slug(class="form-control") }}
+                </div>
                 {{ field_error(form.slug) }}
+                <noscript><span class="help-block">This would be automatically
+                    generated for you if you moron had not blocked javascript.</span></noscript>
             </div>
             <div class="form-group">
                 {{ form.type.label }}
