@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>Hello World!</p>
+    <ul>
+        {% for poll in polls %}
+            <li>
+                {{ poll.title }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

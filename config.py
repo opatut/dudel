@@ -1,0 +1,6 @@
+SQLALCHEMY_DATABASE_URI = "sqlite:///dudel.db"
+SQLALCHEMY_ECHO = False
+
+DEBUG = True
+
+SECRET_KEY = "1234lol"
