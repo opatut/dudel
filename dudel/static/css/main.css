@@ -51,15 +51,15 @@ table.poll tr td:nth-of-type(1) {
     padding: 0 10px;
 }
 
-table.poll .no {
+td.no {
     background-color: #F85252;
 }
 
-table.poll .yes {
+td.yes {
     background-color: #99EE75;
 }
 
-table.poll .maybe {
+td.maybe {
     color: #777;
     background-color: #FFEA79;
 }
@@ -75,4 +75,48 @@ label + .help-inline {
 .checkbox-cell {
     background-color: #F6F6F6;
     text-align: center;
+}
+
+
+/* Calendar stuff */
+.calendar, .calendar table {
+    margin-top: 0.5em;
+    display: inline-block;
+}
+
+.calendar table tr:first-child {
+    background: #F6F6F6;
+}
+
+.calendar table tr:nth-child(2) {
+    font-size: 0.8em;
+}
+
+.calendar table td {
+    text-align: center;
+    padding: 4pt !important;
+}
+
+.time-buttons .btn,
+.calendar table td .btn {
+    display: inline-block;
+    width: 2.5em;
+    text-align: center;
+}
+
+.calendar .title {
+    text-align: center;
+}
+
+.script-only {
+    display: none;
+}
+
+.calendar-list {
+    display: inline-block;
+    vertical-align: top;
+}
+
+footer {
+    margin-top: 4em;
 }

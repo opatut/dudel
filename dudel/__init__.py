@@ -11,4 +11,5 @@ login_manager = LoginManager(app)
 
 import dudel.models
 import dudel.forms
+import dudel.filters
 import dudel.views

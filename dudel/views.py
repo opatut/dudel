@@ -37,13 +37,15 @@ def poll_edit_choices(slug, step=1):
 
     if poll.type == "date":
         if step == 1:
+            print(poll.get_choice_times())
+
             # Put dates into session
             if not "dates" in session.keys(): session["dates"] = {}
-            if not poll.slug in session["dates"]: session["dates"][poll.slug] = poll.get_choice_dates()
+            if not poll.slug in session["dates"]: session["dates"][poll.slug] = [str(date) for date in poll.get_choice_dates()]
 
             # Put times into session
             if not "times" in session.keys(): session["times"] = {}
-            if not poll.slug in session["times"]: session["times"][poll.slug] = poll.get_choice_times()
+            if not poll.slug in session["times"]: session["times"][poll.slug] = [str(time) for time in poll.get_choice_times()]
 
             date_form = AddDateForm()
             if date_form.validate_on_submit():
@@ -67,8 +69,8 @@ def poll_edit_choices(slug, step=1):
 
         if step == 1 or step == 2:
             # parse dates from session, fill with choices
-            args["dates"] = [parser.parse(data, fuzzy=True).date() for data in session["dates"][poll.slug]]
-            args["times"] = [parser.parse(data, fuzzy=True).time() for data in session["times"][poll.slug]]
+            args["dates"] = sorted([parser.parse(data, fuzzy=True).date() for data in session["dates"][poll.slug]])
+            args["times"] = sorted([parser.parse(data, fuzzy=True).time() for data in session["times"][poll.slug]])
 
         if step == 2 and request.method == "POST":
             # list all date/time combinations

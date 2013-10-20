@@ -1,5 +1,6 @@
 from dudel import app, db
 from flask import url_for, session
+from datetime import datetime
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -18,10 +19,14 @@ class Poll(db.Model):
         return Choice.query.filter_by(poll_id=self.id).all()
 
     def get_choice_dates(self):
-        return list(set([choice.date.date for choice in self.choices]))
+        return list(set([choice.date.date() for choice in self.choices]))
 
     def get_choice_times(self):
-        return list(set([choice.date.time for choice in self.choices]))
+        return list(set([choice.date.time() for choice in self.choices]))
+
+    def has_choice_date_time(self, date, time):
+        dt = datetime.combine(date, time)
+        return [choice for choice in self.get_choices() if choice.date == dt and not choice.deleted]
 
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
