@@ -16,13 +16,13 @@ class Poll(db.Model):
         return VoteChoice.query.filter_by(vote=vote, choice=choice).first()
 
     def get_choices(self):
-        return Choice.query.filter_by(poll_id=self.id).all()
+        return Choice.query.filter_by(poll_id=self.id, deleted=False).all()
 
     def get_choice_dates(self):
-        return list(set([choice.date.date() for choice in self.choices]))
+        return list(set([choice.date.date() for choice in self.get_choices()]))
 
     def get_choice_times(self):
-        return list(set([choice.date.time() for choice in self.choices]))
+        return list(set([choice.date.time() for choice in self.get_choices()]))
 
     def has_choice_date_time(self, date, time):
         dt = datetime.combine(date, time)

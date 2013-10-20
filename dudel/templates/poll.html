@@ -16,7 +16,7 @@
 
                 <thead><tr>
                     <th></th>
-                    {% for choice in poll.choices %}
+                    {% for choice in poll.get_choices() %}
                         <th class="text-center">
                             {{ choice.text }}
                         </th>
@@ -26,7 +26,7 @@
                     {% for vote in poll.votes %}
                         <tr>
                             <td>{{ vote.name }}</td>
-                            {% for choice in poll.choices %}
+                            {% for choice in poll.get_choices() %}
                                 {% set vote_choice = poll.get_vote_choice(vote, choice) %}
                                 <td class="vote-choice text-center {{ vote_choice.value }}">
                                     <span class="icon-{{ {"yes": "ok", "no": "ban-circle", "maybe": "question"}[vote_choice.value] }}"></span>

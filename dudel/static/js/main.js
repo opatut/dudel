@@ -96,7 +96,9 @@ function makeWeek(calendar, week) {
             var datetime = date.format("YYYY-MM-DD");
             alert(datetime);
             var enabled = (ENABLED_DATES.indexOf(datetime) !== -1);
-            btn = '<button class="day btn btn-xs btn-default' + (enabled ? ' btn-success' : '') + '">' + week[i] + '</button>';
+            var past = date.isBefore(moment());
+            var t = (past && !enabled ? 'span' : 'button');
+            btn = '<' + t + ' class="day btn-xs ' + (enabled ? 'btn btn-success' : (past ? '' : 'btn btn-default')) + '">' + week[i] + '</' + t + '>';
         }
         tr.append($('<td>' + btn + '</td>'));
     }

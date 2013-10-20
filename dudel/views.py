@@ -37,15 +37,13 @@ def poll_edit_choices(slug, step=1):
 
     if poll.type == "date":
         if step == 1:
-            print(poll.get_choice_times())
-
             # Put dates into session
             if not "dates" in session.keys(): session["dates"] = {}
-            if not poll.slug in session["dates"]: session["dates"][poll.slug] = [str(date) for date in poll.get_choice_dates()]
+            if not poll.slug in session["dates"] or not session["dates"][poll.slug]: session["dates"][poll.slug] = [str(date) for date in poll.get_choice_dates()]
 
             # Put times into session
             if not "times" in session.keys(): session["times"] = {}
-            if not poll.slug in session["times"]: session["times"][poll.slug] = [str(time) for time in poll.get_choice_times()]
+            if not poll.slug in session["times"] or not session["times"][poll.slug]: session["times"][poll.slug] = [str(time) for time in poll.get_choice_times()]
 
             date_form = AddDateForm()
             if date_form.validate_on_submit():
@@ -90,6 +88,10 @@ def poll_edit_choices(slug, step=1):
                     poll.choices.append(choice)
                     print("Adding datetime %s" % datetime)
                     db.session.add(choice)
+
+            # reset session
+            del session["times"][poll.slug]
+            del session["dates"][poll.slug]
 
             db.session.commit()
             flash("The choices list has been updated.", "success")
