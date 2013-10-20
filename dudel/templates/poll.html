@@ -4,9 +4,9 @@
     <div class="page-header">
         <h1 class="inline">{{ poll.title }}</h1>
         <div class="pull-right">
-            <a href="{{ url_for('poll_edit', slug=poll.slug) }}" class="btn btn-default"><span class="icon-wrench"></span> Settings</a>
-            <a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}" class="btn btn-default"><span class="icon-list"></span> Choices</a>
-            <button type="button" class="btn btn-success"><span class="icon-check"></span> Vote</button>
+        <a href="{{ url_for('poll_edit', slug=poll.slug) }}" class="btn btn-default"><span class="icon-wrench"></span> Settings</a>
+        <a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}" class="btn btn-default"><span class="icon-list"></span> Choices</a>
+        <a href="{{ url_for('poll_vote', slug=poll.slug) }}" class="btn btn-success"><span class="icon-check"></span> Vote</a>
         </div>
     </div>
 

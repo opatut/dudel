@@ -94,3 +94,9 @@ def poll_edit_choices(slug, step=1):
             return redirect(poll.get_url())
 
     return render_template("poll_edit_choices.html", poll=poll, step=step, **args)
+
+@app.route("/<slug>/vote")
+def poll_vote(slug):
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+
+    return render_template("vote.html", poll=poll)

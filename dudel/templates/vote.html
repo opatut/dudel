@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="inline">{{ poll.title }}</h1>
+    <div class="pull-right">
+        <a href="{{ poll.get_url() }}">Back to the Poll</a>
+    </div>
+</div>
+
+<div class="table-padding">
+<table class="table poll">
+
+    <tbody>
+        <form action="POST">
+
+        </form>
+    </tbody>
+</table>
+</div>
+
+{% endblock %}
