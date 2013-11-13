@@ -39,10 +39,12 @@ class Poll(db.Model):
     # extra settings
     due_date = db.Column(db.DateTime)
     password = db.Column(db.String)
-    password_mode = db.Column(db.Enum("show", "vote"))
+    password_mode = db.Column(db.Enum("none", "show", "vote"))
     anonymous_allowed = db.Column(db.Boolean, default=True)
+    public_listing = db.Column(db.Boolean, default=False)
     require_login = db.Column(db.Boolean, default=False)
     show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote"))
+    send_mail = db.Column(db.Boolean, default=False)
 
     def __init__(self):
         self.created = datetime.utcnow()

@@ -37,6 +37,11 @@ $(document).ready(function() {
     $("#date-form").hide();
 
     $(".script-only").css("display", "inline-block");
+
+    $("#password_mode").change(function() {
+        $("#password").attr("disabled", $(this).val() == "none");
+    });
+    $("#password").attr("disabled", $("#password_mode").val() == "none");
 });
 
 

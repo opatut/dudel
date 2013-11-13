@@ -28,7 +28,16 @@ def poll(slug):
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
 def poll_edit(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
-    return render_template("poll_edit.html", poll=poll)
+    form = EditPollForm(obj=poll)
+
+    if form.validate_on_submit():
+        form.populate_obj(poll)
+        db.session.commit()
+        flash("Poll settings have been saved.", "success")
+        #return redirect(poll.get_url())
+        return redirect(url_for("poll_edit", slug=poll.slug))
+
+    return render_template("poll_edit.html", poll=poll, form=form)
 
 @app.route("/<slug>/choices/", methods=("POST", "GET"))
 @app.route("/<slug>/choices/<int:step>", methods=("POST", "GET"))

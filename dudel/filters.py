@@ -7,3 +7,4 @@ def date(s):
 @app.template_filter()
 def time(s):
     return s.strftime("%H:%M")
+

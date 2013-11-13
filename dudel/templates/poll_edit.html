@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_formhelpers.html" import field_error %}
 
 {% block content %}
     <div class="page-header">
@@ -9,16 +10,85 @@
         </div>
     </div>
 
-    <b>These things are editable</b>
-    <ul>
-        <li><i>claim authorship</i></li>
-        <li>title</li>
-        <li>public listing</li>
-        <li>allow anonymous</li>
-        <li>require login</li>
-        <li>password</li>
-        <li>show results mode</li>
-        <li>send mail</li>
-        <li>due date</li>
+    {% if not poll.author %}
+    <div class="row">
+        <div class="well col-md-6 col-md-offset-3 text-center">
+            <p>
+                This poll does not belong to any user. While logged in, you can
+                claim authorship to receive exclusive editing rights.
+            </p>
+            <a href="#" class="btn btn-primary btn-sm">Claim authorship</a>
+        </div>
+    </div>
+    <hr />
+    {% endif %}
+
+    <form method="POST">
+        <h3>Settings</h3>
+        <div class="row">
+            <div class="col-md-5">
+                {{ form.hidden_tag() }}
+                {{ field_error(form.hidden_tag) }}
+
+                <div class="form-group">
+                    {{ form.title.label }}
+                    {{ form.title(class="form-control") }}
+                    {{ field_error(form.title) }}
+                </div>
+                <div class="form-group">
+                    {{ form.due_date.label }}
+                    {{ form.due_date(class="form-control") }}
+                    {{ field_error(form.due_date) }}
+                </div>
+                <div class="form-group">
+                    {{ form.show_results.label }}
+                    {{ form.show_results(class="form-control") }}
+                    {{ field_error(form.show_results) }}
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group">
+                    {{ form.password_mode.label }}
+                    <div class="row">
+                        <div class="col-xs-6">
+                            {{ form.password_mode(class="form-control col-") }}
+                        </div>
+                        <div class="col-xs-6">
+                            {{ form.password(class="form-control", placeholder=form.password.label.text) }}
+                        </div>
+                    </div>
+                    {{ field_error(form.password_mode) }}
+                    {{ field_error(form.password) }}
+                </div>
+                <div class="form-group">
+                    {{ form.anonymous_allowed() }}
+                    {{ form.anonymous_allowed.label }}
+                    {{ field_error(form.anonymous_allowed) }}
+                </div>
+                <div class="form-group">
+                    {{ form.require_login() }}
+                    {{ form.require_login.label }}
+                    {{ field_error(form.require_login) }}
+                </div>
+                <div class="form-group">
+                    {{ form.public_listing() }}
+                    {{ form.public_listing.label }}
+                    {{ field_error(form.public_listing) }}
+                </div>
+                <div class="form-group">
+                    {{ form.send_mail() }}
+                    {{ form.send_mail.label }}
+                    {{ field_error(form.send_mail) }}
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="icon-arrow-left"></span> Back to poll</a>
+        <input type="submit" class="btn btn-primary" value="Save settings" />
+    </form>
+
+
     </ul>
 {% endblock %}

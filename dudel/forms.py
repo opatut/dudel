@@ -58,3 +58,13 @@ class EditPollForm(Form):
     due_date = DateTimeField("Due date", validators=[Optional()])
     anonymous_allowed = BooleanField("Allow anonymous votes")
     require_login = BooleanField("Require login to vote")
+    public_listing = BooleanField("Show in public poll list")
+    password = TextField("Password")
+    password_mode = SelectField("Password mode", choices=[("none", "Do not use password"), ("show", "Password required to show poll"), ("vote", "Password required to vote")])
+    show_results = SelectField("Results display", choices=[
+        ("complete", "show all votes"),
+        ("summary", "show only summary"),
+        ("never", "Do not show results"),
+        ("complete_after_vote", "Show all votes, but only after voting"),
+        ("summary_after_vote", "Show summary, but only after voting")])
+    send_mail = BooleanField("Send mail to participants about results")
