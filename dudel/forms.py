@@ -49,3 +49,12 @@ class AddDateForm(MultiForm):
 
 class AddTimeForm(MultiForm):
     time = TextField("Time", validators=[Required(), Regexp(r"^\d?\d(:\d\d)?$", message="Invalid time format (HH:MM).")])
+
+class AddChoiceForm(MultiForm):
+    text = TextField("Choice", validators=[Required(), Length(min=1)])
+
+class EditPollForm(Form):
+    title = TextField("Title", validators=[Required(), Length(min=3)])
+    due_date = DateTimeField("Due date", validators=[Optional()])
+    anonymous_allowed = BooleanField("Allow anonymous votes")
+    require_login = BooleanField("Require login to vote")

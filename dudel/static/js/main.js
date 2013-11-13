@@ -42,7 +42,6 @@ $(document).ready(function() {
 
 function initCalendar(calendar) {
     var date = CURRENT_DATE ? moment(CURRENT_DATE) : moment();
-    alert(date);
     setDate(calendar, date);
 
     calendar.find(".next-month").click(function() {
@@ -94,7 +93,7 @@ function makeWeek(calendar, week) {
             var date = calendar.data("date");
             date.date(week[i]);
             var datetime = date.format("YYYY-MM-DD");
-            alert(datetime);
+            // alert(datetime);
             var enabled = (ENABLED_DATES.indexOf(datetime) !== -1);
             var past = date.isBefore(moment());
             var t = (past && !enabled ? 'span' : 'button');

@@ -8,10 +8,52 @@
             {{ poll.title }}
             <small>Edit choices</small>
         </h1>
+        <div class="pull-right">
+        <a href="{{ url_for('poll_edit', slug=poll.slug) }}" class="btn btn-default"><span class="icon-wrench"></span> Settings</a>
+        <a href="{{ poll.get_url() }}" class="btn btn-primary"><span class="icon-search"></span> Show poll</a>
+        </div>
     </div>
 
     {% if poll.type == "normal" %}
-        boring!
+        {% if poll.get_choices()|length != poll.choices|length %}
+        <p class="alert alert-info">
+            Deleted choices will stay in this list, so votes that have already been
+            made are not lost.
+        </p>
+        {% endif %}
+
+        <form class="form" method="POST">
+            {{ form.hidden_tag() }}
+            {{ form_errors(form) }}
+            <table class="table auto-width">
+                <tr>
+                    <th>Choice</th>
+                    <th>Votes cast</th>
+                    <th>Actions</th>
+                </tr>
+                {% set total_votes = poll.votes|length %}
+                {% for choice in poll.choices|sort() %}
+                    <tr class="choice {% if choice.deleted %}deleted{% endif %}">
+                        <td class="choice">{{ choice.text }}</td>
+                        {% set vote_count = choice.vote_choices|length %}
+                        <td class="color {{ 'green' if vote_count >= total_votes else ('red' if vote_count == 0 else 'orange') }}">
+                            <strong>{{ vote_count }}</strong> / {{ total_votes }}
+                        </td>
+                        <td><a href="?toggle={{ choice.id }}" class="btn btn-default btn-xs">
+                            {% if choice.deleted %}
+                                <i class="icon-undo"></i>
+                            {% else %}
+                                <i class="icon-trash"></i>
+                            {% endif %}
+                        </a></td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2">{{ form.text(class="form-control input-sm", placeholder="Add a choice") }}</td>
+                    <td><input type="submit" value="Add" class="btn btn-default btn-sm" /></td>
+                </tr>
+            </table>
+        </form>
     {% elif poll.type == "date" %}
         {% if step == 1 %}
 

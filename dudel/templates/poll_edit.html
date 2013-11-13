@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="inline">Edit {{ poll.title }}</h1>
+        <div class="pull-right">
+        <a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}" class="btn btn-default"><span class="icon-list"></span> Choices</a>
+        <a href="{{ poll.get_url() }}" class="btn btn-primary"><span class="icon-search"></span> Show poll</a>
+        </div>
+    </div>
+
+    <b>These things are editable</b>
+    <ul>
+        <li><i>claim authorship</i></li>
+        <li>title</li>
+        <li>public listing</li>
+        <li>allow anonymous</li>
+        <li>require login</li>
+        <li>password</li>
+        <li>show results mode</li>
+        <li>send mail</li>
+        <li>due date</li>
+    </ul>
+{% endblock %}

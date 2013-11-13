@@ -13,7 +13,7 @@ def index():
         db.session.add(poll)
         db.session.commit()
         flash("Poll created")
-        return redirect(poll.get_url())
+        return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
     polls = Poll.query.all()
 
@@ -26,8 +26,9 @@ def poll(slug):
     return render_template("poll.html", poll=poll)
 
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
-def poll_edit(slug, step=1):
-    return "edit"
+def poll_edit(slug):
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    return render_template("poll_edit.html", poll=poll)
 
 @app.route("/<slug>/choices/", methods=("POST", "GET"))
 @app.route("/<slug>/choices/<int:step>", methods=("POST", "GET"))
@@ -97,10 +98,36 @@ def poll_edit_choices(slug, step=1):
             flash("The choices list has been updated.", "success")
             return redirect(poll.get_url())
 
+    else:
+        form = AddChoiceForm()
+
+        if form.validate_on_submit():
+            text = form.text.data.strip()
+            choice = Choice.query.filter_by(poll_id=poll.id, text=text).first()
+            if choice:
+                choice.deleted = not choice.deleted
+            else:
+                choice = Choice()
+                choice.text = form.text.data
+                poll.choices.append(choice)
+                db.session.add(choice)
+            db.session.commit()
+            flash("The choice was %s." % ("disabled" if choice.deleted else "added"), "success")
+            return redirect(url_for("poll_edit_choices", slug=poll.slug))
+
+        if "toggle" in request.args:
+            tid = request.args.get("toggle")
+            choice = Choice.query.filter_by(id=tid, poll_id=poll.id).first_or_404()
+            choice.deleted = not choice.deleted
+            db.session.commit()
+            flash("The choice was %s." % ("disabled" if choice.deleted else "added"), "success")
+            return redirect(url_for("poll_edit_choices", slug=poll.slug))
+
+        args["form"] = form
+
     return render_template("poll_edit_choices.html", poll=poll, step=step, **args)
 
 @app.route("/<slug>/vote")
 def poll_vote(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
-
     return render_template("vote.html", poll=poll)

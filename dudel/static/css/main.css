@@ -7,13 +7,10 @@
 }
 
 .vote-choice {
-    border: 5px solid white;
+    margin: 3px;
+    /*border: 5px solid white;*/
     color: white;
     font-size: 16px;
-}
-
-table.poll td, table.poll th, table.poll tr {
-    border: 5px solid white;
 }
 
 .auto-width {
@@ -39,6 +36,18 @@ h1 small { font-size: 0.6em; margin-left: 1em; }
 
 table.poll {
     margin-top: 50px;
+}
+
+table.poll td, table.poll th, table.poll tr {
+    border: none !important;
+}
+
+table.poll {
+    border-collapse: separate !important;
+    border-spacing: 4px !important;
+}
+
+table.poll td.vote-choice {
     font-size: 16px;
 }
 
@@ -53,15 +62,23 @@ table.poll tr td:nth-of-type(1) {
 
 td.no {
     background-color: #F85252;
+    background: #F96;
 }
 
 td.yes {
     background-color: #99EE75;
+    background: #9C6;
 }
 
 td.maybe {
     color: #777;
     background-color: #FFEA79;
+    background: #FF6;
+}
+
+table.poll td.none {
+    border: 1px solid #DDD !important;
+    color: #DDD;
 }
 
 .help-inline {
@@ -120,3 +137,14 @@ label + .help-inline {
 footer {
     margin-top: 4em;
 }
+
+
+.choice.deleted,
+.choice.deleted .color {
+    color: #AAA;
+    text-decoration: line-through;
+}
+
+.color.red { color: red; }
+.color.orange { color: #F90; }
+.color.green { color: #0A0; }
