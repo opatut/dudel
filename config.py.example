@@ -7,3 +7,18 @@ DEBUG = True
 
 # Secret key, required for cookies etc.
 SECRET_KEY = "change me!!!"
+
+LDAP_SERVER = "mafiasi.de"
+LDAP_DN = "uid=%s,ou=People,dc=mafiasi,dc=de"
+
+# Debug mode skips LDAP and pretends to receive data when the password is entered
+LDAP_DEBUG_MODE = False
+LDAP_DEBUG_PASSWORD = "hunter2"
+LDAP_DEBUG_DATA = {
+    "cn": "13musterm",
+    "sn": "Mustermann",
+    "employeeNumber": 42,
+    "givenName": "Max",
+    "mail": "3musterm@informatik.uni-hamburg.de",
+    "uid": "13musterm"
+}

@@ -2,6 +2,7 @@ from dudel import app, db
 from dudel.models import *
 from dudel.forms import *
 from flask import redirect, abort, request, render_template, flash, url_for
+from flask.ext.login import login_user, logout_user, current_user, login_required
 from dateutil import parser
 
 @app.route("/", methods=("POST", "GET"))
@@ -19,10 +20,27 @@ def index():
 
     return render_template("index.html", polls=polls, form=form)
 
+@app.route("/login", methods=("GET", "POST"))
+def login():
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = get_user(form.username.data)
+        login_user(user)
+        flash("You were logged in, %s." % user.displayname, "success")
+        return redirect(url_for("index"))
+
+    return render_template("login.html", form=form)
+
+@app.route("/logout")
+def logout():
+    flash("You were logged out, %s. Goodbye!" % current_user.displayname, "success")
+    logout_user()
+    return redirect(url_for("index"))
+
 @app.route("/<slug>")
 def poll(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
-
     return render_template("poll.html", poll=poll)
 
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
@@ -38,6 +56,17 @@ def poll_edit(slug):
         return redirect(url_for("poll_edit", slug=poll.slug))
 
     return render_template("poll_edit.html", poll=poll, form=form)
+
+@app.route("/<slug>/claim/", methods=("POST", "GET"))
+@login_required
+def poll_claim(slug):
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    if poll.author: abort(403)
+    poll.author = current_user
+    db.session.commit()
+    flash("You claimed this poll. Only you may edit it now.", "success")
+    return redirect(url_for("poll_edit", slug=poll.slug))
+
 
 @app.route("/<slug>/choices/", methods=("POST", "GET"))
 @app.route("/<slug>/choices/<int:step>", methods=("POST", "GET"))

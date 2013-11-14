@@ -17,6 +17,8 @@
                     <a href="/" class="navbar-brand">Dudel</a>
                 </div>
 
+                <a class="btn navbar-btn btn-default" href="https://mafiasi.de"><i class="icon-home"></i> Mafiasi Hub</a>
+
                 <form class="navbar-form navbar-left" role="search">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Search...">
@@ -24,10 +26,13 @@
                     <button type="button" class="btn btn-default">Search</button>
                 </form>
 
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="https://mafiasi.de">Mafiasi Hub</a>
-                    </li>
+                <div class="navbar-right">
+                    {% if current_user.is_anonymous() %}
+                    <a class="btn navbar-btn btn-primary" href="{{ url_for('login') }}">Login</a>
+                    {% else %}
+                    <span class="nav navbar-text">Logged in as {{ current_user.displayname }}</span>
+                    <a class="btn navbar-btn btn-default" href="{{ url_for('logout') }}">Logout</a>
+                    {% endif %}
                 </ul>
             </div>
         </nav>

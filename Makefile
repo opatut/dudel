@@ -1,7 +1,7 @@
 default: run
 
 setup:
-	pip install --upgrade flask flask-sqlalchemy flask-wtf flask-login flask-markdown python-dateutil
+	pip install --upgrade flask flask-sqlalchemy flask-wtf flask-login flask-markdown python-dateutil python-ldap
 
 init:
 	python2 scripts/init.py

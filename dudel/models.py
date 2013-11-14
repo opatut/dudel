@@ -1,31 +1,50 @@
-from dudel import app, db
+from dudel import app, db, login_manager
 from flask import url_for, session
 from datetime import datetime
 
+def update_user_data(username, data):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        # create the user
+        user = User()
+        user.username = username
+        db.session.add(user)
+
+    user.firstname = data["givenName"]
+    user.lastname = data["sn"]
+    user.email = data["mail"]
+    db.session.commit()
+
+@login_manager.user_loader
 def get_user(username):
-    return User.query.filter_by(username=username).first() or AnonymousUser(username)
+    return User.query.filter_by(username=username).first()
 
-class AnonymousUser(object):
-    def __init__(self, username):
-        self.anonymous = True
-        self.username = username
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(80))
+    lastname = db.Column(db.String(80))
+    username = db.Column(db.String(80))
+    email = db.Column(db.String(80))
 
+    @property
+    def displayname(self):
+        if self.firstname and self.lastname:
+            return "%s %s" % (self.firstname, self.lastname)
+        else:
+            return self.username
+
+    # login stuff
     def get_id(self):
         return self.username
 
     def is_active(self):
-        return not self.anonymous
+        return True
 
     def is_anonymous(self):
-        return self.anonymous
+        return False
 
     def is_authenticated(self):
-        return not self.anonymous
-
-class User(db.Model, AnonymousUser):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80))
-    token = db.Column(db.String(64))
+        return True
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -70,6 +89,9 @@ class Poll(db.Model):
     def has_choice_date_time(self, date, time):
         dt = datetime.combine(date, time)
         return [choice for choice in self.get_choices() if choice.date == dt and not choice.deleted]
+
+    def user_can_edit(self, user):
+        return not self.author or self.author == user
 
     # def get_vote(self, user):
     #     return Vote.query.filter_by(self.)
