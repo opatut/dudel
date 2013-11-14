@@ -42,8 +42,26 @@ $(document).ready(function() {
         $("#password").attr("disabled", $(this).val() == "none");
     });
     $("#password").attr("disabled", $("#password_mode").val() == "none");
+
+    $("td .vote-choice-radio").parent().hide();
+    $("input[value='no'").attr("checked", "checked");
+    $("td.vote-choice.control.no").removeClass("off");
+    $(".vote-comment input").hide();
+    $(".vote-comment span").click(function(e) {
+        $(e.target).hide();
+        $(e.target).parent().addClass("not-padded").find("input").show();
+    });
+
+    $("td.vote-choice").click(highlightVoteChoice);
 });
 
+function highlightVoteChoice(event) {
+    var $parent = $(event.target).parent();
+    $parent.find("td.vote-choice.control").addClass("off");
+    $(event.target).removeClass("off");
+    $parent.find("input").prop("checked", false);
+    $parent.find("input[value='" + $(event.target).data("choice") + "']").prop("checked", true);
+}
 
 function initCalendar(calendar) {
     var date = CURRENT_DATE ? moment(CURRENT_DATE) : moment();

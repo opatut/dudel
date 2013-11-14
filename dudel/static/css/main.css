@@ -6,11 +6,23 @@
     margin: 0.5em 0;
 }
 
+table.vote td {
+    vertical-align: middle !important;
+}
+
+.vote .choice-text {
+    text-align: right;
+    width: 1%;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
 .vote-choice {
     margin: 3px;
     /*border: 5px solid white;*/
     color: white;
     font-size: 16px;
+    width: 70px;
 }
 
 .auto-width {
@@ -76,6 +88,10 @@ td.maybe {
     background: #FF6;
 }
 
+td.off {
+    background-color: #D6D6D6 !important;
+}
+
 table.poll td.none {
     border: 1px solid #DDD !important;
     color: #DDD;
@@ -94,6 +110,19 @@ label + .help-inline {
     text-align: center;
 }
 
+td.not-padded {
+    padding: 0 !important;
+}
+
+.vote-comment span:hover {
+    cursor: pointer;
+    color: black;
+}
+
+.vote-comment {
+    display:block;
+    max-width: 300px;
+}
 
 /* Calendar stuff */
 .calendar, .calendar table {

@@ -58,6 +58,9 @@ class Poll(db.Model):
     def get_choices(self):
         return Choice.query.filter_by(poll_id=self.id, deleted=False).all()
 
+    def get_choice_by_id(self, id):
+        return Choice.query.filter_by(poll_id=self.id, id=id).first()
+
     def get_choice_dates(self):
         return list(set([choice.date.date() for choice in self.get_choices()]))
 
@@ -92,7 +95,7 @@ class Vote(db.Model):
 
 class VoteChoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    notice = db.Column(db.String(64))
+    comment = db.Column(db.String(64))
     value = db.Column(db.Enum("yes", "no", "maybe"), default="no")
     vote = db.relationship("Vote", backref="vote_choices")
     vote_id = db.Column(db.Integer, db.ForeignKey("vote.id"))

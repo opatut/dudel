@@ -18,7 +18,7 @@ db.session.add(poll)
 
 for x in range(5):
     choice = Choice()
-    choice.text = "Blend %d" % x
+    choice.text = "Blend no. %d" % x
     poll.choices.append(choice)
 
 for x in range(8):
@@ -31,16 +31,6 @@ for x in range(8):
         vote_choice.vote = vote
         vote_choice.choice = choice
         vote_choice.value = random.choice(["yes", "no", "maybe"])
-
-vote = Vote()
-vote.name = "Peter Hasalongername"
-poll.votes.append(vote)
-
-vote_choice = VoteChoice()
-vote_choice.vote = vote
-vote_choice.choice = random.choice(poll.choices)
-vote_choice.value = "yes"
-db.session.add(vote_choice)
 
 poll = Poll()
 poll.title = "AG-Treffen"

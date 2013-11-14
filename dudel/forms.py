@@ -1,7 +1,7 @@
 from flask import request
 from flask.ext.wtf import Form
 from wtforms import ValidationError
-from wtforms.fields import TextField, SelectField, BooleanField, TextAreaField, HiddenField
+from wtforms.fields import TextField, SelectField, BooleanField, TextAreaField, HiddenField, FieldList, FormField, RadioField
 from wtforms.ext.dateutil.fields import DateField, DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional
 from dudel.models import Poll
@@ -68,3 +68,12 @@ class EditPollForm(Form):
         ("complete_after_vote", "Show all votes, but only after voting"),
         ("summary_after_vote", "Show summary, but only after voting")])
     send_mail = BooleanField("Send mail to participants about results")
+
+class CreateVoteChoiceForm(Form):
+    value = RadioField("Value", choices=[("yes", "Yes"), ("no", "No"), ("maybe", "Maybe")])
+    comment = TextField("Comment")
+    choice_id = HiddenField("choice id", validators=[Required()])
+
+class CreateVoteForm(Form):
+    name = TextField("Enter Name", validators=[Required()])
+    vote_choices = FieldList(FormField(CreateVoteChoiceForm))

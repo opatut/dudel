@@ -136,7 +136,29 @@ def poll_edit_choices(slug, step=1):
 
     return render_template("poll_edit_choices.html", poll=poll, step=step, **args)
 
-@app.route("/<slug>/vote")
+@app.route("/<slug>/vote", methods=("POST", "GET"))
 def poll_vote(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
-    return render_template("vote.html", poll=poll)
+
+    form = CreateVoteForm()
+    if form.validate_on_submit():
+        vote = Vote()
+        vote.name = form.name.data 
+        poll.votes.append(vote)
+        for vote_choice_form in form.vote_choices:
+            choice = Choice.query.filter_by(id=vote_choice_form.choice_id.data).first()
+            if not choice or choice.poll != poll: abort(404)
+
+            vote_choice = VoteChoice()
+            vote_choice.value = vote_choice_form.value.data
+            vote_choice.vote = vote
+            vote_choice.choice = choice
+            db.session.add(vote_choice)
+
+        db.session.commit()
+        return redirect(poll.get_url())
+
+    for choice in poll.choices:
+        form.vote_choices.append_entry(dict(choice_id=choice.id))
+
+    return render_template("vote.html", poll=poll, form=form)

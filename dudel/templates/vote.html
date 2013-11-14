@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_formhelpers.html" import form_errors %}
 
 {% block content %}
 <div class="page-header">
@@ -8,6 +9,35 @@
     </div>
 </div>
 
-todo
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form_errors(form) }}
+
+    <table class="table poll vote">
+        <tbody>
+            {% for entry in poll.choices %}
+                <tr>
+                    {% set vote_choice = form.vote_choices.pop_entry() %}
+                    {% set choice = poll.get_choice_by_id(vote_choice.choice_id.data) %}
+                    <td style="display:none;">{{ vote_choice.hidden_tag() }}</td>
+                    <td class="choice-text">{{ choice.text or choice.date }}</td>
+                    <td>{{ vote_choice.value(class="vote-choice-radio") }}</td>
+                    <td class="vote-choice control yes text-center off" data-choice="yes"><span class="icon-ok"></span></td>
+                    <td class="vote-choice control maybe text-center off" data-choice="maybe"><span class="icon-question"></span></td>
+                    <td class="vote-choice control no text-center off" data-choice="no"><span class="icon-ban-circle"></span></td>
+                    <td class="vote-comment">{{ vote_choice.comment(class="form-control") }} <span class="icon-edit" title="Add a comment"></span></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pull-right form-inline">
+        <div class="form-group">
+            {{ form.name.label(class="control-label sr-only") }}
+            {{ form.name(class="form-control", id="nameInput", placeholder=form.name.label.text) }}
+        </div>   
+        <button type="submit" class="btn btn-success"><span class="icon-check"></span> Vote</button>
+    </div>
+
+</form>
 
 {% endblock %}
