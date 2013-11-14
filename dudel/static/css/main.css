@@ -148,3 +148,8 @@ footer {
 .color.red { color: red; }
 .color.orange { color: #F90; }
 .color.green { color: #0A0; }
+
+
+.form.login {
+    max-width: 400px;
+}

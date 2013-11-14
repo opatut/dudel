@@ -10,14 +10,14 @@
         </div>
     </div>
 
-    {% if not poll.author %}
+    {% if not poll.author and not current_user.is_anonymous() %}
     <div class="row">
         <div class="well col-md-6 col-md-offset-3 text-center">
             <p>
                 This poll does not belong to any user. While logged in, you can
                 claim authorship to receive exclusive editing rights.
             </p>
-            <a href="#" class="btn btn-primary btn-sm">Claim authorship</a>
+            <a href="{{ url_for('poll_claim', slug=poll.slug) }}" class="btn btn-primary btn-sm">Claim authorship</a>
         </div>
     </div>
     <hr />
@@ -50,10 +50,11 @@
                 <div class="form-group">
                     {{ form.password_mode.label }}
                     <div class="row">
-                        <div class="col-xs-6">
+                        <div class="col-sm-6">
                             {{ form.password_mode(class="form-control col-") }}
                         </div>
-                        <div class="col-xs-6">
+                        <div class="visible-xs">&nbsp;</div>
+                        <div class="col-sm-6">
                             {{ form.password(class="form-control", placeholder=form.password.label.text) }}
                         </div>
                     </div>
@@ -88,7 +89,4 @@
         <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="icon-arrow-left"></span> Back to poll</a>
         <input type="submit" class="btn btn-primary" value="Save settings" />
     </form>
-
-
-    </ul>
 {% endblock %}

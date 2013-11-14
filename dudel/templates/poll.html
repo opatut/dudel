@@ -4,16 +4,26 @@
     <div class="page-header">
         <h1 class="inline">{{ poll.title }}</h1>
         <div class="pull-right">
-        <a href="{{ url_for('poll_edit', slug=poll.slug) }}" class="btn btn-default"><span class="icon-wrench"></span> Settings</a>
-        <a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}" class="btn btn-default"><span class="icon-list"></span> Choices</a>
-        <a href="{{ url_for('poll_vote', slug=poll.slug) }}" class="btn btn-success"><span class="icon-check"></span> Vote</a>
+            {% if poll.user_can_edit(current_user) %}
+            <a href="{{ url_for('poll_edit', slug=poll.slug) }}" class="btn btn-default"><span class="icon-wrench"></span> Settings</a>
+            <a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}" class="btn btn-default"><span class="icon-list"></span> Choices</a>
+            {% endif %}
+            <a href="{{ url_for('poll_vote', slug=poll.slug) }}" class="btn btn-success"><span class="icon-check"></span> Vote</a>
         </div>
     </div>
+
+    <ul class="poll-details">
+        {% if poll.due_date %}
+            <li>due on {{ poll.due_date }}</li>
+        {% endif %}
+        {% if poll.author %}
+            <li>owned by {{ "you" if poll.author == current_user else poll.author.displayname }}</li>
+        {% endif %}
+    </ul>
 
     {% if poll.votes %}
         <div class="table-padding">
             <table class="table poll auto-width">
-
                 <thead><tr>
                     <th></th>
                     {% for choice in poll.get_choices() %}

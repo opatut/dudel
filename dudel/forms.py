@@ -1,10 +1,12 @@
+from dudel import app
 from flask import request
 from flask.ext.wtf import Form
 from wtforms import ValidationError
-from wtforms.fields import TextField, SelectField, BooleanField, TextAreaField, HiddenField
+from wtforms.fields import TextField, SelectField, BooleanField, TextAreaField, HiddenField, PasswordField
 from wtforms.ext.dateutil.fields import DateField, DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional
-from dudel.models import Poll
+from dudel.models import *
+import ldap
 
 # Helper class for multiple forms on one page
 class MultiForm(Form):
@@ -32,6 +34,37 @@ class UniqueObject(object):
         if len([x for x in self.type.query.filter_by(**{self.column:field.data.strip()}).all() if not x in self.allowed_objects]):
             raise ValidationError(self.message)
 
+class LDAPAuthenticator(object):
+    def __init__(self, username_value_or_field, message = "Invalid credentials."):
+        self.username_value_or_field = username_value_or_field
+        self.message = message
+
+    def __call__(self, form, field):
+        username = self.username_value_or_field
+        if self.username_value_or_field in form.data: username = form.data[self.username_value_or_field]
+
+        if app.config["LDAP_DEBUG_MODE"]:
+            if username != app.config["LDAP_DEBUG_DATA"]["uid"] or  app.config["LDAP_DEBUG_PASSWORD"] != field.data:
+                raise ValidationError("LDAP_DEBUG_PASSWORD set but incorrect, log in as %s, password %s." %
+                        (app.config["LDAP_DEBUG_DATA"]["uid"], app.config["LDAP_DEBUG_PASSWORD"]))
+            else:
+                update_user_data(username, app.config["LDAP_DEBUG_DATA"])
+                return
+
+        try:
+            with ldap.initialize(app.config["LDAP_SERVER"]) as connection:
+                #connection.start_tls_s()
+                connection.simple_bind_s(app.config["LDAP_DN"] % username, field.data)
+
+                # At this point, we update the user info (since we already have
+                # a connection to LDAP)
+                update_user_data(username, {}) #TODO
+
+        except ldap.INVALID_CREDENTIALS:
+            raise ValidationError(self.message)
+        except ldap.LDAPError, e:
+            raise ValidationError("LDAP Error: " + (e.message["desc"] if e.message else "%s (%s)"%(e[1],e[0])))
+
 ################################################################################
 
 class CreatePollForm(Form):
@@ -52,6 +85,10 @@ class AddTimeForm(MultiForm):
 
 class AddChoiceForm(MultiForm):
     text = TextField("Choice", validators=[Required(), Length(min=1)])
+
+class LoginForm(MultiForm):
+    username = TextField("Username", validators=[Required()])
+    password = PasswordField("Password", validators=[Required(), LDAPAuthenticator("username")])
 
 class EditPollForm(Form):
     title = TextField("Title", validators=[Required(), Length(min=3)])
