@@ -65,6 +65,8 @@ class Poll(db.Model):
     show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote"))
     send_mail = db.Column(db.Boolean, default=False)
 
+    RESERVED_NAMES = ["login", "logout", "index"]
+
     def __init__(self):
         self.created = datetime.utcnow()
 

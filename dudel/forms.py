@@ -4,7 +4,7 @@ from flask.ext.wtf import Form
 from wtforms import ValidationError
 from wtforms.fields import TextField, SelectField, BooleanField, TextAreaField, HiddenField, FieldList, FormField, RadioField, PasswordField
 from wtforms.ext.dateutil.fields import DateField, DateTimeField
-from wtforms.validators import Required, Length, Regexp, Optional
+from wtforms.validators import Required, Length, Regexp, Optional, NoneOf
 from dudel.models import *
 import ldap
 
@@ -73,7 +73,8 @@ class CreatePollForm(Form):
     slug = TextField("URL name", validators=[Required(),
         Length(min=3),
         Regexp(r"^[a-zA-Z0-9_-]*$", message="Invalid character."),
-        UniqueObject(Poll, "slug", message="A poll with this URL name already exists.")
+        UniqueObject(Poll, "slug", message="A poll with this URL name already exists."),
+        NoneOf(Poll.RESERVED_NAMES, message="This is a reserved name.")
         ])
     due_date = DateTimeField("Due date", validators=[Optional()])
 

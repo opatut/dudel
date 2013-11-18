@@ -38,7 +38,7 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
-@app.route("/<slug>")
+@app.route("/<slug>/")
 def poll(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
     return render_template("poll.html", poll=poll)
@@ -172,7 +172,7 @@ def poll_vote(slug):
     form = CreateVoteForm()
     if form.validate_on_submit():
         vote = Vote()
-        vote.name = form.name.data 
+        vote.name = form.name.data
         poll.votes.append(vote)
         for vote_choice_form in form.vote_choices:
             choice = Choice.query.filter_by(id=vote_choice_form.choice_id.data).first()
