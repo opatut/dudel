@@ -14,26 +14,36 @@
     {{ form_errors(form) }}
 
     <table class="table poll vote auto-width">
-        {% for entry in poll.choices %}
-            <tr>
-                {% set vote_choice = form.vote_choices.pop_entry() %}
-                {% set choice = poll.get_choice_by_id(vote_choice.choice_id.data) %}
-                <td class="choice-text">
-                    {{ choice.text or choice.date }}
-                    {{ vote_choice.hidden_tag() }}
-                </td>
-                <td>{{ vote_choice.value(class="vote-choice-radio") }}</td>
-                <td class="vote-choice control yes off" data-choice="yes" title="Yes"><span class="icon-ok"></span></td>
-                <td class="vote-choice control no off" data-choice="no" title="No"><span class="icon-ban-circle"></span></td>
-                <td class="vote-choice control maybe off" data-choice="maybe" title="Maybe"><span class="icon-question"></span></td>
-                <td class="vote-comment">{{ vote_choice.comment(class="form-control input-sm", placeholder=vote_choice.comment.label.text) }} <span class="icon-edit" title="Add a comment"></span></td>
-            </tr>
+        {% set groups = poll.get_choice_groups() %}
+        {% for group_value, group in groups.iteritems()|sort %}
+            {% for entry in group %}
+                <tr>
+                    {% set vote_choice = form.vote_choices.pop_entry() %}
+                    {% set choice = poll.get_choice_by_id(vote_choice.choice_id.data) %}
+                    {% if loop.first %}
+                    <td class="choice-group" rowspan="{{ group|length }}">
+                        {% if groups|length > 1 or poll.type == "date" %}
+                        {{ group_value|date if poll.type == "date" else group_value }}
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                    <td class="choice-text">
+                        {{ choice.text or choice.date.time()|time }}
+                        {{ vote_choice.hidden_tag() }}
+                    </td>
+                    <td>{{ vote_choice.value(class="vote-choice-radio") }}</td>
+                    <td class="vote-choice control yes off" data-choice="yes" title="Yes"><span class="icon-ok"></span></td>
+                    <td class="vote-choice control no off" data-choice="no" title="No"><span class="icon-ban-circle"></span></td>
+                    <td class="vote-choice control maybe off" data-choice="maybe" title="Maybe"><span class="icon-question"></span></td>
+                    <td class="vote-comment">{{ vote_choice.comment(class="form-control input-sm", placeholder=vote_choice.comment.label.text) }} <span class="icon-edit" title="Add a comment"></span></td>
+                </tr>
+            {% endfor %}
         {% endfor %}
 
-        <tr><td colspan="5"><hr /></td></tr>
+        <tr><td colspan="6"><hr /></td></tr>
 
         <tr>
-            <td>{{ form.name.label }}</td>
+            <td colspan="2">{{ form.name.label }}</td>
             <td colspan="3">
                 {% if current_user.is_anonymous() %}
                     {{ form.name(class="form-control", id="nameInput") }}

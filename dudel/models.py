@@ -98,6 +98,24 @@ class Poll(db.Model):
     def user_can_edit(self, user):
         return not self.author or self.author == user
 
+    def get_choice_groups(self):
+        return self.get_choices_grouped_by_date() if self.type == "date" else {"default": self.choices}
+
+    def get_choices_grouped_by_date(self):
+        if not self.type == "date": raise Exception("You should not get_choices_grouped_by_date on a non-date poll.")
+        groups = {}
+        for choice in self.choices:
+            if not choice.date.date() in groups: groups[choice.date.date()] = []
+            groups[choice.date.date()].append(choice)
+        return groups
+
+    def get_statistics(self):
+        stats = [{value: sum([1 if vc.value==value else 0 for vc in choice.vote_choices]) for value in ("yes", "no", "maybe")} for choice in self.choices]
+        maximum = max([x["yes"] for x in stats])
+        for k in range(len(stats)):
+            stats[k]["max"] = (stats[k]["yes"] == maximum)
+        return stats
+
     # @property
     # def password_session_key(self):
     #     return "poll-password-%s" % self.id

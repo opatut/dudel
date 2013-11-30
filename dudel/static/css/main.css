@@ -6,15 +6,42 @@
     margin: 0.5em 0;
 }
 
+.poll, .vote {
+    font-size: 9pt;
+}
+
 table.vote label {
     margin-top: 8px;
 }
 
+.poll .choice-text,
+.poll .choice-sum,
 .vote .choice-text {
-    text-align: right;
-    width: 1%;
     white-space: nowrap;
     font-weight: bold;
+    background: #EEE;
+}
+
+.vote .choice-text {
+    text-align: right;
+}
+
+.poll .choice-group,
+.vote .choice-group {
+    font-weight: bold;
+    white-space: nowrap;
+    background: #EEE;
+}
+
+.poll .choice-group,
+.poll .choice-sum,
+.poll .choice-text {
+    text-align: center;
+}
+
+.poll .choice-sum.maximum {
+    background: #AAA;
+    color: #FFF;
 }
 
 .vote-choice {
@@ -58,10 +85,6 @@ table.poll td, table.poll th, table.poll tr {
 table.poll {
     border-collapse: separate !important;
     border-spacing: 4px !important;
-}
-
-table.poll td.vote-choice {
-    font-size: 16px;
 }
 
 table.poll tr td:nth-of-type(1) {
