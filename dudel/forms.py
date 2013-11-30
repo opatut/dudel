@@ -1,6 +1,7 @@
 from dudel import app
 from flask import request
 from flask.ext.wtf import Form
+from flask.ext.login import current_user
 from wtforms import ValidationError
 from wtforms.fields import TextField, SelectField, BooleanField, TextAreaField, HiddenField, FieldList, FormField, RadioField, PasswordField
 from wtforms.ext.dateutil.fields import DateField, DateTimeField
@@ -65,6 +66,11 @@ class LDAPAuthenticator(object):
         except ldap.LDAPError, e:
             raise ValidationError("LDAP Error: " + (e.message["desc"] if e.message else "%s (%s)"%(e[1],e[0])))
 
+class RequiredIfNotLoggedIn(object):
+    def __call__(self, form, field):
+        if not field.data and current_user.is_anonymous():
+            raise ValidationError("This field is required.")
+
 ################################################################################
 
 class CreatePollForm(Form):
@@ -97,8 +103,13 @@ class EditPollForm(Form):
     anonymous_allowed = BooleanField("Allow anonymous votes")
     require_login = BooleanField("Require login to vote")
     public_listing = BooleanField("Show in public poll list")
-    password = TextField("Password")
-    password_mode = SelectField("Password mode", choices=[("none", "Do not use password"), ("show", "Password required to show poll"), ("vote", "Password required to vote")])
+    # password = TextField("Password")
+    # password_level = SelectField("Password mode", choices=[
+    #     (0, "Do not use password"),
+    #     (1, "Password required for editing"),
+    #     (2, "Password required to vote"),
+    #     (3, "Password required to show poll")],
+    #     coerce=int)
     show_results = SelectField("Results display", choices=[
         ("complete", "show all votes"),
         ("summary", "show only summary"),
@@ -113,5 +124,9 @@ class CreateVoteChoiceForm(Form):
     choice_id = HiddenField("choice id", validators=[Required()])
 
 class CreateVoteForm(Form):
-    name = TextField("Enter Name", validators=[Required()])
+    name = TextField("Your Name", validators=[RequiredIfNotLoggedIn()])
+    anonymous = BooleanField("Post anonymous vote")
     vote_choices = FieldList(FormField(CreateVoteChoiceForm))
+
+class PollPassword(Form):
+    password = PasswordField("Poll password", validators=[Required()])

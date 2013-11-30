@@ -6,8 +6,8 @@
     margin: 0.5em 0;
 }
 
-table.vote td {
-    vertical-align: middle !important;
+table.vote label {
+    margin-top: 8px;
 }
 
 .vote .choice-text {
@@ -23,6 +23,7 @@ table.vote td {
     color: white;
     font-size: 16px;
     width: 70px;
+    text-align: center;
 }
 
 .auto-width {
@@ -90,6 +91,7 @@ td.maybe {
 
 td.off {
     background-color: #D6D6D6 !important;
+    color: #FFF !important;
 }
 
 table.poll td.none {
@@ -114,14 +116,18 @@ td.not-padded {
     padding: 0 !important;
 }
 
-.vote-comment span:hover {
+.vote-comment {
     cursor: pointer;
+    display:block;
+    max-width: 300px;
+}
+
+.vote-comment span:hover {
     color: black;
 }
 
-.vote-comment {
-    display:block;
-    max-width: 300px;
+.vote-comment input {
+    width: 40em;
 }
 
 /* Calendar stuff */
@@ -181,4 +187,22 @@ footer {
 
 .form.login {
     max-width: 400px;
+}
+
+.poll-details {
+    list-style: none;
+    padding: 0;
+    /*display: table;*/
+    float: right;
+}
+
+.poll-details li {
+    /*display: table-cell;*/
+    margin: 0;
+}
+
+.poll-details li i {
+    display: inline-block;
+    width: 16px;
+    text-align: center;
 }

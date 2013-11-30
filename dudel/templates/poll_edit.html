@@ -47,11 +47,12 @@
                 </div>
             </div>
             <div class="col-md-5 col-md-offset-1">
+                {#
                 <div class="form-group">
-                    {{ form.password_mode.label }}
+                    {{ form.password_level.label }}
                     <div class="row">
                         <div class="col-sm-6">
-                            {{ form.password_mode(class="form-control col-") }}
+                            {{ form.password_level(class="form-control") }}
                         </div>
                         <div class="visible-xs">&nbsp;</div>
                         <div class="col-sm-6">
@@ -61,22 +62,25 @@
                     {{ field_error(form.password_mode) }}
                     {{ field_error(form.password) }}
                 </div>
-                <div class="form-group">
+                #}
+
+                <label>Additional settings</label>
+                <div class="checkbox">
                     {{ form.anonymous_allowed() }}
                     {{ form.anonymous_allowed.label }}
                     {{ field_error(form.anonymous_allowed) }}
                 </div>
-                <div class="form-group">
+                <div class="checkbox">
                     {{ form.require_login() }}
                     {{ form.require_login.label }}
                     {{ field_error(form.require_login) }}
                 </div>
-                <div class="form-group">
+                <div class="checkbox">
                     {{ form.public_listing() }}
                     {{ form.public_listing.label }}
                     {{ field_error(form.public_listing) }}
                 </div>
-                <div class="form-group">
+                <div class="checkbox">
                     {{ form.send_mail() }}
                     {{ form.send_mail.label }}
                     {{ field_error(form.send_mail) }}

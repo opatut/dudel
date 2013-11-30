@@ -1,5 +1,6 @@
 from dudel import app, db, login_manager
 from flask import url_for, session
+from flask.ext.login import current_user
 from datetime import datetime
 
 def update_user_data(username, data):
@@ -55,10 +56,12 @@ class Poll(db.Model):
     author = db.relationship("User", backref="polls")
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
-    # extra settings
+    # === Extra settings ===
     due_date = db.Column(db.DateTime)
     password = db.Column(db.String)
-    password_mode = db.Column(db.Enum("none", "show", "vote"))
+    # "What is impossible without password?"
+    # 0: nothing, 1: editing, 2: vote, 3: show
+    password_level = db.Column(db.Integer, default=0)
     anonymous_allowed = db.Column(db.Boolean, default=True)
     public_listing = db.Column(db.Boolean, default=False)
     require_login = db.Column(db.Boolean, default=False)
@@ -95,8 +98,22 @@ class Poll(db.Model):
     def user_can_edit(self, user):
         return not self.author or self.author == user
 
-    # def get_vote(self, user):
-    #     return Vote.query.filter_by(self.)
+    # @property
+    # def password_session_key(self):
+    #     return "poll-password-%s" % self.id
+
+    # def has_password(self):
+    #     return (self.password_session_key in session and session[self.password_session_key] == self.password) \
+    #         or (self.author and self.author == current_user)
+
+    # def set_password(self):
+    #     session[self.password_session_key] = self.password
+
+    #e.g. "require_password(2)" for voting page, returns false if the password is
+    # not set, and this poll requires pw level 2 or higher
+    # def require_password(self, level):
+    #     if not self.has_password():
+    #         return level <= self.password_level???
 
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -116,6 +133,7 @@ class Vote(db.Model):
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
     user = db.relationship("User", backref="votes")
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    anonymous = db.Column(db.Boolean, default=False)
 
 class VoteChoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)

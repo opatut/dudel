@@ -13,12 +13,29 @@
     </div>
 
     <ul class="poll-details">
-        {% if poll.due_date %}
-            <li>due on {{ poll.due_date }}</li>
-        {% endif %}
-        {% if poll.author %}
-            <li>owned by {{ "you" if poll.author == current_user else poll.author.displayname }}</li>
-        {% endif %}
+        <li><i class="icon-calendar"></i> created on {{ poll.created|date }}</li>
+        <li>
+            <i class="icon-time"></i>
+            {% if poll.due_date %}
+                due on {{ poll.due_date|date }} at {{ poll.due_date|time }}
+            {% else %}
+                no due date
+            {% endif %}
+        </li>
+
+        <li>
+            <i class="icon-briefcase"></i>
+            {% if poll.author %}
+                owned by {{ "you" if poll.author == current_user else poll.author.displayname }}</li>
+            {% else %}
+                no owner
+            {% endif %}
+        </li>
+
+        <li><i class="icon-exclamation"></i> {{ "anonymous voting allowed" if poll.anonymous_allowed else "no anonymous voting" }}</li>
+        <li><i class="icon-list"></i> {{ "visible" if poll.public_listing else "hidden" }} in public list</li>
+        <li><i class="icon-user"></i> {{ "requires login" if poll.require_login else "no login required" }}</li>
+        <!-- <li><i class="icon-envelope"></i> {{ poll.send_mail }}</li> -->
     </ul>
 
     {% if poll.votes %}
@@ -35,7 +52,13 @@
                 <tbody>
                     {% for vote in poll.votes %}
                         <tr>
-                            <td>{{ vote.name }}</td>
+                            <td>
+                                {% if vote.anonymous %}
+                                    anonymous
+                                {% else %}
+                                    {{ vote.name or vote.user.displayname }}
+                                {% endif %}
+                            </td>
                             {% for choice in poll.get_choices() %}
                                 {% set vote_choice = poll.get_vote_choice(vote, choice) %}
                                 <td class="vote-choice text-center {{ vote_choice.value or 'none' }}">

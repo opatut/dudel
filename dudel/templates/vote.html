@@ -9,34 +9,57 @@
     </div>
 </div>
 
-<form method="POST">
+<form method="POST" class="form">
     {{ form.hidden_tag() }}
     {{ form_errors(form) }}
 
-    <table class="table poll vote">
-        <tbody>
-            {% for entry in poll.choices %}
-                <tr>
-                    {% set vote_choice = form.vote_choices.pop_entry() %}
-                    {% set choice = poll.get_choice_by_id(vote_choice.choice_id.data) %}
-                    <td style="display:none;">{{ vote_choice.hidden_tag() }}</td>
-                    <td class="choice-text">{{ choice.text or choice.date }}</td>
-                    <td>{{ vote_choice.value(class="vote-choice-radio") }}</td>
-                    <td class="vote-choice control yes text-center off" data-choice="yes"><span class="icon-ok"></span></td>
-                    <td class="vote-choice control maybe text-center off" data-choice="maybe"><span class="icon-question"></span></td>
-                    <td class="vote-choice control no text-center off" data-choice="no"><span class="icon-ban-circle"></span></td>
-                    <td class="vote-comment">{{ vote_choice.comment(class="form-control") }} <span class="icon-edit" title="Add a comment"></span></td>
-                </tr>
-            {% endfor %}
-        </tbody>
+    <table class="table poll vote auto-width">
+        {% for entry in poll.choices %}
+            <tr>
+                {% set vote_choice = form.vote_choices.pop_entry() %}
+                {% set choice = poll.get_choice_by_id(vote_choice.choice_id.data) %}
+                <td class="choice-text">
+                    {{ choice.text or choice.date }}
+                    {{ vote_choice.hidden_tag() }}
+                </td>
+                <td>{{ vote_choice.value(class="vote-choice-radio") }}</td>
+                <td class="vote-choice control yes off" data-choice="yes" title="Yes"><span class="icon-ok"></span></td>
+                <td class="vote-choice control no off" data-choice="no" title="No"><span class="icon-ban-circle"></span></td>
+                <td class="vote-choice control maybe off" data-choice="maybe" title="Maybe"><span class="icon-question"></span></td>
+                <td class="vote-comment">{{ vote_choice.comment(class="form-control input-sm", placeholder=vote_choice.comment.label.text) }} <span class="icon-edit" title="Add a comment"></span></td>
+            </tr>
+        {% endfor %}
+
+        <tr><td colspan="5"><hr /></td></tr>
+
+        <tr>
+            <td>{{ form.name.label }}</td>
+            <td colspan="3">
+                {% if current_user.is_anonymous() %}
+                    {{ form.name(class="form-control", id="nameInput") }}
+                {% else %}
+                    <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
+                {% endif %}
+
+                {% if poll.anonymous_allowed %}
+                <div class="checkbox">
+                    {{ form.anonymous() }}
+                    {{ form.anonymous.label() }}
+                </div>
+                {% endif %}
+            </td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td colspan="3">
+                <button type="submit" class="btn btn-success btn-block"><span class="icon-check"></span> Save vote</button>
+            </td>
+            <td></td>
+        </tr>
     </table>
-    <div class="pull-right form-inline">
-        <div class="form-group">
-            {{ form.name.label(class="control-label sr-only") }}
-            {{ form.name(class="form-control", id="nameInput", placeholder=form.name.label.text) }}
-        </div>   
-        <button type="submit" class="btn btn-success"><span class="icon-check"></span> Vote</button>
-    </div>
+
 
 </form>
 

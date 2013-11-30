@@ -38,10 +38,10 @@ $(document).ready(function() {
 
     $(".script-only").css("display", "inline-block");
 
-    $("#password_mode").change(function() {
-        $("#password").attr("disabled", $(this).val() == "none");
+    $("#password_level").change(function() {
+        $("#password").attr("disabled", $(this).val() == "0");
     });
-    $("#password").attr("disabled", $("#password_mode").val() == "none");
+    $("#password").attr("disabled", $("#password_level").val() == "0");
 
     $("td .vote-choice-radio").parent().hide();
     $("input[value='no'").attr("checked", "checked");

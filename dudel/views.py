@@ -41,12 +41,23 @@ def logout():
 @app.route("/<slug>/")
 def poll(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
+
+    # if poll.password_mode in ("show"):
+    #     if not poll.has_password():
+    #         return redirect(url_for("poll_password", slug=poll.slug, next=request.url))
+
     return render_template("poll.html", poll=poll)
 
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
 def poll_edit(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
     form = EditPollForm(obj=poll)
+
+    # if poll.password_mode in ("edit"):
+    #     if not poll.has_password():
+    #         return redirect(url_for("poll_password", slug=poll.slug, next=request.url))
+    # elif poll.password_mode in ("none"):
+    #     pass #TODO
 
     if form.validate_on_submit():
         form.populate_obj(poll)
@@ -62,6 +73,11 @@ def poll_edit(slug):
 def poll_claim(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
     if poll.author: abort(403)
+
+    # if poll.password_mode in ("edit"):
+    #     if not poll.has_password():
+    #         return redirect(url_for("poll_password", slug=poll.slug, next=request.url))
+
     poll.author = current_user
     db.session.commit()
     flash("You claimed this poll. Only you may edit it now.", "success")
@@ -73,6 +89,10 @@ def poll_claim(slug):
 def poll_edit_choices(slug, step=1):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
     args = {}
+
+    # if poll.password_mode in ("edit"):
+    #     if not poll.has_password():
+    #         return redirect(url_for("poll_password", slug=poll.slug, next=request.url))
 
     if poll.type == "date":
         if step == 1:
@@ -165,14 +185,44 @@ def poll_edit_choices(slug, step=1):
 
     return render_template("poll_edit_choices.html", poll=poll, step=step, **args)
 
+# @app.route("/<slug>/password", methods=("POST", "GET"))
+# def poll_password(slug):
+#     next = request.args.get("next")
+
+#     poll = Poll.query.filter_by(slug=slug).first_or_404()
+#     form = PollPassword()
+
+#     if poll.has_password():
+#         return redirect(next)
+
+#     if form.validate_on_submit():
+#         if form.password.data == poll.password:
+#             poll.set_password()
+#             return redirect(next)
+#         else:
+#             flash("Incorrect password, try again!", "error")
+
+#     return render_template("poll_password.html", poll=poll, next=next, form=form)
+
 @app.route("/<slug>/vote", methods=("POST", "GET"))
 def poll_vote(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
 
+    if poll.require_login and current_user.is_anonymous():
+        return render_template("vote_error.html", reason="LOGIN_REQUIRED")
+
+    # if poll.password_mode in ("show", "vote"):
+    #     if not poll.has_password():
+    #         return redirect(url_for("poll_password", slug=poll.slug, next=request.url))
+
     form = CreateVoteForm()
     if form.validate_on_submit():
         vote = Vote()
-        vote.name = form.name.data
+        if current_user.is_anonymous():
+            vote.name = form.name.data
+        else:
+            vote.user = current_user
+        vote.anonymous = poll.anonymous_allowed and form.anonymous.data
         poll.votes.append(vote)
         for vote_choice_form in form.vote_choices:
             choice = Choice.query.filter_by(id=vote_choice_form.choice_id.data).first()
