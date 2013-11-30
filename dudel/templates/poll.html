@@ -45,7 +45,7 @@
                     <th></th>
                     {% for choice in poll.get_choices() %}
                         <th class="text-center">
-                            {{ choice.text }}
+                            {{ choice.text or choice.date }}
                         </th>
                     {% endfor %}
                 </tr></thead>

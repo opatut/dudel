@@ -53,14 +53,20 @@ $(document).ready(function() {
     });
 
     $("td.vote-choice").click(highlightVoteChoice);
+    $("td.vote-choice span").click(highlightVoteChoice);
 });
 
 function highlightVoteChoice(event) {
+    var $target = $(event.target);
     var $parent = $(event.target).parent();
+    if ($(event.target).prop("tagName") == "SPAN") {
+        $target = $parent;
+        $parent = $parent.parent();
+    }
     $parent.find("td.vote-choice.control").addClass("off");
-    $(event.target).removeClass("off");
+    $target.removeClass("off");
     $parent.find("input").prop("checked", false);
-    $parent.find("input[value='" + $(event.target).data("choice") + "']").prop("checked", true);
+    $parent.find("input[value='" + $target.data("choice") + "']").prop("checked", true);
 }
 
 function initCalendar(calendar) {
