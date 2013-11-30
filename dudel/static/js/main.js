@@ -53,7 +53,6 @@ $(document).ready(function() {
     });
 
     $("td.vote-choice").click(highlightVoteChoice);
-    $("td.vote-choice span").click(highlightVoteChoice);
 });
 
 function highlightVoteChoice(event) {
