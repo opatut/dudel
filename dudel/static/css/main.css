@@ -53,6 +53,22 @@ table.vote label {
     text-align: center;
 }
 
+.comment-icon { display: none; }
+
+.vote-choice {
+    position: relative;
+}
+.vote-choice.comment span.comment-icon {
+    display: block;
+    border-right: 5px solid white;
+    border-top: 5px solid white;
+    border-left: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
 .auto-width {
     width: auto;
 }

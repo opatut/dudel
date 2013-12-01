@@ -197,12 +197,14 @@ def poll_vote(slug):
             vote.user = current_user
         vote.anonymous = poll.anonymous_allowed and form.anonymous.data
         poll.votes.append(vote)
-        for vote_choice_form in form.vote_choices:
-            choice = Choice.query.filter_by(id=vote_choice_form.choice_id.data).first()
+
+        for subform in form.vote_choices:
+            choice = Choice.query.filter_by(id=subform.choice_id.data).first()
             if not choice or choice.poll != poll: abort(404)
 
             vote_choice = VoteChoice()
-            vote_choice.value = vote_choice_form.value.data
+            vote_choice.value = subform.value.data
+            vote_choice.comment = subform.comment.data
             vote_choice.vote = vote
             vote_choice.choice = choice
             db.session.add(vote_choice)
@@ -210,7 +212,8 @@ def poll_vote(slug):
         db.session.commit()
         return redirect(poll.get_url())
 
-    for choice in poll.choices:
-        form.vote_choices.append_entry(dict(choice_id=choice.id))
+    for k, group in sorted(poll.get_choice_groups().iteritems()):
+        for choice in sorted(group, reverse=True):
+            form.vote_choices.append_entry(dict(choice_id=choice.id))
 
     return render_template("vote.html", poll=poll, form=form)
