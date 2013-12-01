@@ -8,6 +8,7 @@
         <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" media="screen">
         <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" media="screen">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}" media="screen">
+        {% block head %}{% endblock %}
     </head>
 
     <body>
@@ -47,6 +48,8 @@
 
         <script src="{{ url_for('static', filename='js/moment.min.js') }}" type="text/javascript" lang="javascript"></script>
         <script src="{{ url_for('static', filename='js/jquery.js') }}" type="text/javascript" lang="javascript"></script>
+        <script src="{{ url_for('static', filename='js/util.js') }}" type="text/javascript" lang="javascript"></script>
         <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" lang="javascript"></script>
+        {% block foot %}{% endblock %}
     </body>
 </html>

@@ -104,15 +104,17 @@ class Poll(db.Model):
     def get_choices_grouped_by_date(self):
         if not self.type == "date": raise Exception("You should not get_choices_grouped_by_date on a non-date poll.")
         groups = {}
-        for choice in self.choices:
+        for choice in self.get_choices():
             if not choice.date.date() in groups: groups[choice.date.date()] = []
             groups[choice.date.date()].append(choice)
+        for group, li in groups.iteritems():
+            li.sort(reverse=True)
         return groups
 
     def get_statistics(self):
-        stats = [{value: sum([1 if vc.value==value else 0 for vc in choice.vote_choices]) for value in ("yes", "no", "maybe")} for choice in self.choices]
-        maximum = max([x["yes"] for x in stats])
-        for k in range(len(stats)):
+        stats = {choice: {value: sum([1 if vc.value==value else 0 for vc in choice.vote_choices]) for value in ("yes", "no", "maybe")} for choice in self.get_choices()}
+        maximum = max([v["yes"] for k,v in stats.iteritems()]) if stats else 0
+        for k in stats:
             stats[k]["max"] = (stats[k]["yes"] == maximum)
         return stats
 

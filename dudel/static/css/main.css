@@ -216,13 +216,19 @@ footer {
 .poll-details {
     list-style: none;
     padding: 0;
-    /*display: table;*/
-    float: right;
+    display: table;
+    width: 100%;
+    /*float: right;*/
+    border-collapse: separate !important;
+    border-spacing: 4px !important;
 }
 
 .poll-details li {
-    /*display: table-cell;*/
+    display: table-cell;
     margin: 0;
+    width: 1%;
+    background: #EEE;
+    padding: 5px;
 }
 
 .poll-details li i {

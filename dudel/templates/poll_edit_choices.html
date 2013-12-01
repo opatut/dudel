@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
+{% block foot %}
+    <script src="{{ url_for('static', filename='js/poll_edit_choices.js') }}" type="text/javascript" lang="javascript"></script>
+{% endblock %}
+
 {% block content %}
 
     <div class="page-header">
@@ -61,7 +65,7 @@
                 lists. In the next step, you will be asked to select which time
                 is available at which date.</p>
 
-<!--             <noscript>
+            <noscript>
                 <p class="alert alert-warning">
                     It's a pity you don't have <b>JavaScript</b> turned on, so you'll have
                     to type in comma separated values in the correct format yourself,
@@ -70,108 +74,100 @@
                     for date and time input...
                 </p>
             </noscript>
- -->
-            <div class="row script-only">
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Selected dates
+
+            <form method="POST" id="date-time-form" action="{{ url_for('poll_edit_choices', slug=poll.slug, step=2) }}" >
+                <div id="date-time-form-content">
+                    {{ form.hidden_tag() }}
+                    {{ form_errors(form) }}
+                    <div class="form-group">
+                        {{ form.dates.label }}
+                        {{ form.dates(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.times.label }}
+                        {{ form.times(class="form-control") }}
+                    </div>
+                </div>
+
+                <div class="script-only">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Selected dates
+                                </div>
+                                <div class="panel-body">
+                                    <div id="calendar" class="calendar" data-calendar-field="#date">
+                                        <table class="table auto-width">
+                                            <tr>
+                                                <th><button id="calendar-prev-month" class="btn btn-default btn-xs">&laquo;</button></th>
+                                                <th class="title" colspan="5">monthname</th>
+                                                <th><button id="calendar-next-month" class="btn btn-default btn-xs">&raquo;</button></th>
+                                            </tr>
+                                            <tr><td>Mo</td><td>Tu</td><td>We</td><td>Th</td><td>Fr</td><td>Sa</td><td>Su</td></tr>
+                                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                        </table>
+                                    </div>
+
+                                    <ul class="calendar-list"></ul>
+
+                                    <span class="help-block">Click a date to add/remove it</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="panel-body">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Selected time slots
+                                </div>
+                                <div class="panel-body">
 
-                    <div class="calendar script-only" data-calendar-field="#date">
-                        <table class="table auto-width">
-                            <tr>
-                                <th><button class="prev-month btn btn-default btn-xs">&laquo;</button></th>
-                                <th class="title" colspan="5">monthname</th>
-                                <th><button class="next-month btn btn-default btn-xs">&raquo;</button></th>
-                            </tr>
-                            <tr><td>Mo</td><td>Tu</td><td>We</td><td>Th</td><td>Fr</td><td>Sa</td><td>Su</td></tr>
-                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-                            <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-                        </table>
-                    </div>
+                            <div class="time-input">
+                                <div id="time-slider">
+                                    <div id="time-slider-knob">
+                                    </div>
+                                </div>
 
-                    <script>
-                        var ENABLED_DATES = [{% for date in dates %}"{{ date }}", {% endfor %}];
-                        var CURRENT_DATE = "{{ request.form.get('date') or '' }}";
-                    </script>
+                                <div class="time-slider-display">
+                                    <div class="hour"></div>
+                                    <div class="minute"></div>
+                                </div>
 
-                    <ul class="calendar-list">
-                        {% for date in dates %}
-                            <li><a href="#" class="btn btn-default">{{ date|date }}</a></li>
-                        {% endfor %}
-                    </ul>
-                    <span class="help-block">Click a date to remove it</span>
-
-                    <div id="date-form">
-                        <h2>Add another date</h2>
-                        <form class="form" method="POST">
-                            {{ date_form.hidden_tag() }}
-                            {{ form_errors(date_form) }}
-                            <div class="form-group">
-                                {{ date_form.date.label }}
-                                {{ date_form.date(class="form-control") }}
+                                <div class="form-inline" id="time-slider-form">
+                                    <input type="text" id="time-hour" class="form-control" placeholder="HH" />
+                                    <input type="text" id="time-minute" class="form-control" placeholder="MM" />
+                                    <input type="button" id="time-add-button" value="Add" class="btn btn-default" style="height: 3.4em;" />
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <input type="submit" value="Add date" class="btn btn-default" />
-                            </div>
-                        </form>
-                    </div>
 
+                            <ul class="time-slots"></ul>
+
+                            <span class="help-block">Click a time slot to remove it</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Selected time slots
-                        </div>
-                        <div class="panel-body">
 
-                    <div class="time-input">
-                        <div id="time-slider">
-                            <div id="time-slider-knob">
-                            </div>
-                        </div>
-
-                        <div class="time-slider-display">
-                            <div class="hour"></div>
-                            <div class="minute"></div>
-                        </div>
-
-                        <form class="form-inline" id="time-slider-form" method="POST">
-                            {{ time_form.hidden_tag() }}
-                            {{ form_errors(time_form) }}
-                            {{ time_form.hour(id="time-hour", class="form-control", placeholder="HH") }}
-                            {{ time_form.minute(id="time-minute", class="form-control", placeholder="MM") }}
-                            <input type="submit" value="Add" class="btn btn-default" style="height: 3.4em;" />
-                        </form>
-                    </div>
-
-                    <ul class="time-slots">
-                        {% for time in times %}
-                            <li><input type="button" class="btn btn-default time-remove-button" value="{{ time|time }}" /></li>
-                        {% endfor %}
-                    </ul>
-                    <span class="help-block">Click a time slot to remove it</span>
-                        </div>
-                    </div>
+                <div class="form-actions">
+                    <input type="submit" value="Next" class="btn btn-primary" />
                 </div>
-            </div>
-
-            <div class="form-actions">
-                <a href="{{ url_for('poll_edit_choices', slug=poll.slug, step=2) }}" class="btn btn-primary">Next</a>
-            </div>
-
+            </form>
 
         {% elif step == 2 %}
             <p>Here you can select which date and time combinations are available for voting.</p>
 
-            <form class="form form-inline" method="POST">
+            <form class="form form-inline" method="POST" action="{{ url_for('poll_edit_choices', slug=poll.slug, step=3) }}">
+                {{ form.hidden_tag() }}
+                {{ form_errors(form) }}
+                {{ form.dates(hidden=True) }}
+                {{ form.times(hidden=True) }}
+
+
                 <table class="table auto-width poll">
                     <tr>
                         <th></th>

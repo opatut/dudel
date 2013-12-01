@@ -17,7 +17,7 @@
         <li>
             <i class="icon-time"></i>
             {% if poll.due_date %}
-                due on {{ poll.due_date|date }} at {{ poll.due_date|time }}
+                due {{ poll.due_date|date }} {{ poll.due_date|time }}
             {% else %}
                 no due date
             {% endif %}
@@ -56,10 +56,12 @@
                     {% endif %}
                     <tr>
                         <th></th>
-                        {% for choice in poll.get_choices() %}
-                            <th class="choice-text">
-                                {{ choice.text or choice.date|time }}
-                            </th>
+                        {% for k, group in groups.iteritems() %}
+                            {% for choice in group %}
+                                <th class="choice-text">
+                                    {{ choice.text or choice.date|time }}
+                                </th>
+                            {% endfor %}
                         {% endfor %}
                     </tr>
                 </thead>
@@ -73,11 +75,13 @@
                                     {{ vote.name or vote.user.displayname }}
                                 {% endif %}
                             </td>
-                            {% for choice in poll.get_choices() %}
-                                {% set vote_choice = poll.get_vote_choice(vote, choice) %}
-                                <td class="vote-choice text-center {{ vote_choice.value or 'none' }}">
-                                    <span class="icon-{{ {"yes": "ok", "no": "ban-circle", "maybe": "question"}[vote_choice.value] or 'question' }}"></span>
-                                </td>
+                            {% for k, group in groups.iteritems() %}
+                                {% for choice in group %}
+                                    {% set vote_choice = poll.get_vote_choice(vote, choice) %}
+                                    <td class="vote-choice text-center {{ vote_choice.value or 'none' }}">
+                                        <span class="icon-{{ {"yes": "ok", "no": "ban-circle", "maybe": "question"}[vote_choice.value] or 'question' }}"></span>
+                                    </td>
+                                {% endfor %}
                             {% endfor %}
                         </tr>
                     {% endfor %}
@@ -87,10 +91,13 @@
                         {% set stats = poll.get_statistics() %}
                         {% set total = poll.votes|length %}
                         <th></th>
-                        {% for stat in stats %}
-                            <th class="choice-sum {% if stat["max"] %}maximum{% endif %}" title="{{ stat["yes"] }} yes, {{ stat["no"] }} no, {{ stat["maybe"] }} maybe">
-                                {{ "%2.0f" % (stat["yes"]/total*100) }}%
-                            </th>
+                        {% for k, group in groups.iteritems() %}
+                            {% for choice in group %}
+                                {% set stat = stats[choice] %}
+                                <th class="choice-sum {% if stat["max"] %}maximum{% endif %}" title="{{ stat["yes"] }} yes, {{ stat["no"] }} no, {{ stat["maybe"] }} maybe">
+                                    {{ "%2.0f" % (stat["yes"]/total*100) }}%
+                                </th>
+                            {% endfor %}
                         {% endfor %}
                     </tr>
                 </tfoot>

@@ -95,42 +95,20 @@ def poll_edit_choices(slug, step=1):
     #         return redirect(url_for("poll_password", slug=poll.slug, next=request.url))
 
     if poll.type == "date":
+        form = DateTimeSelectForm()
+        args["form"] = form
+
         if step == 1:
-            # Put dates into session
-            if not "dates" in session.keys(): session["dates"] = {}
-            if not poll.slug in session["dates"] or not session["dates"][poll.slug]: session["dates"][poll.slug] = [str(date) for date in poll.get_choice_dates()]
+            form.dates.data = ",".join(set([choice.date.strftime("%Y-%m-%d") for choice in poll.get_choices()]))
+            form.times.data = ",".join(set([choice.date.strftime("%H:%M") for choice in poll.get_choices()]))
 
-            # Put times into session
-            if not "times" in session.keys(): session["times"] = {}
-            if not poll.slug in session["times"] or not session["times"][poll.slug]: session["times"][poll.slug] = [str(time) for time in poll.get_choice_times()]
+        if step in (2, 3) and form.validate_on_submit():
+            dates = form.dates.data.split(",")
+            times = form.times.data.split(",")
+            args["dates"] = list(set(sorted([parser.parse(data, fuzzy=True).date() for data in dates])))
+            args["times"] = list(set(sorted([parser.parse("1970-01-01 %s" % data, fuzzy=True).time() for data in times])))
 
-            date_form = AddDateForm()
-            if date_form.validate_on_submit():
-                date = str(date_form.date.data)
-                if date in session["dates"][poll.slug]:
-                    session["dates"][poll.slug].remove(date)
-                else:
-                    session["dates"][poll.slug].append(date)
-            args["date_form"] = date_form
-
-            time_form = AddTimeForm()
-            if time_form.validate_on_submit():
-                time = str(parser.parse("2013-01-01 %s:%s:00" % (time_form.hour.data, time_form.minute.data), fuzzy=True).time())
-                print("Time submitted %s" % time)
-                if time in session["times"][poll.slug]:
-                    session["times"][poll.slug].remove(time)
-                else:
-                    session["times"][poll.slug].append(time)
-            time_form.hour.data = 0
-
-            args["time_form"] = time_form
-
-        if step == 1 or step == 2:
-            # parse dates from session, fill with choices
-            args["dates"] = sorted([parser.parse(data, fuzzy=True).date() for data in session["dates"][poll.slug]])
-            args["times"] = sorted([parser.parse(data, fuzzy=True).time() for data in session["times"][poll.slug]])
-
-        if step == 2 and request.method == "POST":
+        if step == 3 and form.validate_on_submit():
             # list all date/time combinations
             datetimes = [parser.parse(data) for data in request.form.getlist("datetimes[]")]
             existing_datetimes = [choice.date for choice in poll.choices]
@@ -138,7 +116,6 @@ def poll_edit_choices(slug, step=1):
             # disable all that are not listed
             for choice in poll.choices:
                 choice.deleted = not choice.date in datetimes
-                print("Setting datetime %s to deleted: %s" % (choice.date, choice.deleted))
 
             # create those that don't exist yet
             for datetime in datetimes:
@@ -146,12 +123,7 @@ def poll_edit_choices(slug, step=1):
                     choice = Choice()
                     choice.date = datetime
                     poll.choices.append(choice)
-                    print("Adding datetime %s" % datetime)
                     db.session.add(choice)
-
-            # reset session
-            del session["times"][poll.slug]
-            del session["dates"][poll.slug]
 
             db.session.commit()
             flash("The choices list has been updated.", "success")

@@ -84,12 +84,9 @@ class CreatePollForm(Form):
         ])
     due_date = DateTimeField("Due date", validators=[Optional()])
 
-class AddDateForm(MultiForm):
-    date = DateField("Date", validators=[Required()])
-
-class AddTimeForm(MultiForm):
-    hour = IntegerField("Hour", validators=[Required(), NumberRange(min=0, max=23)])
-    minute = IntegerField("Minute", validators=[NumberRange(min=0, max=59)])
+class DateTimeSelectForm(Form):
+    dates = TextField("Dates", validators = [Regexp("([\d]{4}-[\d]{2}-[\d]{2},?)*")])
+    times = TextField("Times", validators = [Regexp("([\d]{2}:[\d]{2}(:[\d]{2})?,?)*")])
 
 class AddChoiceForm(MultiForm):
     text = TextField("Choice", validators=[Required(), Length(min=1)])
