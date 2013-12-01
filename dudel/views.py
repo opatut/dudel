@@ -99,8 +99,8 @@ def poll_edit_choices(slug, step=1):
         args["form"] = form
 
         if step == 1:
-            form.dates.data = ",".join(set([choice.date.strftime("%Y-%m-%d") for choice in poll.get_choices()]))
-            form.times.data = ",".join(set([choice.date.strftime("%H:%M") for choice in poll.get_choices()]))
+            form.dates.data = ",".join(set([choice.date.strftime("%Y-%m-%d") for choice in poll.choices]))
+            form.times.data = ",".join(set([choice.date.strftime("%H:%M") for choice in poll.choices]))
 
         if step in (2, 3) and form.validate_on_submit():
             dates = form.dates.data.split(",")
