@@ -115,13 +115,14 @@ def poll_edit_choices(slug, step=1):
 
             time_form = AddTimeForm()
             if time_form.validate_on_submit():
-
-                time = str(parser.parse("2013-01-01 " + time_form.time.data, fuzzy=True).time())
+                time = str(parser.parse("2013-01-01 %s:%s:00" % (time_form.hour.data, time_form.minute.data), fuzzy=True).time())
                 print("Time submitted %s" % time)
                 if time in session["times"][poll.slug]:
                     session["times"][poll.slug].remove(time)
                 else:
                     session["times"][poll.slug].append(time)
+            time_form.hour.data = 0
+
             args["time_form"] = time_form
 
         if step == 1 or step == 2:

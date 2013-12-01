@@ -3,9 +3,9 @@ from flask import request
 from flask.ext.wtf import Form
 from flask.ext.login import current_user
 from wtforms import ValidationError
-from wtforms.fields import TextField, SelectField, BooleanField, TextAreaField, HiddenField, FieldList, FormField, RadioField, PasswordField
+from wtforms.fields import TextField, SelectField, BooleanField, TextAreaField, HiddenField, FieldList, FormField, RadioField, PasswordField, IntegerField
 from wtforms.ext.dateutil.fields import DateField, DateTimeField
-from wtforms.validators import Required, Length, Regexp, Optional, NoneOf
+from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, NumberRange
 from dudel.models import *
 import ldap
 
@@ -88,7 +88,8 @@ class AddDateForm(MultiForm):
     date = DateField("Date", validators=[Required()])
 
 class AddTimeForm(MultiForm):
-    time = TextField("Time", validators=[Required(), Regexp(r"^\d?\d(:\d\d)?$", message="Invalid time format (HH:MM).")])
+    hour = IntegerField("Hour", validators=[Required(), NumberRange(min=0, max=23)])
+    minute = IntegerField("Minute", validators=[NumberRange(min=0, max=59)])
 
 class AddChoiceForm(MultiForm):
     text = TextField("Choice", validators=[Required(), Length(min=1)])

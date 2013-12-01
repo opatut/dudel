@@ -10,7 +10,7 @@
         </h1>
         <div class="pull-right">
         <a href="{{ url_for('poll_edit', slug=poll.slug) }}" class="btn btn-default"><span class="icon-wrench"></span> Settings</a>
-        <a href="{{ poll.get_url() }}" class="btn btn-primary"><span class="icon-search"></span> Show poll</a>
+        <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="icon-search"></span> Show poll</a>
         </div>
     </div>
 
@@ -57,13 +57,27 @@
     {% elif poll.type == "date" %}
         {% if step == 1 %}
 
-            <p class="well well-sm">Please add the dates and times you want to allow to these
+            <p>Please add the dates and times you want to allow to these
                 lists. In the next step, you will be asked to select which time
                 is available at which date.</p>
 
-            <div class="row">
+<!--             <noscript>
+                <p class="alert alert-warning">
+                    It's a pity you don't have <b>JavaScript</b> turned on, so you'll have
+                    to type in comma separated values in the correct format yourself,
+                    no spaces allowed. Or just stop being paranoid and enable
+                    JavaScript on this site. You'll get a certainly fancy interface
+                    for date and time input...
+                </p>
+            </noscript>
+ -->
+            <div class="row script-only">
                 <div class="col-md-6">
-                    <h2>Selected dates</h2>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Selected dates
+                        </div>
+                        <div class="panel-body">
 
                     <div class="calendar script-only" data-calendar-field="#date">
                         <table class="table auto-width">
@@ -88,9 +102,10 @@
 
                     <ul class="calendar-list">
                         {% for date in dates %}
-                            <li>{{ date|date }}</li>
+                            <li><a href="#" class="btn btn-default">{{ date|date }}</a></li>
                         {% endfor %}
                     </ul>
+                    <span class="help-block">Click a date to remove it</span>
 
                     <div id="date-form">
                         <h2>Add another date</h2>
@@ -107,61 +122,94 @@
                         </form>
                     </div>
 
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6">
-                    <h2>Selected time slots</h2>
-                    <ul>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Selected time slots
+                        </div>
+                        <div class="panel-body">
+
+                    <div class="time-input">
+                        <div id="time-slider">
+                            <div id="time-slider-knob">
+                            </div>
+                        </div>
+
+                        <div class="time-slider-display">
+                            <div class="hour"></div>
+                            <div class="minute"></div>
+                        </div>
+
+                        <form class="form-inline" id="time-slider-form" method="POST">
+                            {{ time_form.hidden_tag() }}
+                            {{ form_errors(time_form) }}
+                            {{ time_form.hour(id="time-hour", class="form-control", placeholder="HH") }}
+                            {{ time_form.minute(id="time-minute", class="form-control", placeholder="MM") }}
+                            <input type="submit" value="Add" class="btn btn-default" style="height: 3.4em;" />
+                        </form>
+                    </div>
+
+                    <ul class="time-slots">
                         {% for time in times %}
-                            <li>{{ time|time }}</li>
+                            <li><input type="button" class="btn btn-default time-remove-button" value="{{ time|time }}" /></li>
                         {% endfor %}
                     </ul>
-                    {% if not times %}
-                        <p>No time slots yet.</p>
-                    {% endif %}
-
-                    <h2>Add time slot</h2>
-                    <form class="form-inline" method="POST">
-                        {{ time_form.hidden_tag() }}
-                        {{ form_errors(time_form) }}
-                        <div class="form-group">
-                            {{ time_form.time(class="form-control", placeholder="HH:MM", size=10) }}
+                    <span class="help-block">Click a time slot to remove it</span>
                         </div>
-                        <div class="form-group">
-                            <input type="submit" value="Add" class="btn btn-default" />
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
 
-            <a href="{{ url_for('poll_edit_choices', slug=poll.slug, step=2) }}" class="btn btn-primary">Next</a>
+            <div class="form-actions">
+                <a href="{{ url_for('poll_edit_choices', slug=poll.slug, step=2) }}" class="btn btn-primary">Next</a>
+            </div>
+
 
         {% elif step == 2 %}
-            <p class="well well-sm">Here you can select which date.</p>
+            <p>Here you can select which date and time combinations are available for voting.</p>
 
             <form class="form form-inline" method="POST">
                 <table class="table auto-width poll">
                     <tr>
                         <th></th>
                         {% for time in times %}
-                        <th>{{ time|time }}</th>
+                        <th class="choice-text">{{ time|time }}</th>
                         {% endfor %}
                     </tr>
                 {% for date in dates %}
                     {% set dateloop = loop %}
                     <tr>
-                        <th>{{ date|date }}</th>
+                        <th class="choice-text">{{ date|date }}</th>
                         {% for time in times %}
                         <td class="checkbox-cell">
                             <input type="checkbox" name="datetimes[]" value="{{date}} {{time}}"{% if poll.has_choice_date_time(date, time) %} checked="CHECKED"{% endif %} />
                         </td>
                         {% endfor %}
+                        <td class="choice-text">
+                            <input type="button" class="btn btn-xs toggle toggle-select   toggle-row" value="all" />
+                            <input type="button" class="btn btn-xs toggle toggle-deselect toggle-row" value="none" />
+                        </td>
                     </tr>
                 {% endfor %}
+                    <tr>
+                        <td></td>
+                        {% for time in times+[0] %}
+                        <td class="choice-text">
+                            <input type="button" class="btn btn-block btn-xs toggle toggle-select   toggle-{{ 'all' if loop.last else 'column' }}" value="all" />
+                            <input type="button" class="btn btn-block btn-xs toggle toggle-deselect toggle-{{ 'all' if loop.last else 'column' }}" value="none" />
+                        </td>
+                        {% endfor %}
+
+                        <td></td>
+                    </tr>
                 </table>
 
-                <div class="form-group">
+                <div class="form-actions">
                     <a href="{{ url_for('poll_edit_choices', slug=poll.slug, step=1) }}" class="btn btn-default">Back</a>
-                    <input type="submit" value="Save" class="btn btn-success" />
+                    <input type="submit" value="Save" class="btn btn-primary" />
                 </div>
 
             </form>

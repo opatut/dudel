@@ -141,7 +141,7 @@ td.not-padded {
 
 .vote-comment {
     cursor: pointer;
-    display:block;
+    display: block;
     max-width: 300px;
 }
 
@@ -187,15 +187,16 @@ td.not-padded {
     display: none;
 }
 
-.calendar-list {
-    display: inline-block;
-    vertical-align: top;
-}
-
 footer {
     margin-top: 4em;
 }
 
+.form-actions {
+    padding: 20px;
+    background: #EEE;
+    border-top: 1px solid #CCC;
+    text-align: right;
+}
 
 .choice.deleted,
 .choice.deleted .color {
@@ -228,4 +229,100 @@ footer {
     display: inline-block;
     width: 16px;
     text-align: center;
+}
+
+.time-input {
+    margin: 20px;
+    text-align: center;
+    /*width: 400px;*/
+}
+
+#time-slider {
+    background: url("../gfx/time-slider.png");
+    height: 50px;
+    width: 400px;
+    position: relative;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+#time-slider-knob {
+    position: absolute;
+    top: 16px;
+    width: 4px;
+    height: 20px;
+    background: #000;
+    margin-left: -2px;
+}
+
+.time-slider-display {
+    display: inline-block;
+    position: relative;
+    background: url("../gfx/clock-background.png");
+    vertical-align: middle;
+}
+
+.time-slider-display,
+.time-slider-display .minute,
+.time-slider-display .hour {
+    height: 64px;
+    width: 64px;
+}
+
+.time-slider-display .minute,
+.time-slider-display .hour {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.time-slider-display .minute.animated,
+.time-slider-display .hour.animated {
+    -webkit-transition: -webkit-transform 0.5s;
+}
+
+.time-slider-display .hour {
+    background: url("../gfx/clock-hand-hour.png");
+}
+
+.time-slider-display .minute {
+    background: url("../gfx/clock-hand-minute.png");
+}
+
+#time-slider-form {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 20px;
+}
+
+#time-slider-form input[type="text"] {
+    width: 2em;
+    padding: 0;
+    display: inline-block;
+    text-align: center;
+    font-size: 2em;
+    height: 1.7em;
+}
+
+.time-slots {
+    list-style: none;
+    padding: 0;
+}
+
+.time-slots li {
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.calendar-list {
+    display: inline-block;
+    vertical-align: top;
+    margin: 14px;
+    list-style: none;
+    padding: 0;
+}
+
+.calendar-list li {
+    display: block;
+    margin-bottom: 4px;
 }

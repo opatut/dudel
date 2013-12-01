@@ -6,6 +6,10 @@ function get_slug(s) {
     return s;
 }
 
+function updateCheckbox(e) {
+    $(this).closest(".checkbox-cell").removeClass("no yes maybe").addClass($(this).prop("checked") ? "yes" : "no");
+}
+
 $(document).ready(function() {
     $("[data-slug-field]").on("input", function() {
         var val = $(this).val();
@@ -14,22 +18,18 @@ $(document).ready(function() {
         slug_input.val(slug);
     });
 
-    $(".checkbox-cell").on("click", function() {
-        $(this).find(":checkbox").each(function() {
-            $(this).click();
-            $(this).closest(".checkbox-cell").removeClass("no yes maybe").addClass($(this).prop("checked") ? "yes" : "no");
-            //$(this).prop("checked", !$(this).prop("checked"));
-        });
-    });
-
-    $(".checkbox-cell :checkbox").on("click", function(e){
-        $(this).closest(".checkbox-cell").removeClass("no yes maybe").addClass($(this).prop("checked") ? "yes" : "no");
+    $(".checkbox-cell :checkbox").on("click", updateCheckbox).on("click", function(e) {
         e.stopPropagation();
     });
 
-    $(".checkbox-cell :checkbox").each(function(e){
-        $(this).closest(".checkbox-cell").removeClass("no yes maybe").addClass($(this).prop("checked") ? "yes" : "no");
+    $(".checkbox-cell").on("click", function(e){
+        var checkbox = $(this).find(":checkbox");
+        checkbox.prop("checked", !checkbox.prop("checked"));
+        updateCheckbox.call(checkbox);
     });
+
+    // initialize
+    $(".checkbox-cell :checkbox").each(updateCheckbox);
 
     $(".calendar").each(function() {
         initCalendar($(this));
@@ -53,7 +53,104 @@ $(document).ready(function() {
     });
 
     $("td.vote-choice").click(highlightVoteChoice);
+
+    initTimeSlider();
+
+    $(".toggle").click(function() {
+        // deselect or select
+        var selected = $(this).hasClass("toggle-select");
+        var cells;
+        if($(this).hasClass("toggle-column")) {
+            var index = $(this).closest("td").index() + 1;
+            cells = $(this).closest("table").find("tr td:nth-child(" + index + ")");
+        } else if($(this).hasClass("toggle-row")) {
+            cells = $(this).closest("tr").find("td");
+        } else {
+            cells = $(this).closest("table").find("td");
+        }
+        updateCheckbox.call(cells.find(":checkbox").prop("checked", selected));
+    });
+
+    $(".time-remove-button").click(function() {
+        var split = $(this).val().split(":");
+        $("#time-hour").val(split[0]);
+        $("#time-minute").val(split[1]);
+        $("#time-slider-form").submit();
+    });
 });
+
+$.fn.rotate = function(degrees) {
+    $(this).css({
+  '-webkit-transform' : 'rotate('+degrees+'deg)',
+     '-moz-transform' : 'rotate('+degrees+'deg)',
+      '-ms-transform' : 'rotate('+degrees+'deg)',
+       '-o-transform' : 'rotate('+degrees+'deg)',
+          'transform' : 'rotate('+degrees+'deg)',
+               'zoom' : 1
+
+    });
+};
+
+/* Time Slider */
+
+function initTimeSlider() {
+    $("#time-slider").click(sliderPosition).mousemove(function(e) {
+        if(e.which == 1) sliderPosition.call(this, e);
+    });
+    $("#time-minute, #time-hour").keyup(function() {
+        var hour = $("#time-hour").val();
+        var minute = $("#time-minute").val();
+        if(!hour || !minute) return;
+        setSliderPosition( parseInt(hour), parseInt(minute), true);
+    }).focus(function(e) {
+        $(this).select();
+    }).mouseup(function(e) {
+        e.preventDefault();
+    });
+    setSliderPosition(12, 0);
+
+    // suppress initial animation
+    setTimeout(function() {
+        $(".time-slider-display .hour, .time-slider-display .minute").addClass("animated");
+    }, 100);
+}
+
+function sliderPosition(e) {
+    var offset = 8;
+    var width = 384;
+    var progress = (e.pageX - offset - $(this).offset().left) / width;
+    progress = Math.min(1, Math.max(0, progress));
+    var steps = 24 * 4;
+    var step = Math.round(steps*progress);
+    var hour = Math.floor(step/4);
+    var minute = 15 * (step % 4);
+    setSliderPosition(hour, minute);
+}
+
+function setSliderPosition(_hour, _minute, suppressValueUpdate) {
+    var hour = (_hour + (_minute-(_minute%60))/60) % 24;
+    // alert(hour + " // " + _hour);
+    var minute = _minute % 60;
+
+    var steps = 24 * 4 + 1;
+    var offset = 8;
+    var width = 384;
+
+    var step = hour * 4 + minute/15;
+    var pos = (step / (steps-1)) * width + offset;
+    // $("#time-debug").text(step/4);
+    $("#time-slider-knob").css("left", pos);
+
+    $(".time-slider-display .hour").rotate(hour / 12 * 360 + minute / 60 / 12 * 360);
+    $(".time-slider-display .minute").rotate(hour * 360 + minute / 60 * 360);
+
+    if(!suppressValueUpdate || hour!=_hour || minute!=_minute) {
+        $("#time-hour").val(hour);
+        $("#time-minute").val(minute < 10 ? "0" + minute : minute);
+    }
+}
+
+/* Vote choices */
 
 function highlightVoteChoice(event) {
     var $target = $(event.target);
