@@ -15,7 +15,7 @@ $(document).ready(function() {
 
     // Voting
     $("td .vote-choice-radio").parent().hide();
-    $("input[value='no'").attr("checked", "checked");
+    $("input[value='no']").attr("checked", "checked");
     $("td.vote-choice.control.no").removeClass("off");
     $(".vote-comment input").hide();
     $(".vote-comment span").click(function(e) {
