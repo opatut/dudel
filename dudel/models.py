@@ -108,7 +108,7 @@ class Poll(db.Model):
             if not choice.date.date() in groups: groups[choice.date.date()] = []
             groups[choice.date.date()].append(choice)
         for group, li in groups.iteritems():
-            li.sort(reverse=True)
+            li.sort()
         return groups
 
     def get_statistics(self):
