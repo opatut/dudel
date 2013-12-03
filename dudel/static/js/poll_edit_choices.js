@@ -56,6 +56,8 @@ $(document).ready(function() {
     // Load data
     if($("#times").val()) times = $("#times").val().split(",");
     if($("#dates").val()) dates = $("#dates").val().split(",");
+    times.sort();
+    dates.sort();
     updateDateTimeList();
 
 });
@@ -91,12 +93,14 @@ function updateDateTimeList() {
 function addTime(time) {
     times.push(time);
     times = times.uniquify();
+    times.sort();
     updateDateTimeList();
 }
 
 function addDate(date) {
     dates.push(date);
     dates = dates.uniquify();
+    dates.sort();
     updateDateTimeList();
 }
 

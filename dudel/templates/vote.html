@@ -14,8 +14,8 @@
     {{ form_errors(form) }}
 
     <table class="table poll vote auto-width">
-        {% set groups = poll.get_choice_groups().iteritems()|sort %}
-        {% for group_value, group in groups %}
+        {% set groups = poll.get_choice_groups() %}
+        {% for group in groups %}
             {% for choice in group %}
                 <tr>
                     {% set subform = form.vote_choices.pop_entry() %}
@@ -23,7 +23,7 @@
                     {% if loop.first %}
                     <td class="choice-group" rowspan="{{ group|length }}">
                         {% if groups|length > 1 or poll.type == "date" %}
-                        {{ group_value|date if poll.type == "date" else group_value }}
+                        {{ group[0].group|date if poll.type == "date" else group[0].group }}
                         {% endif %}
                     </td>
                     {% endif %}

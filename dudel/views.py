@@ -105,8 +105,8 @@ def poll_edit_choices(slug, step=1):
         if step in (2, 3) and form.validate_on_submit():
             dates = form.dates.data.split(",")
             times = form.times.data.split(",")
-            args["dates"] = list(set(sorted([parser.parse(data, fuzzy=True).date() for data in dates])))
-            args["times"] = list(set(sorted([parser.parse("1970-01-01 %s" % data, fuzzy=True).time() for data in times])))
+            args["dates"] = sorted(list(set(sorted([parser.parse(data, fuzzy=True).date() for data in dates]))))
+            args["times"] = sorted(list(set(sorted([parser.parse("1970-01-01 %s" % data, fuzzy=True).time() for data in times]))))
 
         if step == 3 and form.validate_on_submit():
             # list all date/time combinations
@@ -212,8 +212,10 @@ def poll_vote(slug):
         db.session.commit()
         return redirect(poll.get_url())
 
-    for k, group in sorted(poll.get_choice_groups().iteritems()):
-        for choice in sorted(group, reverse=True):
+    # this adds at beginning, not in order :(
+    # so we just reverse the order
+    for group in reversed(poll.get_choice_groups()):
+        for choice in reversed(group):
             form.vote_choices.append_entry(dict(choice_id=choice.id))
 
     return render_template("vote.html", poll=poll, form=form)

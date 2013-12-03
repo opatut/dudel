@@ -30,8 +30,11 @@ class User(db.Model):
 
     @property
     def displayname(self):
+        return "%s (%s)" % (self.firstname, self.username)
         if self.firstname and self.lastname:
             return "%s %s" % (self.firstname, self.lastname)
+        if self.lastname:
+            return self.lastname
         else:
             return self.username
 
@@ -99,18 +102,16 @@ class Poll(db.Model):
     def user_can_edit(self, user):
         return not self.author or self.author == user
 
+    # returns a list of groups
+    # each group is sorted
+    # the groups are sorted by first item
     def get_choice_groups(self):
-        return self.get_choices_grouped_by_date() if self.type == "date" else {"default": self.choices}
-
-    def get_choices_grouped_by_date(self):
-        if not self.type == "date": raise Exception("You should not get_choices_grouped_by_date on a non-date poll.")
         groups = {}
         for choice in self.get_choices():
-            if not choice.date.date() in groups: groups[choice.date.date()] = []
-            groups[choice.date.date()].append(choice)
-        for group, li in groups.iteritems():
-            li.sort()
-        return groups
+            group = choice.group
+            if not group in groups: groups[group] = []
+            groups[group].append(choice)
+        return sorted([sorted(group) for group in groups.itervalues()])
 
     def get_statistics(self):
         stats = {choice: {value: sum([1 if vc.value==value else 0 for vc in choice.vote_choices]) for value in ("yes", "no", "maybe")} for choice in self.get_choices()}
@@ -146,6 +147,10 @@ class Choice(db.Model):
 
     def __cmp__(self,other):
         return cmp(self.date, other.date) or cmp(self.deleted, other.deleted) or cmp(self.text, other.text)
+
+    @property
+    def group(self):
+        return self.date.date() or "default" # normal polls only have one default group
 
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)

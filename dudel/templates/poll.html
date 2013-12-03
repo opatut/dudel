@@ -40,23 +40,22 @@
 
     {% if poll.votes %}
         <div class="table-padding">
-            {% set groups = poll.get_choice_groups().iteritems()|sort %}
-            {% set choices = poll.get_choices() %}
+            {% set groups = poll.get_choice_groups() %}
             <table class="table poll auto-width">
                 <thead>
                     {% if groups|length>1 or poll.type == "date" %}
                     <tr>
                         <th></th>
-                        {% for group_value, group in groups %}
+                        {% for group in groups %}
                             <th colspan="{{ group|length }}" class="choice-group">
-                                {{ group_value|date if poll.type=="date" else group_value }}
+                                {{ group[0].group|date if poll.type=="date" else group[0].group }}
                             </th>
                         {% endfor %}
                     </tr>
                     {% endif %}
                     <tr>
                         <th></th>
-                        {% for k, group in groups %}
+                        {% for group in groups %}
                             {% for choice in group %}
                                 <th class="choice-text">
                                     {{ choice.text or choice.date|time }}
@@ -75,7 +74,7 @@
                                     {{ vote.name or vote.user.displayname }}
                                 {% endif %}
                             </td>
-                            {% for k, group in groups %}
+                            {% for group in groups %}
                                 {% for choice in group %}
                                     {% set vote_choice = poll.get_vote_choice(vote, choice) %}
                                     <td class="vote-choice text-center {{ vote_choice.value or 'none' }} {{ 'comment' if vote_choice.comment else '' }}" {% if vote_choice.comment %}title="{{ vote_choice.comment }}"{% endif %}>
@@ -92,7 +91,7 @@
                         {% set stats = poll.get_statistics() %}
                         {% set total = poll.votes|length %}
                         <th></th>
-                        {% for k, group in groups %}
+                        {% for group in groups %}
                             {% for choice in group %}
                                 {% set stat = stats[choice] %}
                                 <th class="choice-sum {% if stat["max"] %}maximum{% endif %}" title="{{ stat["yes"] }} yes, {{ stat["no"] }} no, {{ stat["maybe"] }} maybe">
