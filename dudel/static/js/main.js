@@ -17,14 +17,17 @@ $(document).ready(function() {
     $("td .vote-choice-radio").parent().hide();
     $("input[value='no']").attr("checked", "checked");
     $("td.vote-choice.control.no").removeClass("off");
-    $(".vote-comment input").hide();
-    $(".vote-comment span").click(function(e) {
+    $(".vote-comment .vote-choice-radio").hide();
+    $(".vote-comment .vote-choice-comment").hide();
+    $(".vote-comment .vote-choice-edit").click(function(e) {
         $(e.target).hide();
         $(e.target).parent().addClass("not-padded").find("input").show();
+        return false;
     });
 
     $("td.vote-choice").click(highlightVoteChoice);
 
+    $("[data-toggle='tooltip']").tooltip();
 
     $(".toggle").click(function() {
         // deselect or select
@@ -48,6 +51,11 @@ $(document).ready(function() {
         $("#time-slider-form").submit();
     });
 
+    $("#due_date").datetimepicker({
+        dateFormat: "yy-mm-dd",
+        timeFormat: "HH:mm",
+        stepMinute: 15,
+    });
 });
 
 /* Vote choices */

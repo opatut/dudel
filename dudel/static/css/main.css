@@ -166,7 +166,8 @@ td.not-padded {
 }
 
 .vote-comment input {
-    width: 40em;
+    width: 30em;
+    vertical-align: center;
 }
 
 /* Calendar stuff */

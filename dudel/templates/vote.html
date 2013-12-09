@@ -9,11 +9,23 @@
     </div>
 </div>
 
-<form method="POST" class="form">
+<form method="POST" class="form-inline">
     {{ form.hidden_tag() }}
     {{ form_errors(form) }}
 
     <table class="table poll vote auto-width">
+        <tr>
+            <td></td><td></td>
+            <td class="">
+                <input type="button" class="btn btn-xs" value="all" />
+            </td>
+            <td class="">
+                <input type="button" class="btn btn-xs" value="all" />
+            </td>
+            <td class="">
+                <input type="button" class="btn btn-xs" value="all" />
+            </td>
+        </tr>
         {% set groups = poll.get_choice_groups() %}
         {% for group in groups %}
             {% for choice in group %}
@@ -35,7 +47,10 @@
                     <td class="vote-choice control yes off" data-choice="yes" title="Yes"><span class="icon-ok"></span></td>
                     <td class="vote-choice control no off" data-choice="no" title="No"><span class="icon-ban-circle"></span></td>
                     <td class="vote-choice control maybe off" data-choice="maybe" title="Maybe"><span class="icon-question"></span></td>
-                    <td class="vote-comment">{{ subform.comment(class="form-control input-sm", placeholder=subform.comment.label.text) }} <span class="icon-edit" title="Add a comment"></span></td>
+                    <td class="vote-comment">
+                        {{ subform.comment(class="form-control input-sm vote-choice-comment", placeholder=subform.comment.label.text) }}
+                        <button class="btn btn-sm btn-default vote-choice-edit icon-edit" title="Add a comment"></button>
+                    </td>
                 </tr>
             {% endfor %}
         {% endfor %}

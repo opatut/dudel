@@ -8,6 +8,8 @@
         <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" media="screen">
         <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" media="screen">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}" media="screen">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.css') }}" media="screen" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui-timepicker-addon.css') }}" media="screen" />
         {% block head %}{% endblock %}
     </head>
 
@@ -46,10 +48,14 @@
         <footer>
         </footer>
 
-        <script src="{{ url_for('static', filename='js/moment.min.js') }}" type="text/javascript" lang="javascript"></script>
-        <script src="{{ url_for('static', filename='js/jquery.js') }}" type="text/javascript" lang="javascript"></script>
-        <script src="{{ url_for('static', filename='js/util.js') }}" type="text/javascript" lang="javascript"></script>
-        <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" lang="javascript"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/util.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-timepicker-addon.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-sliderAccess.js') }}"></script>
         {% block foot %}{% endblock %}
     </body>
 </html>

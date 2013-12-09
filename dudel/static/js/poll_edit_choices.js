@@ -44,11 +44,13 @@ $(document).ready(function() {
 
     // Time remove buttons
     $(".time-slots").on("click", ".time-remove-button", function() {
-        removeTime($(this).val());
+        removeTime($(this).attr("data-time"));
+        return false;
     });
 
     $(".calendar-list").on("click", ".date-remove-button", function() {
         removeDate($(this).attr("data-date"));
+        return false;
     });
 
     $("#date-time-form-content").hide();
@@ -78,14 +80,16 @@ function updateDateTimeList() {
 
     $(".time-slots").html("");
     times.forEach(function(time) {
-        $(".time-slots").append('<li><input type="button" class="btn btn-default time-remove-button" value="' + time + '" /></li> ');
+        $(".time-slots").append('<li><button class="btn btn-default time-remove-button" title="remove time" data-time="' + time + '">' + time + ' <i class="icon-trash"></i></li> ');
     });
 
     $(".calendar-list").html("");
     dates.forEach(function(date) {
         var formatDate = moment(date).format("ddd D MMM");
-        $(".calendar-list").append('<li><input type="button" class="btn btn-default date-remove-button" value="' + formatDate + '" data-date="' + date +'"/></li> ');
+        $(".calendar-list").append('<li><button class="btn btn-default date-remove-button" title="remove date" data-date="' + date +'">' + formatDate + ' <i class="icon-trash"></i></li> ');
     });
+
+    // $(".date-remove-button, .time-remove-button").tooltip({"placement": "right"});
 
     calendarSetDate(calendar.data("date"));
 }
