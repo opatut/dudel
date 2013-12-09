@@ -150,7 +150,10 @@ class Choice(db.Model):
 
     @property
     def group(self):
-        return self.date.date() or "default" # normal polls only have one default group
+        if self.date:
+            return self.date.date()
+        else:
+            return "default" # normal polls only have one default group
 
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
