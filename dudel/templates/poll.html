@@ -13,13 +13,12 @@
     </div>
 
     <ul class="poll-details">
-        <li><i class="icon-calendar"></i> created on {{ poll.created|date }}</li>
         <li>
-            <i class="icon-time"></i>
+            <i class="icon-calendar"></i>
             {% if poll.due_date %}
                 due {{ poll.due_date|date }} {{ poll.due_date|time }}
             {% else %}
-                no due date
+                created on {{ poll.created|date }}
             {% endif %}
         </li>
 
