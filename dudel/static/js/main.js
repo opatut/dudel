@@ -17,25 +17,41 @@ $(document).ready(function() {
     // $("#password").attr("disabled", $("#password_level").val() == "0");
 
     // Voting
+
+    // Hide voting radio column
     $("td .vote-choice-radio").parent().hide();
-    $(".vote-comment .vote-choice-comment").hide();
+
+    // Apply checked radio states to table cells
+    $(".vote-choice-radio input:checked").each(function() {
+        $(this).closest("tr").find("[data-choice=\"" + $(this).val() + "\"]").removeClass("off");
+    })
+
+    // Buttons: "Show comment field"
     $(".vote-choice-edit").click(showComment);
+
+    // Button: "Show all comment fields"
     $(".vote-choice-edit-all").click(function() {
         $(".vote-choice-edit").each(function(i) {
             var t = $(this);
             setTimeout(function() {
                 showComment.call(t);
-            }, i * 150);
+            }, i * 50);
         });
     });
 
+    // Hide comment fields, but show those that do have input
+    $(".vote-comment .vote-choice-comment").hide();
+    $(".vote-comment input[value!=\"\"]").each(function() {
+        showComment.call($(this).closest(".vote-comment").find(".vote-choice-edit"));
+    });
+
+    // Button: "all" (selecting the whole column)
     $(".vote-choice-column").click(function() {
         $('.vote-choice.control[data-choice="' + $(this).data("choice") + '"].off').click();
     });
 
+    // Clicking on a voting cell
     $("td.vote-choice").click(highlightVoteChoice);
-
-    $("[data-toggle='tooltip']").tooltip();
 
     $(".toggle").click(function() {
         // deselect or select
@@ -64,6 +80,8 @@ $(document).ready(function() {
         timeFormat: "HH:mm",
         stepMinute: 15,
     });
+
+    $("[data-toggle='tooltip']").tooltip();
 });
 
 /* Vote choices */

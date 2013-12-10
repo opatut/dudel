@@ -68,8 +68,8 @@
                                 {% for choice in group %}
                                     {% set vote_choice = poll.get_vote_choice(vote, choice) %}
                                     {% if vote_choice %}
-                                    <td class="vote-choice text-center {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}"{% if vote_choice.comment %} title="{{ vote_choice.comment }}"{% endif %}>
-                                        <span class="icon-{{ vote_choice.value.icon }}"></span>
+                                    <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}"{% if vote_choice.comment %} title="{{ vote_choice.comment }}"{% endif %}>
+                                        <span class="icon-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
                                         {% if vote_choice.comment %}<span class="comment-icon icon-exclamation"></span>{% endif %}
                                     </td>
                                     {% else %}
