@@ -76,6 +76,10 @@ class Poll(db.Model):
 
     def __init__(self):
         self.created = datetime.utcnow()
+        # create yes/no/maybe default choice values
+        self.choice_values.append(ChoiceValue("yes", "ok", "9C6"))
+        self.choice_values.append(ChoiceValue("no", "ban-circle", "F96"))
+        self.choice_values.append(ChoiceValue("maybe", "question", "FF6"))
 
     def get_url(self):
         return url_for("poll", slug=self.slug)
@@ -114,10 +118,11 @@ class Poll(db.Model):
         return sorted([sorted(group) for group in groups.itervalues()])
 
     def get_statistics(self):
-        stats = {choice: {value: sum([1 if vc.value==value else 0 for vc in choice.vote_choices]) for value in ("yes", "no", "maybe")} for choice in self.get_choices()}
-        maximum = max([v["yes"] for k,v in stats.iteritems()]) if stats else 0
+        stats = {choice: {choice_value.title: sum([1 if vc.value == choice_value else 0 for vc in choice.vote_choices]) for choice_value in self.choice_values} for choice in self.get_choices()}
+        main_key = "yes"
+        maximum = max([v[main_key] for k,v in stats.iteritems()]) if stats else 0
         for k in stats:
-            stats[k]["max"] = (stats[k]["yes"] == maximum)
+            stats[k]["max"] = (stats[k][main_key] == maximum)
         return stats
 
     # @property
@@ -155,6 +160,19 @@ class Choice(db.Model):
         else:
             return "default" # normal polls only have one default group
 
+class ChoiceValue(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80))
+    icon = db.Column(db.String(64))
+    color = db.Column(db.String(6))
+    poll = db.relationship("Poll", backref="choice_values")
+    poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
+
+    def __init__(self, title, icon, color):
+        self.title = title
+        self.icon = icon
+        self.color = color
+
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
@@ -167,7 +185,8 @@ class Vote(db.Model):
 class VoteChoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.String(64))
-    value = db.Column(db.Enum("yes", "no", "maybe"), default="no")
+    value = db.relationship("ChoiceValue", backref="vote_choices")
+    value_id = db.Column(db.Integer, db.ForeignKey("choice_value.id"))
     vote = db.relationship("Vote", backref="vote_choices")
     vote_id = db.Column(db.Integer, db.ForeignKey("vote.id"))
     choice = db.relationship("Choice", backref="vote_choices")

@@ -189,33 +189,47 @@ def poll_vote(slug):
     #         return redirect(url_for("poll_password", slug=poll.slug, next=request.url))
 
     form = CreateVoteForm()
-    if form.validate_on_submit():
-        vote = Vote()
-        if current_user.is_anonymous():
-            vote.name = form.name.data
-        else:
-            vote.user = current_user
-        vote.anonymous = poll.anonymous_allowed and form.anonymous.data
-        poll.votes.append(vote)
 
+    if request.method == "POST":
         for subform in form.vote_choices:
-            choice = Choice.query.filter_by(id=subform.choice_id.data).first()
-            if not choice or choice.poll != poll: abort(404)
+            subform.value.choices = [(v.id, v.title) for v in poll.choice_values]
 
-            vote_choice = VoteChoice()
-            vote_choice.value = subform.value.data
-            vote_choice.comment = subform.comment.data
-            vote_choice.vote = vote
-            vote_choice.choice = choice
-            db.session.add(vote_choice)
+        if form.validate_on_submit():
 
-        db.session.commit()
-        return redirect(poll.get_url())
+            vote = Vote()
+            if current_user.is_anonymous():
+                vote.name = form.name.data
+            else:
+                vote.user = current_user
+            vote.anonymous = poll.anonymous_allowed and form.anonymous.data
+            poll.votes.append(vote)
+
+            for subform in form.vote_choices:
+                choice = Choice.query.filter_by(id=subform.choice_id.data).first()
+                value = ChoiceValue.query.filter_by(id=subform.value.data).first()
+                if not choice or choice.poll != poll: abort(404)
+                if value and value.poll != poll: abort(404)
+                if not value: continue # skip this vote choice
+
+                vote_choice = VoteChoice()
+                vote_choice.value = value
+                vote_choice.comment = subform.comment.data
+                vote_choice.vote = vote
+                vote_choice.choice = choice
+                db.session.add(vote_choice)
+
+            db.session.commit()
+            return redirect(poll.get_url())
 
     # this adds at beginning, not in order :(
     # so we just reverse the order
-    for group in reversed(poll.get_choice_groups()):
-        for choice in reversed(group):
-            form.vote_choices.append_entry(dict(choice_id=choice.id))
+    if not request.method == "POST":
+        for group in reversed(poll.get_choice_groups()):
+            for choice in reversed(group):
+                form.vote_choices.append_entry(dict(choice_id=choice.id))
+
+        for subform in form.vote_choices:
+            subform.value.choices = [(v.id, v.title) for v in poll.choice_values]
+
 
     return render_template("vote.html", poll=poll, form=form)

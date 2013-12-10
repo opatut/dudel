@@ -30,7 +30,7 @@ for x in range(8):
         vote_choice = VoteChoice()
         vote_choice.vote = vote
         vote_choice.choice = choice
-        vote_choice.value = random.choice(["yes", "no", "maybe"])
+        vote_choice.value = random.choice(poll.choice_values)
 
 poll = Poll()
 poll.title = "AG-Treffen"

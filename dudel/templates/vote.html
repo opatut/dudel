@@ -14,16 +14,15 @@
     {{ form_errors(form) }}
 
     <table class="table poll vote auto-width">
-        <tr>
+        <tr class="script-only">
             <td></td><td></td>
-            <td class="">
-                <input type="button" class="btn btn-xs" value="all" />
+            {% for value in poll.choice_values %}
+            <td class="text-center">
+                <input type="button" class="btn btn-xs btn-link vote-choice-column" value="all" data-choice="{{ value.id }}"/>
             </td>
-            <td class="">
-                <input type="button" class="btn btn-xs" value="all" />
-            </td>
-            <td class="">
-                <input type="button" class="btn btn-xs" value="all" />
+            {% endfor %}
+            <td>
+                <input type="button" class="btn btn-xs btn-link vote-choice-edit-all" value="Show all comment fields" />
             </td>
         </tr>
         {% set groups = poll.get_choice_groups() %}
@@ -44,12 +43,14 @@
                         {{ subform.hidden_tag() }}
                     </td>
                     <td>{{ subform.value(class="vote-choice-radio") }}</td>
-                    <td class="vote-choice control yes off" data-choice="yes" title="Yes"><span class="icon-ok"></span></td>
-                    <td class="vote-choice control no off" data-choice="no" title="No"><span class="icon-ban-circle"></span></td>
-                    <td class="vote-choice control maybe off" data-choice="maybe" title="Maybe"><span class="icon-question"></span></td>
+                    {% for value in poll.choice_values %}
+                        <td class="vote-choice control off script-only" data-choice="{{ value.id }}" title="{{ value.title }}" style="background-color: #{{ value.color }}"><span class="icon-{{ value.icon }}"></span></td>
+                    {% endfor %}
                     <td class="vote-comment">
                         {{ subform.comment(class="form-control input-sm vote-choice-comment", placeholder=subform.comment.label.text) }}
-                        <button class="btn btn-sm btn-default vote-choice-edit icon-edit" title="Add a comment"></button>
+                        <div class="script-only">
+                            <button class="btn btn-sm btn-default vote-choice-edit" title="Add a comment"><i class="icon-comment-alt"></i></button>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}

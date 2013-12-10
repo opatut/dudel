@@ -71,8 +71,9 @@ class LDAPAuthenticator(object):
         except ldap.LDAPError, e:
             raise ValidationError("LDAP Error: " + (e.message["desc"] if e.message else "%s (%s)"%(e[1],e[0])))
 
-class RequiredIfNotLoggedIn(object):
+class YourNameRequired(object):
     def __call__(self, form, field):
+        if form["anonymous"].data: return # nevermind if we are anonymous!
         if not field.data and current_user.is_anonymous():
             raise ValidationError("This field is required.")
 
@@ -122,12 +123,12 @@ class EditPollForm(Form):
     send_mail = BooleanField("Send mail to participants about results")
 
 class CreateVoteChoiceForm(Form):
-    value = RadioField("Value", choices=[("yes", "Yes"), ("no", "No"), ("maybe", "Maybe")])
+    value = RadioField("Value", coerce=int, validators=[Optional()])
     comment = TextField("Comment")
     choice_id = HiddenField("choice id", validators=[Required()])
 
 class CreateVoteForm(Form):
-    name = TextField("Your Name", validators=[RequiredIfNotLoggedIn()])
+    name = TextField("Your Name", validators=[YourNameRequired()])
     anonymous = BooleanField("Post anonymous vote")
     vote_choices = FieldList(FormField(CreateVoteChoiceForm))
 

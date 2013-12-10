@@ -112,25 +112,33 @@ table.poll tr td:nth-of-type(1) {
     padding: 0 10px;
 }
 
-td.no {
-    background-color: #F85252;
-    background: #F96;
+.no { background: #F96; }
+.yes { background: #9C6; }
+.maybe { background: #FF6; }
+
+.yes, .no, .maybe,
+td.vote-choice,
+td.control {
+    text-shadow: 0px 1px 6px rgba(0, 0, 0, 0.7);
 }
 
-td.yes {
-    background-color: #99EE75;
-    background: #9C6;
+.vote-choice-radio {
+    padding: 0;
+    list-style: none;
 }
 
-td.maybe {
-    color: #777;
-    background-color: #FFEA79;
-    background: #FF6;
+.vote-choice-radio li {
+    display: inline;
+    padding: 0;
+    margin-right: 1em;
 }
 
 td.off {
     background-color: #D6D6D6 !important;
-    color: #FFF !important;
+}
+
+td.off, td.none {
+    text-shadow: none;
 }
 
 table.poll td.none {
@@ -155,10 +163,15 @@ td.not-padded {
     padding: 0 !important;
 }
 
-.vote-comment {
+td.vote-comment {
     cursor: pointer;
     display: block;
     max-width: 300px;
+    padding: 4px !important;
+}
+
+.btn-link:focus {
+    outline: none;
 }
 
 .vote-comment span:hover {

@@ -7,6 +7,9 @@ $(document).ready(function() {
     });
 
     $(".script-only").css("display", "block");
+    $("td.script-only").css("display", "table-cell");
+    $("tr.script-only").css("display", "table-row");
+    $("table.script-only").css("display", "table");
 
     // $("#password_level").change(function() {
     //     $("#password").attr("disabled", $(this).val() == "0");
@@ -15,14 +18,19 @@ $(document).ready(function() {
 
     // Voting
     $("td .vote-choice-radio").parent().hide();
-    $("input[value='no']").attr("checked", "checked");
-    $("td.vote-choice.control.no").removeClass("off");
-    $(".vote-comment .vote-choice-radio").hide();
     $(".vote-comment .vote-choice-comment").hide();
-    $(".vote-comment .vote-choice-edit").click(function(e) {
-        $(e.target).hide();
-        $(e.target).parent().addClass("not-padded").find("input").show();
-        return false;
+    $(".vote-choice-edit").click(showComment);
+    $(".vote-choice-edit-all").click(function() {
+        $(".vote-choice-edit").each(function(i) {
+            var t = $(this);
+            setTimeout(function() {
+                showComment.call(t);
+            }, i * 150);
+        });
+    });
+
+    $(".vote-choice-column").click(function() {
+        $('.vote-choice.control[data-choice="' + $(this).data("choice") + '"].off').click();
     });
 
     $("td.vote-choice").click(highlightVoteChoice);
@@ -60,15 +68,24 @@ $(document).ready(function() {
 
 /* Vote choices */
 
+function showComment() {
+    $(this).hide().closest("td").find("input")
+        .css("width", 0).show()
+        .animate({
+            width: "100%"
+        }, 400, "easeOutQuart");
+    return false;
+}
+
 function highlightVoteChoice(event) {
-    var $target = $(event.target);
-    var $parent = $(event.target).parent();
-    if ($(event.target).prop("tagName") == "SPAN") {
-        $target = $parent;
-        $parent = $parent.parent();
+    var is_off = $(this).hasClass("off");
+
+    var tr = $(this).closest("tr");
+    tr.find("td.vote-choice.control").addClass("off");
+    tr.find("input").prop("checked", false);
+
+    if(is_off) {
+        $(this).removeClass("off");
+        if(is_off) tr.find("input[value='" + $(this).data("choice") + "']").prop("checked", true);
     }
-    $parent.find("td.vote-choice.control").addClass("off");
-    $target.removeClass("off");
-    $parent.find("input").prop("checked", false);
-    $parent.find("input[value='" + $target.data("choice") + "']").prop("checked", true);
 }
