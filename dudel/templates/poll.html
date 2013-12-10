@@ -70,7 +70,7 @@
                                     {% if vote_choice %}
                                     <td class="vote-choice text-center {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}"{% if vote_choice.comment %} title="{{ vote_choice.comment }}"{% endif %}>
                                         <span class="icon-{{ vote_choice.value.icon }}"></span>
-                                        {% if vote_choice.comment %}<span class="comment-icon"></span>{% endif %}
+                                        {% if vote_choice.comment %}<span class="comment-icon icon-exclamation"></span>{% endif %}
                                     </td>
                                     {% else %}
                                     <td class="vote-choice text-center none">
