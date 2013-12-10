@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{% block title %}{% endblock %}</h1>
+    <ul class="nav nav-tabs" style="margin-bottom: 10px;">
+        <li {% if request.endpoint == "poll" %} class="active"{% endif %}><a href="{{ poll.get_url() }}"><span class="icon-comments-alt"></span> Poll</a></li>
+
+        {% if poll.user_can_edit(current_user) %}
+            <li{% if request.endpoint == "poll_edit" %} class="active"{% endif %}><a href="{{ url_for('poll_edit', slug=poll.slug) }}"><span class="icon-wrench"></span> Settings</a></li>
+            <li{% if request.endpoint == "poll_edit_choices" %} class="active"{% endif %}><a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}"><span class="icon-list"></span> Choice</a></li>
+        {% endif %}
+
+        <li{% if request.endpoint == "poll_vote" %} class="active"{% endif %}><a href="{{ url_for('poll_vote', slug=poll.slug) }}"><span class="icon-check"></span> Vote</a></li>
+    </ul>
+
+    {% block poll_content %}{% endblock %}
+{% endblock %}

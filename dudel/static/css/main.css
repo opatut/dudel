@@ -362,3 +362,11 @@ footer {
     display: block;
     margin-bottom: 4px;
 }
+
+.nav-tabs {
+    margin-top: -40px;
+}
+
+.nav-tabs li {
+    float: right;
+}

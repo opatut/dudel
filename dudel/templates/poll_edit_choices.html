@@ -1,23 +1,13 @@
-{% extends "base.html" %}
+{% extends "base_poll.html" %}
 {% from "_formhelpers.html" import form_errors %}
+
+{% block title %}{{ poll.title }} <small>Edit choices</small>{% endblock %}
 
 {% block foot %}
     <script src="{{ url_for('static', filename='js/poll_edit_choices.js') }}" type="text/javascript" lang="javascript"></script>
 {% endblock %}
 
-{% block content %}
-
-    <div class="page-header">
-        <h1 class="inline">
-            {{ poll.title }}
-            <small>Edit choices</small>
-        </h1>
-        <div class="pull-right">
-        <a href="{{ url_for('poll_edit', slug=poll.slug) }}" class="btn btn-default"><span class="icon-wrench"></span> Settings</a>
-        <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="icon-search"></span> Show poll</a>
-        </div>
-    </div>
-
+{% block poll_content %}
     {% if poll.type == "normal" %}
         {% if poll.get_choices()|length != poll.choices|length %}
         <p class="alert alert-info">
@@ -61,7 +51,7 @@
     {% elif poll.type == "date" %}
         {% if step == 1 %}
 
-            <p>Please add the dates and times you want to allow to these
+            <p class="alert alert-info">Please add the dates and times you want to allow to these
                 lists. In the next step, you will be asked to select which time
                 is available at which date.</p>
 

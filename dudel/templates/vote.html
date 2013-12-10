@@ -1,92 +1,86 @@
-{% extends "base.html" %}
+{% extends "base_poll.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% block content %}
-<div class="page-header">
-    <h1 class="inline">{{ poll.title }}</h1>
-    <div class="pull-right">
-        <a href="{{ poll.get_url() }}" class="btn btn-danger"><span class="icon-ban-circle"></span> Cancel voting</a>
-    </div>
-</div>
+{% block title %}Vote on {{ poll.title }}{% endblock %}
 
-<form method="POST" class="form-inline">
-    {{ form.hidden_tag() }}
-    {{ form_errors(form) }}
+{% block poll_content %}
+    <form method="POST" class="form-inline">
+        {{ form.hidden_tag() }}
+        {{ form_errors(form) }}
 
-    <table class="table poll vote auto-width">
-        <tr class="script-only">
-            <td></td><td></td>
-            {% for value in poll.choice_values %}
-            <td class="text-center">
-                <input type="button" class="btn btn-xs btn-link vote-choice-column" value="all" data-choice="{{ value.id }}"/>
-            </td>
-            {% endfor %}
-            <td>
-                <input type="button" class="btn btn-xs btn-link vote-choice-edit-all" value="Show all comment fields" />
-            </td>
-        </tr>
-        {% set groups = poll.get_choice_groups() %}
-        {% for group in groups %}
-            {% for choice in group %}
-                <tr>
-                    {% set subform = form.vote_choices.pop_entry() %}
-                    {% set choice = poll.get_choice_by_id(subform.choice_id.data) %}
-                    {% if loop.first %}
-                    <td class="choice-group" rowspan="{{ group|length }}">
-                        {% if groups|length > 1 or poll.type == "date" %}
-                        {{ group[0].group|date if poll.type == "date" else group[0].group }}
+        <table class="table poll vote auto-width">
+            <tr class="script-only">
+                <td></td><td></td>
+                {% for value in poll.choice_values %}
+                <td class="text-center">
+                    <input type="button" class="btn btn-xs btn-link vote-choice-column" value="all" data-choice="{{ value.id }}"/>
+                </td>
+                {% endfor %}
+                <td>
+                    <input type="button" class="btn btn-xs btn-link vote-choice-edit-all" value="Show all comment fields" />
+                </td>
+            </tr>
+            {% set groups = poll.get_choice_groups() %}
+            {% for group in groups %}
+                {% for choice in group %}
+                    <tr>
+                        {% set subform = form.vote_choices.pop_entry() %}
+                        {% set choice = poll.get_choice_by_id(subform.choice_id.data) %}
+                        {% if loop.first %}
+                        <td class="choice-group" rowspan="{{ group|length }}">
+                            {% if groups|length > 1 or poll.type == "date" %}
+                            {{ group[0].group|date if poll.type == "date" else group[0].group }}
+                            {% endif %}
+                        </td>
                         {% endif %}
-                    </td>
-                    {% endif %}
-                    <td class="choice-text">
-                        {{ choice.text or choice.date.time()|time }}
-                        {{ subform.hidden_tag() }}
-                    </td>
-                    <td>{{ subform.value(class="vote-choice-radio") }}</td>
-                    {% for value in poll.choice_values %}
-                        <td class="vote-choice control off script-only" data-choice="{{ value.id }}" title="{{ value.title }}" style="background-color: #{{ value.color }}"><span class="icon-{{ value.icon }}"></span></td>
-                    {% endfor %}
-                    <td class="vote-comment">
-                        {{ subform.comment(class="form-control input-sm vote-choice-comment", placeholder=subform.comment.label.text) }}
-                        <div class="script-only">
-                            <button class="btn btn-sm btn-default vote-choice-edit" title="Add a comment"><i class="icon-comment-alt"></i></button>
-                        </div>
-                    </td>
-                </tr>
+                        <td class="choice-text">
+                            {{ choice.text or choice.date.time()|time }}
+                            {{ subform.hidden_tag() }}
+                        </td>
+                        <td>{{ subform.value(class="vote-choice-radio") }}</td>
+                        {% for value in poll.choice_values %}
+                            <td class="vote-choice control off script-only" data-choice="{{ value.id }}" title="{{ value.title }}" style="background-color: #{{ value.color }}"><span class="icon-{{ value.icon }}"></span></td>
+                        {% endfor %}
+                        <td class="vote-comment">
+                            {{ subform.comment(class="form-control input-sm vote-choice-comment", placeholder=subform.comment.label.text) }}
+                            <div class="script-only">
+                                <button class="btn btn-sm btn-default vote-choice-edit" title="Add a comment"><i class="icon-comment-alt"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
 
-        <tr><td colspan="6"><hr /></td></tr>
+            <tr><td colspan="6"><hr /></td></tr>
 
-        <tr>
-            <td colspan="2">{{ form.name.label }}</td>
-            <td colspan="3">
-                {% if current_user.is_anonymous() %}
-                    {{ form.name(class="form-control", id="nameInput") }}
-                {% else %}
-                    <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
-                {% endif %}
+            <tr>
+                <td colspan="2">{{ form.name.label }}</td>
+                <td colspan="3">
+                    {% if current_user.is_anonymous() %}
+                        {{ form.name(class="form-control", id="nameInput") }}
+                    {% else %}
+                        <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
+                    {% endif %}
 
-                {% if poll.anonymous_allowed %}
-                <div class="checkbox">
-                    {{ form.anonymous() }}
-                    {{ form.anonymous.label() }}
-                </div>
-                {% endif %}
-            </td>
-            <td></td>
-        </tr>
+                    {% if poll.anonymous_allowed %}
+                    <div class="checkbox">
+                        {{ form.anonymous() }}
+                        {{ form.anonymous.label() }}
+                    </div>
+                    {% endif %}
+                </td>
+                <td></td>
+            </tr>
 
-        <tr>
-            <td></td>
-            <td colspan="3">
-                <button type="submit" class="btn btn-success btn-block"><span class="icon-check"></span> Save vote</button>
-            </td>
-            <td></td>
-        </tr>
-    </table>
+            <tr>
+                <td></td>
+                <td colspan="3">
+                    <button type="submit" class="btn btn-success btn-block"><span class="icon-check"></span> Save vote</button>
+                </td>
+                <td></td>
+            </tr>
+        </table>
 
 
-</form>
-
+    </form>
 {% endblock %}

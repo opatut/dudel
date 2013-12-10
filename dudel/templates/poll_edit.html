@@ -1,15 +1,9 @@
-{% extends "base.html" %}
+{% extends "base_poll.html" %}
 {% from "_formhelpers.html" import field_error %}
 
-{% block content %}
-    <div class="page-header">
-        <h1 class="inline">Edit {{ poll.title }}</h1>
-        <div class="pull-right">
-        <a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}" class="btn btn-default"><span class="icon-list"></span> Choices</a>
-        <a href="{{ poll.get_url() }}" class="btn btn-primary"><span class="icon-search"></span> Show poll</a>
-        </div>
-    </div>
+{% block title %}{{ poll.title }}{% endblock %}
 
+{% block poll_content %}
     {% if not poll.author and not current_user.is_anonymous() %}
     <div class="row">
         <div class="well col-md-6 col-md-offset-3 text-center">
