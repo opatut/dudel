@@ -53,6 +53,20 @@
                 </li>
             {% endfor %}
         </ul>
+
+        {% if not polls %}
+        <p class="alert alert-info">
+            There are currently no public polls.
+        </p>
+        {% endif %}
+
+        <hr />
+        <h2>Dudel statistics</h2>
+        <table class="table auto-width">
+            <tr><th>Polls created</th><td>{{ poll_count }}</td></tr>
+            <tr><th>Votes cast</th><td>{{ vote_count }}</td></tr>
+            <tr><th>Users</th><td>{{ user_count }}</td></tr>
+        </table>
     </div>
 </div>
 {% endblock %}

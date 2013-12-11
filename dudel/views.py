@@ -16,9 +16,13 @@ def index():
         flash("Poll created")
         return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
-    polls = Poll.query.all()
+    polls = Poll.query.filter_by(public_listing=True).all()
 
-    return render_template("index.html", polls=polls, form=form)
+    poll_count = Poll.query.count()
+    vote_count = Vote.query.count()
+    user_count = User.query.count()
+
+    return render_template("index.html", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count, user_count=user_count)
 
 @app.route("/login", methods=("GET", "POST"))
 def login():
