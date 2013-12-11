@@ -209,7 +209,6 @@ def poll_vote(slug):
                 value = ChoiceValue.query.filter_by(id=subform.value.data).first()
                 if not choice or choice.poll != poll: abort(404)
                 if value and value.poll != poll: abort(404)
-                if not value: continue # skip this vote choice
 
                 vote_choice = VoteChoice()
                 vote_choice.value = value
