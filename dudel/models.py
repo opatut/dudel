@@ -77,8 +77,8 @@ class Poll(db.Model):
     def __init__(self):
         self.created = datetime.utcnow()
         # create yes/no/maybe default choice values
-        self.choice_values.append(ChoiceValue("yes", "ok", "9C6"))
-        self.choice_values.append(ChoiceValue("no", "ban-circle", "F96"))
+        self.choice_values.append(ChoiceValue("yes", "check", "9C6"))
+        self.choice_values.append(ChoiceValue("no", "ban", "F96"))
         self.choice_values.append(ChoiceValue("maybe", "question", "FF6"))
 
     def get_url(self):
@@ -89,6 +89,9 @@ class Poll(db.Model):
 
     def get_choices(self):
         return Choice.query.filter_by(poll_id=self.id, deleted=False).all()
+
+    def get_choice_values(self):
+        return ChoiceValue.query.filter_by(poll_id=self.id, deleted=False).all()
 
     def get_choice_by_id(self, id):
         return Choice.query.filter_by(poll_id=self.id, id=id).first()
@@ -167,8 +170,9 @@ class ChoiceValue(db.Model):
     color = db.Column(db.String(6))
     poll = db.relationship("Poll", backref="choice_values")
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
+    deleted = db.Column(db.Boolean, default=False)
 
-    def __init__(self, title, icon, color):
+    def __init__(self, title="", icon="question", color="EEEEEE"):
         self.title = title
         self.icon = icon
         self.color = color

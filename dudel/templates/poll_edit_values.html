@@ -1,0 +1,102 @@
+{% extends "base_poll.html" %}
+{% from "_formhelpers.html" import form_errors %}
+
+{% block polltitle %}Values{% endblock %}
+
+{% block poll_content %}
+    <p>
+        Here you can edit which options the voters have for each choice you
+        give them. By default, <b>yes</b>, <b>no</b> and <b>maybe</b> are always
+        enabled, but you can disabled any of these. You should have at least one value
+        in this list for the voting to make sense.
+    </p>
+
+    <script>
+        var ICONS = {
+            {% for icon in ICONS %}
+            "{{ icon[0] }}": "{{ icon[1] }}",
+            {% endfor %}
+        };
+    </script>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Available choices</h2>
+            <table class="table auto-width poll">
+                <tr>
+                    <th>Title</th>
+                    <th>Color/Icon</th>
+                    <th>Votes cast</th>
+                </tr>
+                {% set total_votes = poll.votes|length %}
+                {% for value in poll.choice_values %}
+                    <tr class="choice {% if value.disabled %}deleted{% endif %}">
+                        <td class="choice">{{ value.title }}</td>
+                        <td class="vote-choice" style="background-color: #{{ value.color }}">
+                            <i class="fa fa-{{ value.icon }}"></i>
+                        </td>
+                        {% set vote_count = value.vote_choices|length %}
+                        <td class="color {{ 'green' if vote_count >= total_votes else ('red' if vote_count == 0 else 'orange') }}">
+                            <strong>{{ vote_count }}</strong> / {{ total_votes }}
+                        </td>
+                        <td><a href="?toggle={{ value.id }}" class="btn btn-default btn-xs">
+                            {% if value.disabled %}
+                                <i class="fa fa-undo"></i>
+                            {% else %}
+                                <i class="fa fa-trash-o"></i>
+                            {% endif %}
+                        </a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-md-8">
+            <h2>Add a choice value</h2>
+
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {{ form_errors(form) }}
+
+                <div class="form-group">
+                    {{ form.title.label }}
+                    {{ form.title(class="form-control input-sm") }}
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6 form-group">
+                        {{ form.color.label }}
+                        <div class="input-group">
+                            <div class="input-group-addon">#</div>
+                            {{ form.color(class="form-control input-sm", placeholder="RRGGBB") }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6 form-group">
+                        {{ form.icon.label }} <span class="help-inline">(any FontAwesome icon)</span>
+                        <div class="input-group">
+                            <div class="input-group-addon">fa fa-</div>
+                            {{ form.icon(class="form-control input-sm", placeholder=form.icon.label.text) }}
+                        </div>
+                    </div>
+                </div>
+
+                <input type="submit" value="Add" class="btn btn-primary btn-sm" />
+            </form>
+
+            <h3>Available icons</h3>
+
+            <p class="script-only">Click icon to insert it into the form.</p>
+
+            <ul class="icon-preview">
+            {% for icon in ICONS %}
+            <li>
+                <button data-icon="{{ icon[0] }}">
+                    <i class="fa fa-{{ icon[0] }} fa-2x"></i>
+                    <span>{{ icon[0] }}</span>
+                </button>
+            </li>
+            {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+{% endblock %}

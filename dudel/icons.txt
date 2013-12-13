@@ -1,0 +1,45 @@
+smile-o                 Smile
+meh-o                   Meh
+frown-o                 Frown
+star                    Star
+star-half-o             Half star
+star-o                  No star
+thumbs-up               Thumbs up!
+thumbs-down             Thumbs down
+adjust                  Adjust
+asterisk                Asterisk
+ban                     No
+beer                    Beer!!11elf
+book                    Book
+bolt                    Bolt
+calendar                Calendar
+check                   Yes
+check-circle            Check
+circle                  Disk
+circle-o                Circle
+clock-o                 Clock
+code                    Code
+coffee                  Coffe
+comment                 Comment
+comments                Comments
+cutlery                 Mensa
+dashboard               Dashboard
+exclamation-triangle    Warning
+flag                    Flag
+flask                   Lab
+globe                   Globe/WWW
+heart                   Heart <3
+home                    Home
+lightbulb-o             Lightbulb
+magic                   Magic
+moon-o                  Moon
+phone                   Phone
+music                   Music
+power-off               Power off
+rocket                  Rocket
+sun-o                   Sun
+umbrella                Umbrella
+android                 Android
+github                  Github
+stack-overflow          StackOverflow
+linux                   Linux

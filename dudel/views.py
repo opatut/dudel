@@ -162,6 +162,24 @@ def poll_edit_choices(slug, step=1):
 
     return render_template("poll_edit_choices.html", poll=poll, step=step, **args)
 
+@app.route("/<slug>/values/", methods=("POST", "GET"))
+def poll_edit_values(slug):
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+
+    form = AddValueForm()
+    if form.validate_on_submit():
+        value = ChoiceValue()
+        value.title = form.title.data
+        value.icon = form.icon.data
+        value.color = form.color.data.lstrip("#")
+        value.poll = poll
+        db.session.add(value)
+        db.session.commit()
+        flash("The choice value was added.", "success")
+        return redirect(url_for("poll_edit_values", slug=poll.slug))
+
+    return render_template("poll_edit_values.html", poll=poll, form=form)
+
 # @app.route("/<slug>/password", methods=("POST", "GET"))
 # def poll_password(slug):
 #     next = request.args.get("next")
@@ -196,7 +214,7 @@ def poll_vote(slug):
 
     if request.method == "POST":
         for subform in form.vote_choices:
-            subform.value.choices = [(v.id, v.title) for v in poll.choice_values]
+            subform.value.choices = [(v.id, v.title) for v in poll.get_choice_values()]
 
         if form.validate_on_submit():
 
@@ -232,7 +250,7 @@ def poll_vote(slug):
                 form.vote_choices.append_entry(dict(choice_id=choice.id))
 
         for subform in form.vote_choices:
-            subform.value.choices = [(v.id, v.title) for v in poll.choice_values]
+            subform.value.choices = [(v.id, v.title) for v in poll.get_choice_values()]
 
 
     return render_template("vote.html", poll=poll, form=form)

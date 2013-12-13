@@ -9,6 +9,9 @@ db = SQLAlchemy(app)
 markdown = Markdown(app, safe_mode="escape")
 login_manager = LoginManager(app)
 
+from dudel.util import load_icons
+ICONS = load_icons("dudel/icons.txt")
+
 import dudel.models
 import dudel.forms
 import dudel.filters

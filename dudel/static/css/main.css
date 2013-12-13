@@ -97,10 +97,6 @@ h1 small { font-size: 0.6em; margin-left: 1em; }
     margin: 20px 0;
 }
 
-table.poll {
-    margin-top: 50px;
-}
-
 table.poll td, table.poll th, table.poll tr {
     border: none !important;
 }
@@ -108,6 +104,10 @@ table.poll td, table.poll th, table.poll tr {
 table.poll {
     border-collapse: separate !important;
     border-spacing: 3px !important;
+}
+
+.input-group {
+    border-spacing: 0 !important;
 }
 
 table.poll tr td:nth-of-type(1) {
@@ -375,4 +375,57 @@ footer {
 
 .nav-tabs li {
     float: right;
+}
+
+.special-button {
+   padding: 0;
+   width: 32px;
+   text-align: center;
+}
+
+.special-button > * {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: -2px;
+}
+
+.special-button > span.color {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: #FFF;
+}
+
+.icon-preview {
+    list-style: none;
+    padding: 0;
+}
+
+.icon-preview li {
+    display: inline-block;
+}
+
+.icon-preview li button {
+    background: none;
+    border: none;
+    display: inline-block;
+    width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0.8em;
+    border-radius: 4px;
+    padding: 4px;
+    padding-bottom: 2px;
+    margin-bottom: 2px;
+    text-align: left;
+    outline: none;
+}
+
+.icon-preview li button:hover {
+    background: #EEE;
+}
+
+.icon-preview li i {
+    vertical-align: middle;
+    margin-right: 4px;
+    width: 20px;
 }

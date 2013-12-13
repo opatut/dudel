@@ -82,6 +82,16 @@ $(document).ready(function() {
     });
 
     $("[data-toggle='tooltip']").tooltip();
+
+    $(".icon-preview button").click(function() {
+        $("#icon").val($(this).data("icon"));
+    }).each(function() {
+        $(this).find("span").text(ICONS[$(this).data("icon")]).hide();
+    }).css("width", "28px");
+
+    $("#color").colorpicker({
+        "buttonClass": "btn"
+    });
 });
 
 /* Vote choices */

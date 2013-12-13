@@ -1,7 +1,7 @@
 {% extends "base_poll.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% block title %}{{ poll.title }} <small>Edit choices</small>{% endblock %}
+{% block polltitle %}Choices{% endblock %}
 
 {% block foot %}
     <script src="{{ url_for('static', filename='js/poll_edit_choices.js') }}" type="text/javascript" lang="javascript"></script>
@@ -35,9 +35,9 @@
                         </td>
                         <td><a href="?toggle={{ choice.id }}" class="btn btn-default btn-xs">
                             {% if choice.deleted %}
-                                <i class="icon-undo"></i>
+                                <i class="fa fa-undo"></i>
                             {% else %}
-                                <i class="icon-trash"></i>
+                                <i class="fa fa-trash-o"></i>
                             {% endif %}
                         </a></td>
                     </tr>

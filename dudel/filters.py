@@ -1,4 +1,4 @@
-from dudel import app
+from dudel import app, ICONS
 
 @app.template_filter()
 def date(s):
@@ -7,4 +7,10 @@ def date(s):
 @app.template_filter()
 def time(s):
     return s.strftime("%H:%M")
+
+@app.context_processor
+def inject():
+    return dict(
+        ICONS=ICONS
+        )
 

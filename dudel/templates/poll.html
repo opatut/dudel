@@ -1,11 +1,11 @@
 {% extends "base_poll.html" %}
 
-{% block title %}{{ poll.title }}{% endblock %}
+{% block polltitle %}{% endblock %}
 
 {% block poll_content %}
     <ul class="poll-details">
         <li>
-            <i class="icon-calendar"></i>
+            <i class="fa fa-calendar"></i>
             {% if poll.due_date %}
                 due {{ poll.due_date|date }} {{ poll.due_date|time }}
             {% else %}
@@ -14,7 +14,7 @@
         </li>
 
         <li>
-            <i class="icon-briefcase"></i>
+            <i class="fa fa-briefcase"></i>
             {% if poll.author %}
                 owned by {{ "you" if poll.author == current_user else poll.author.displayname }}</li>
             {% else %}
@@ -22,10 +22,10 @@
             {% endif %}
         </li>
 
-        <li><i class="icon-exclamation"></i> {{ "anonymous voting allowed" if poll.anonymous_allowed else "no anonymous voting" }}</li>
-        <li><i class="icon-list"></i> {{ "visible" if poll.public_listing else "hidden" }} in public list</li>
-        <li><i class="icon-user"></i> {{ "requires login" if poll.require_login else "no login required" }}</li>
-        <!-- <li><i class="icon-envelope"></i> {{ poll.send_mail }}</li> -->
+        <li><i class="fa fa-exclamation"></i> {{ "anonymous voting allowed" if poll.anonymous_allowed else "no anonymous voting" }}</li>
+        <li><i class="fa fa-list"></i> {{ "visible" if poll.public_listing else "hidden" }} in public list</li>
+        <li><i class="fa fa-user"></i> {{ "requires login" if poll.require_login else "no login required" }}</li>
+        <!-- <li><i class="fa fa-envelope"></i> {{ poll.send_mail }}</li> -->
     </ul>
 
     {% if poll.votes %}
@@ -69,12 +69,12 @@
                                     {% set vote_choice = poll.get_vote_choice(vote, choice) %}
                                     {% if vote_choice %}
                                     <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}"{% if vote_choice.comment %} title="{{ vote_choice.comment }}"{% endif %}>
-                                        <span class="icon-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
-                                        {% if vote_choice.comment %}<span class="comment-icon icon-exclamation"></span>{% endif %}
+                                        <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
+                                        {% if vote_choice.comment %}<span class="comment-icon fa fa-exclamation"></span>{% endif %}
                                     </td>
                                     {% else %}
                                     <td class="vote-choice text-center none">
-                                        <span class="icon-question"></span>
+                                        <span class="fa fa-question"></span>
                                     </td>
                                     {% endif%}
                                 {% endfor %}
@@ -90,7 +90,7 @@
                         {% for group in groups %}
                             {% for choice in group %}
                                 {% set stat = stats[choice] %}
-                                <th class="choice-sum {% if stat["max"] %}maximum{% endif %}" title="{{ stat["yes"] }} yes, {{ stat["no"] }} no, {{ stat["maybe"] }} maybe">
+                                <th class="choice-sum {% if stat["max"] %}maximum{% endif %}" title="{% for value in poll.get_choice_values() %}{{ stat[value.title] }} {{ value.title }}{% if not loop.last %}, {% endif %}{% endfor %}">
                                     {{ "%2.0f" % (stat["yes"]/total*100) }}%
                                 </th>
                             {% endfor %}

@@ -1,7 +1,7 @@
 {% extends "base_poll.html" %}
 {% from "_formhelpers.html" import field_error %}
 
-{% block title %}{{ poll.title }}{% endblock %}
+{% block polltitle %}Settings{% endblock %}
 
 {% block poll_content %}
     {% if not poll.author and not current_user.is_anonymous() %}
@@ -83,13 +83,13 @@
                 <hr />
 
                 <label>Very advanced stuff</label>
-                <p><a href="#">Edit possible answer values</a></p>
+                <p><a href="{{ url_for('poll_edit_values', slug=poll.slug) }}">Edit possible answer values</a></p>
             </div>
         </div>
 
         <hr />
 
-        <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="icon-arrow-left"></span> Back to poll</a>
+        <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="fa fa-arrow-left"></span> Back to poll</a>
         <input type="submit" class="btn btn-primary" value="Save settings" />
     </form>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base_poll.html" %}
 {% from "_formhelpers.html" import form_errors %}
 
-{% block title %}Vote on {{ poll.title }}{% endblock %}
+{% block polltitle %}Vote{% endblock %}
 
 {% block poll_content %}
     <form method="POST" class="form-inline">
@@ -11,7 +11,7 @@
         <table class="table poll vote auto-width">
             <tr class="script-only">
                 <td></td><td></td>
-                {% for value in poll.choice_values %}
+                {% for value in poll.get_choice_values() %}
                 <td class="text-center">
                     <input type="button" class="btn btn-xs btn-link vote-choice-column" value="all" data-choice="{{ value.id }}"/>
                 </td>
@@ -38,13 +38,13 @@
                             {{ subform.hidden_tag() }}
                         </td>
                         <td>{{ subform.value(class="vote-choice-radio") }}</td>
-                        {% for value in poll.choice_values %}
-                            <td class="vote-choice control off script-only" data-choice="{{ value.id }}" title="{{ value.title }}" style="background-color: #{{ value.color }}"><span class="icon-{{ value.icon }}"></span></td>
+                        {% for value in poll.get_choice_values() %}
+                            <td class="vote-choice control off script-only" data-choice="{{ value.id }}" title="{{ value.title }}" style="background-color: #{{ value.color }}"><span class="fa fa-{{ value.icon }}"></span></td>
                         {% endfor %}
                         <td class="vote-comment">
                             {{ subform.comment(class="form-control input-sm vote-choice-comment", placeholder=subform.comment.label.text) }}
                             <div class="script-only">
-                                <button class="btn btn-sm btn-default vote-choice-edit" title="Add a comment"><i class="icon-comment-alt"></i></button>
+                                <button class="btn btn-sm btn-default vote-choice-edit" title="Add a comment"><i class="fa fa-comment-o"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -76,7 +76,7 @@
                 <td></td>
                 <td></td>
                 <td colspan="3">
-                    <button type="submit" class="btn btn-success btn-block"><span class="icon-check"></span> Save vote</button>
+                    <button type="submit" class="btn btn-success btn-block"><span class="fa fa-check"></span> Save vote</button>
                 </td>
                 <td></td>
             </tr>
