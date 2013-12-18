@@ -50,8 +50,22 @@ $(document).ready(function() {
         $('.vote-choice.control[data-choice="' + $(this).data("choice") + '"].off').click();
     });
 
-    // Clicking on a voting cell
-    $("td.vote-choice").click(highlightVoteChoice);
+    // Prevent selection of voting cells
+    $('td.vote-choice').unselectable();
+        
+    // Fast selecting of voting cells
+    var fastselectState = {'active': false}
+    $("td.vote-choice").mousedown(function() {
+        fastselectState.active = true;
+        highlightVoteChoice($(this));
+        $('body').one('mouseup', function() {
+            fastselectState.active = false;
+        });
+    }).mouseenter(function() {
+        if(fastselectState.active) {
+            highlightVoteChoice($(this));
+        }
+    });
 
     $(".toggle").click(function() {
         // deselect or select
@@ -105,15 +119,15 @@ function showComment() {
     return false;
 }
 
-function highlightVoteChoice(event) {
-    var is_off = $(this).hasClass("off");
+function highlightVoteChoice(elem) {
+    var is_off = elem.hasClass("off");
 
-    var tr = $(this).closest("tr");
+    var tr = elem.closest("tr");
     tr.find("td.vote-choice.control").addClass("off");
     tr.find("input").prop("checked", false);
 
     if(is_off) {
-        $(this).removeClass("off");
-        if(is_off) tr.find("input[value='" + $(this).data("choice") + "']").prop("checked", true);
+        elem.removeClass("off");
+        if(is_off) tr.find("input[value='" + elem.data("choice") + "']").prop("checked", true);
     }
 }
