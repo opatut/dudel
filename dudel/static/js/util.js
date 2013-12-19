@@ -35,9 +35,16 @@ $.fn.rotate = function(degrees) {
     });
 };
     
-$.fn.unselectable = function() {
+$.fn.disableSelect = function() {
     return this
          .attr('unselectable', 'on')
          .css('user-select', 'none')
          .on('selectstart', false);
+};
+
+$.fn.enableSelect = function() {
+    return this
+         .attr('unselectable', 'off')
+         .css('user-select', 'auto')
+         .unbind('selectstart', false);
 };
