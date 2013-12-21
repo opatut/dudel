@@ -122,8 +122,16 @@ function removeDate(date) {
 /* Time Slider */
 
 function initTimeSlider() {
-    $("#time-slider").click(sliderPosition).mousemove(function(e) {
-        if(e.which == 1) sliderPosition.call(this, e);
+    var buttonState = {'pressed': false};
+    $("#time-slider").mousedown(function(e) {
+        buttonState.pressed = true;
+        $('body').one('mouseup', function(e) {
+            buttonState.pressed = false;
+        });
+    }).mousemove(function(e) {
+        if (buttonState.pressed) {
+            sliderPosition.call(this, e);
+        }
     });
     $("#time-minute, #time-hour").keyup(function() {
         var hour = $("#time-hour").val();
