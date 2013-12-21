@@ -56,14 +56,8 @@ table.vote label {
     text-align: center;
 }
 
-.comment-icon { display: none; }
-
-.vote-choice {
-    position: relative;
-}
-
 .vote-choice.comment span.comment-icon {
-    display: block;
+	display:none;
     right: 0;
     bottom: 0;
     margin: 4px;

@@ -105,6 +105,25 @@ $(document).ready(function() {
     $("#color").colorpicker({
         "buttonClass": "btn"
     });
+
+    // Comment positioning
+    // Relative positioning is not defined on elements with
+    // display:table-cell. Therefore we wrap everything in a div
+	// with position:relative and emulate table cell properties.
+    // (see http://www.w3.org/TR/CSS21/visuren.html#choose-position)
+    $('td.vote-choice:has(span.comment-icon)').each(function() {
+        var cell = $(this);
+        var cellHeight = cell.outerHeight() + 'px';
+        var div = $('<div></div>').css({
+            'position': 'relative',
+            'padding': cell.css('padding'),
+            'width': '100%',
+            'height': cellHeight,
+            'line-height': cellHeight
+        });
+        cell.css('padding', 0).wrapInner(div);
+        cell.find('span.comment-icon').css('display', 'block');
+    });
 });
 
 /* Vote choices */
