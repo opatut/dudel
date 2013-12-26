@@ -49,14 +49,14 @@ $(document).ready(function() {
     $(".vote-choice-column").click(function() {
         $('.vote-choice.control[data-choice="' + $(this).data("choice") + '"].off').click();
     });
-    
+
     // Fast selecting of voting cells
     var fastselectState = {'active': false}
     $("td.vote-choice").mousedown(function() {
         fastselectState.active = true;
         $('table.vote').disableSelect();
         highlightVoteChoice($(this));
-        $('body').one('mouseup', function() {
+        $('body').on('mouseup', function() {
             fastselectState.active = false;
             $('table.vote').enableSelect();
         });
