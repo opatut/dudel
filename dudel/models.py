@@ -55,7 +55,7 @@ class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))
     slug = db.Column(db.String(80))
-    type = db.Column(db.Enum("date", "normal"), default="normal")
+    type = db.Column(db.Enum("date", "normal", name="poll_type"), default="normal")
     created = db.Column(db.DateTime)
     author = db.relationship("User", backref="polls")
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
@@ -69,7 +69,7 @@ class Poll(db.Model):
     anonymous_allowed = db.Column(db.Boolean, default=True)
     public_listing = db.Column(db.Boolean, default=False)
     require_login = db.Column(db.Boolean, default=False)
-    show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote"))
+    show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote", name="poll_show_results"))
     send_mail = db.Column(db.Boolean, default=False)
 
     RESERVED_NAMES = ["login", "logout", "index"]
