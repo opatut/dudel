@@ -63,7 +63,8 @@ class LDAPAuthenticator(object):
             escaped_username = escape_dn_chars(username)
             connection.simple_bind_s(app.config["LDAP_BIND_DN"].format(uid=escaped_username), field.data)
             filter = app.config["LDAP_FILTER"].format(uid=escaped_username)
-            results = connection.search_s(app.config["LDAP_BASE_DN"], ldap.SCOPE_SUBTREE, filter)
+            base_dn = app.config["LDAP_BASE_DN"].format(uid=escaped_username)
+            results = connection.search_s(base_dn, ldap.SCOPE_SUBTREE, filter)
             results = {k:(v if len(v)>1 else v[0]) for k,v in results[0][1].iteritems()}
             connection.unbind_s()
 
