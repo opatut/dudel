@@ -22,3 +22,5 @@ LDAP_DEBUG_DATA = {
     "mail": "3musterm@informatik.uni-hamburg.de",
     "uid": "13musterm"
 }
+
+SENTRY_DSN = "https://user:password@sentry.mafiasi.de/X"

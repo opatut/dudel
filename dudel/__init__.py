@@ -1,3 +1,4 @@
+from raven.contrib.flask import Sentry
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.markdown import Markdown
@@ -8,6 +9,7 @@ app.config.from_pyfile("../config.py", silent=True)
 db = SQLAlchemy(app)
 markdown = Markdown(app, safe_mode="escape")
 login_manager = LoginManager(app)
+sentry = Sentry(app)
 
 from dudel.util import load_icons
 ICONS = load_icons("dudel/icons.txt")

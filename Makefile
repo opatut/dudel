@@ -1,7 +1,7 @@
 default: run
 
 setup:
-	pip install --upgrade flask flask-sqlalchemy flask-wtf flask-login flask-markdown python-dateutil python-ldap
+	pip install --upgrade flask flask-sqlalchemy flask-wtf flask-login flask-markdown python-dateutil python-ldap raven blinker
 
 init:
 	python2 scripts/init.py
