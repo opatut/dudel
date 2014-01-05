@@ -97,10 +97,10 @@ class Poll(db.Model):
         return Choice.query.filter_by(poll_id=self.id, id=id).first()
 
     def get_choice_dates(self):
-        return list(set([choice.date.date() for choice in self.get_choices()]))
+        return list(set(choice.date.date() for choice in self.get_choices()))
 
     def get_choice_times(self):
-        return list(set([choice.date.time() for choice in self.get_choices()]))
+        return list(set(choice.date.time() for choice in self.get_choices()))
 
     def has_choice_date_time(self, date, time):
         dt = datetime.combine(date, time)
