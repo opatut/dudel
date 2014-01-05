@@ -60,9 +60,10 @@ class LDAPAuthenticator(object):
             # At this point, we update the user info (since we already have
             # a connection to LDAP)
             #connection.start_tls_s()
-            connection.simple_bind_s(app.config["LDAP_DN"] % escape_dn_chars(username), field.data)
-            filter = app.config.get("LDAP_FILTER")
-            results = connection.search_s(app.config["LDAP_BASEDN"], ldap.SCOPE_SUBTREE, filter)
+            escaped_username = escape_dn_chars(username)
+            connection.simple_bind_s(app.config["LDAP_BIND_DN"].format(uid=escaped_username), field.data)
+            filter = app.config["LDAP_FILTER"].format(uid=escaped_username)
+            results = connection.search_s(app.config["LDAP_BASE_DN"], ldap.SCOPE_SUBTREE, filter)
             results = {k:(v if len(v)>1 else v[0]) for k,v in results[0][1].iteritems()}
             connection.unbind_s()
 

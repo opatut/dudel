@@ -8,8 +8,10 @@ DEBUG = True
 # Secret key, required for cookies etc.
 SECRET_KEY = "change me!!!"
 
-LDAP_SERVER = "mafiasi.de"
-LDAP_DN = "uid=%s,ou=People,dc=mafiasi,dc=de"
+LDAP_SERVER = "ldap://localhost"
+LDAP_BIND_DN = "uid={uid},ou=People,dc=mafiasi,dc=de"
+LDAP_BASE_DN = "ou=People,dc=mafiasi,dc=de"
+LDAP_FILTER = "(uid={uid})
 
 # Debug mode skips LDAP and pretends to receive data when the password is entered
 LDAP_DEBUG_MODE = False
