@@ -76,7 +76,8 @@ def poll_edit(slug):
 @login_required
 def poll_claim(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
-    if poll.author: abort(403)
+    if poll.author:
+        abort(403)
 
     # if poll.password_mode in ("edit"):
     #     if not poll.has_password():

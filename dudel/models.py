@@ -116,7 +116,8 @@ class Poll(db.Model):
         groups = {}
         for choice in self.get_choices():
             group = choice.group
-            if not group in groups: groups[group] = []
+            if not group in groups:
+                groups[group] = []
             groups[group].append(choice)
         return sorted([sorted(group) for group in groups.itervalues()])
 

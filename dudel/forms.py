@@ -42,7 +42,8 @@ class LDAPAuthenticator(object):
 
     def __call__(self, form, field):
         username = self.username_value_or_field
-        if self.username_value_or_field in form.data: username = form.data[self.username_value_or_field]
+        if self.username_value_or_field in form.data:
+            username = form.data[self.username_value_or_field]
 
         if app.config["LDAP_DEBUG_MODE"]:
             if username != app.config["LDAP_DEBUG_DATA"]["uid"] or  app.config["LDAP_DEBUG_PASSWORD"] != field.data:
@@ -73,7 +74,8 @@ class LDAPAuthenticator(object):
 
 class YourNameRequired(object):
     def __call__(self, form, field):
-        if form["anonymous"].data: return # nevermind if we are anonymous!
+        if form["anonymous"].data:
+            return # nevermind if we are anonymous!
         if not field.data and current_user.is_anonymous():
             raise ValidationError("This field is required.")
 
