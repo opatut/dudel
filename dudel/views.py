@@ -109,8 +109,8 @@ def poll_edit_choices(slug, step=1):
         if step in (2, 3) and form.validate_on_submit():
             dates = form.dates.data.split(",")
             times = form.times.data.split(",")
-            args["dates"] = sorted(list(set(sorted([parser.parse(data, fuzzy=True).date() for data in dates]))))
-            args["times"] = sorted(list(set(sorted([parser.parse("1970-01-01 %s" % data, fuzzy=True).time() for data in times]))))
+            args["dates"] = sorted(list(set(parser.parse(data, fuzzy=True).date() for data in dates)))
+            args["times"] = sorted(list(set(parser.parse("1970-01-01 %s" % data, fuzzy=True).time() for data in times)))
 
         if step == 3 and form.validate_on_submit():
             # list all date/time combinations
