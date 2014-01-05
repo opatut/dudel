@@ -3,10 +3,10 @@ from flask import request
 from flask.ext.wtf import Form
 from flask.ext.login import current_user
 from wtforms import ValidationError
-from wtforms.fields import TextField, SelectField, BooleanField, TextAreaField, HiddenField, FieldList, FormField, RadioField, PasswordField, IntegerField
+from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField
 from wtforms.ext.dateutil.fields import DateTimeField
-from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, NumberRange
-from dudel.models import *
+from wtforms.validators import Required, Length, Regexp, Optional, NoneOf
+from dudel.models import Poll, update_user_data
 import ldap
 
 # Helper class for multiple forms on one page
