@@ -21,16 +21,12 @@
                 <div class="navbar-header">
                     <a href="/" class="navbar-brand">Dudel</a>
                 </div>
-                <a class="btn navbar-btn btn-default" href="https://mafiasi.de"><i class="fa fa-home"></i> Mafiasi Hub</a>
 
-                {#
-                <form class="navbar-form navbar-left" role="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search...">
-                    </div>
-                    <button type="button" class="btn btn-default">Search</button>
-                </form>
-                #}
+                <div class="navbar-left">
+                    <a class="btn navbar-btn btn-default" href="https://mafiasi.de">
+                        <i class="fa fa-home"></i> Mafiasi Hub
+                    </a>
+                </div>
 
                 <div class="navbar-right">
                     {% if current_user.is_anonymous() %}
