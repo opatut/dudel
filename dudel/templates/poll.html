@@ -79,6 +79,9 @@
                                     {% endif%}
                                 {% endfor %}
                             {% endfor %}
+                            <td>
+                                <a href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

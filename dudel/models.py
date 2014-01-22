@@ -121,6 +121,9 @@ class Poll(db.Model):
             groups[group].append(choice)
         return sorted([sorted(group) for group in groups.itervalues()])
 
+    def get_choices_by_group(self, group):
+        return [choice for choice in self.get_choices() if choice.group == group]
+
     def get_statistics(self):
         stats = {choice: {choice_value.title: sum([1 if vc.value == choice_value else 0 for vc in choice.vote_choices]) for choice_value in self.choice_values} for choice in self.get_choices()}
         main_key = "yes"
@@ -128,6 +131,18 @@ class Poll(db.Model):
         for k in stats:
             stats[k]["max"] = (stats[k][main_key] == maximum)
         return stats
+
+    def fill_vote_form(self, form):
+        while form.vote_choices:
+            form.vote_choices.pop_entry()
+
+        for group in self.get_choice_groups():
+            for choice in group:
+                form.vote_choices.append_entry(dict(choice_id=choice.id))
+
+        for subform in form.vote_choices:
+            subform.value.choices = [(v.id, v.title) for v in self.get_choice_values()]
+
 
     # @property
     # def password_session_key(self):

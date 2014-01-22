@@ -22,9 +22,9 @@ $(document).ready(function() {
     $("td .vote-choice-radio").parent().hide();
 
     // Apply checked radio states to table cells
-    $(".vote-choice-radio input:checked").each(function() {
+    $(".vote-choice-radio:checked").each(function() {
         $(this).closest("tr").find("[data-choice=\"" + $(this).val() + "\"]").removeClass("off");
-    })
+    });
 
     // Buttons: "Show comment field"
     $(".vote-choice-edit").click(showComment);

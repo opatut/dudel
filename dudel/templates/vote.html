@@ -21,34 +21,47 @@
                 </td>
             </tr>
             {% set groups = poll.get_choice_groups() %}
-            {% for group in groups %}
-                {% for choice in group %}
-                    <tr>
-                        {% set subform = form.vote_choices.pop_entry() %}
-                        {% set choice = poll.get_choice_by_id(subform.choice_id.data) %}
-                        {% if loop.first %}
-                        <td class="choice-group" rowspan="{{ group|length }}">
-                            {% if groups|length > 1 or poll.type == "date" %}
-                            {{ group[0].group|date if poll.type == "date" else group[0].group }}
-                            {% endif %}
-                        </td>
+            {% set prev_group = None %}
+            {% for subform in form.vote_choices %}
+                <tr>
+                    {% set choice = poll.get_choice_by_id(subform.choice_id.data) %}
+                    {% set group = choice.group %}
+
+                    {% if group != prev_group %}
+                    <td class="choice-group" rowspan="{{ poll.get_choices_by_group(group)|length }}">
+                        {% if groups|length > 1 or poll.type == "date" %}
+                            {{ group|date if poll.type == "date" else group }}
                         {% endif %}
-                        <td class="choice-text">
-                            {{ choice.text or choice.date.time()|time }}
-                            {{ subform.hidden_tag() }}
-                        </td>
-                        <td>{{ subform.value(class="vote-choice-radio") }}</td>
-                        {% for value in poll.get_choice_values() %}
-                            <td class="vote-choice control off script-only" data-choice="{{ value.id }}" title="{{ value.title }}" style="background-color: #{{ value.color }}"><span class="fa fa-{{ value.icon }}"></span></td>
+                    </td>
+                    {% endif %}
+
+                    {% set prev_group = group %}
+
+                    <td class="choice-text">
+                        {{ choice.text or choice.date.time()|time }}
+                        {{ subform.hidden_tag() }}
+                    </td>
+                    <td>
+                        {% for field in subform.value %}
+                            {% if vote and field.data == poll.get_vote_choice(vote, choice).value_id %}
+                                {{ field(class="vote-choice-radio", checked=1) }}
+                            {% else %}
+                                {{ field(class="vote-choice-radio") }}
+                            {% endif %}
+
+                            {{ field.label }}
                         {% endfor %}
-                        <td class="vote-comment">
-                            {{ subform.comment(class="form-control input-sm vote-choice-comment", placeholder=subform.comment.label.text) }}
-                            <div class="script-only">
-                                <button class="btn btn-sm btn-default vote-choice-edit" title="Add a comment"><i class="fa fa-comment-o"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
+                    </td>
+                    {% for value in poll.get_choice_values() %}
+                        <td class="vote-choice control off script-only" data-choice="{{ value.id }}" title="{{ value.title }}" style="background-color: #{{ value.color }}"><span class="fa fa-{{ value.icon }}"></span></td>
+                    {% endfor %}
+                    <td class="vote-comment">
+                        {{ subform.comment(class="form-control input-sm vote-choice-comment", placeholder=subform.comment.label.text) }}
+                        <div class="script-only">
+                            <button class="btn btn-sm btn-default vote-choice-edit" title="Add a comment"><i class="fa fa-comment-o"></i></button>
+                        </div>
+                    </td>
+                </tr>
             {% endfor %}
 
             <tr><td colspan="6">Hold left mouse button and drag mouse to select many vote choices.</td></tr>

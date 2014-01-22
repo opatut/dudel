@@ -218,7 +218,6 @@ def poll_vote(slug):
             subform.value.choices = [(v.id, v.title) for v in poll.get_choice_values()]
 
         if form.validate_on_submit():
-
             vote = Vote()
             if current_user.is_anonymous():
                 vote.name = form.name.data
@@ -243,15 +242,47 @@ def poll_vote(slug):
             db.session.commit()
             return redirect(poll.get_url())
 
-    # this adds at beginning, not in order :(
-    # so we just reverse the order
     if not request.method == "POST":
-        for group in reversed(poll.get_choice_groups()):
-            for choice in reversed(group):
-                form.vote_choices.append_entry(dict(choice_id=choice.id))
+        poll.fill_vote_form(form)
 
+    return render_template("vote.html", poll=poll, form=form)
+
+@app.route("/<slug>/vote/<int:vote_id>/edit", methods=("POST", "GET"))
+def poll_vote_edit(slug, vote_id):
+    # TODO
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    vote = Vote.query.filter_by(id=vote_id).first_or_404()
+    if vote.poll != poll: abort(404)
+
+    form = CreateVoteForm(obj=vote)
+    if poll.require_login and current_user.is_anonymous():
+        return render_template("vote_error.html", reason="LOGIN_REQUIRED")
+
+    if request.method == "POST":
         for subform in form.vote_choices:
             subform.value.choices = [(v.id, v.title) for v in poll.get_choice_values()]
 
+        if form.validate_on_submit():
+            if current_user.is_anonymous():
+                vote.name = form.name.data
+            vote.anonymous = poll.anonymous_allowed and form.anonymous.data
 
-    return render_template("vote.html", poll=poll, form=form)
+            for subform in form.vote_choices:
+                choice = Choice.query.filter_by(id=subform.choice_id.data).first()
+                value = ChoiceValue.query.filter_by(id=subform.value.data).first()
+                if not choice or choice.poll != poll: abort(404)
+                if value and value.poll != poll: abort(404)
+
+                vote_choice = poll.get_vote_choice(vote, choice)
+                vote_choice.comment = subform.comment.data
+                vote_choice.value = value
+                print("Set vote choice of %s to %s" % (choice, value.title))
+
+            db.session.commit()
+            flash("The vote has been edited.", "success")
+            return redirect(poll.get_url())
+
+    if not request.method == "POST":
+        poll.fill_vote_form(form)
+
+    return render_template("vote.html", poll=poll, form=form, vote=vote)
