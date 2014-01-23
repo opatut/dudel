@@ -210,4 +210,4 @@ class VoteChoice(db.Model):
     vote = db.relationship("Vote", backref="vote_choices")
     vote_id = db.Column(db.Integer, db.ForeignKey("vote.id"))
     choice = db.relationship("Choice", backref="vote_choices")
-    choide_id = db.Column(db.Integer, db.ForeignKey("choice.id"))
+    choice_id = db.Column(db.Integer, db.ForeignKey("choice.id"))
