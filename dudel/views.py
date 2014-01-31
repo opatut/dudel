@@ -167,6 +167,14 @@ def poll_edit_choices(slug, step=1):
 def poll_edit_values(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
 
+    if "toggle" in request.args:
+        value = ChoiceValue.query.filter_by(id=request.args["toggle"]).first_or_404()
+        if value.poll != poll: abort(404)
+        value.deleted = not value.deleted
+        db.session.commit()
+        flash("The choice value was %s." % ("removed" if value.deleted else "restored"), "success")
+        return redirect(url_for("poll_edit_values", slug=poll.slug))
+
     form = AddValueForm()
     if form.validate_on_submit():
         value = ChoiceValue()

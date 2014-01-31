@@ -30,7 +30,7 @@
                 </tr>
                 {% set total_votes = poll.votes|length %}
                 {% for value in poll.choice_values %}
-                    <tr class="choice {% if value.disabled %}deleted{% endif %}">
+                    <tr class="choice {% if value.deleted %}deleted{% endif %}">
                         <td class="choice">{{ value.title }}</td>
                         <td class="vote-choice" style="background-color: #{{ value.color }}">
                             <i class="fa fa-{{ value.icon }}"></i>
@@ -40,7 +40,7 @@
                             <strong>{{ vote_count }}</strong> / {{ total_votes }}
                         </td>
                         <td><a href="?toggle={{ value.id }}" class="btn btn-default btn-xs">
-                            {% if value.disabled %}
+                            {% if value.deleted %}
                                 <i class="fa fa-undo"></i>
                             {% else %}
                                 <i class="fa fa-trash-o"></i>
