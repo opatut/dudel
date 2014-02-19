@@ -46,6 +46,7 @@
         <div class="page-header">
             <h1>Recent polls</h1>
         </div>
+        {% if polls %}
         <ul>
             {% for poll in polls %}
                 <li>
@@ -53,14 +54,33 @@
                 </li>
             {% endfor %}
         </ul>
-
-        {% if not polls %}
+        {% else %}
         <p class="alert alert-info">
             There are currently no public polls.
         </p>
         {% endif %}
-
         <hr />
+
+        {% if current_user.is_authenticated() %}
+        <div class="page-header">
+            <h1>My polls</h1>
+        </div>
+        {% if user_polls %}
+        <ul>
+            {% for poll in user_polls %}
+            <li>
+                <a href="{{ poll.get_url() }}">{{ poll.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="alert alert-info">
+            You do not own any polls yet.
+        </p>
+        {% endif %}
+        <hr />
+        {% endif %}
+
         <h2>Dudel statistics</h2>
         <table class="table auto-width">
             <tr><th>Polls created</th><td>{{ poll_count }}</td></tr>
