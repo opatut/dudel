@@ -1,10 +1,7 @@
+{% from "_formhelpers.html" import alert %}
+
 <div class="flashes">
 {% for category, message in get_flashed_messages(with_categories=True) %}
-    {% set replace = {"message":"info","error":"danger"} %}
-    <div class="alert alert-{{  replace[category] if category in replace else category }}">
-        <div class="container">
-            {{ message | safe }}
-        </div>
-    </div>
+    {{ alert(category, message) }}
 {% endfor %}
 </div>

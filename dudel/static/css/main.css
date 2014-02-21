@@ -3,7 +3,13 @@
 }
 
 .alert {
-    padding: 4px 8px;
+    padding: 0.7em 0em;
+}
+
+.alert .fa {
+    font-size: 20px;
+    vertical-align: middle;
+    margin: -1em 0.2em -0.9em 0;
 }
 
 .form-errors {
@@ -16,6 +22,10 @@
 
 table.vote label {
     margin-top: 8px;
+}
+
+.table {
+    margin-bottom: 0;
 }
 
 .poll .choice-text,
@@ -31,10 +41,17 @@ table.vote label {
 }
 
 .poll .choice-group,
+.poll .author,
 .vote .choice-group {
     font-weight: bold;
     white-space: nowrap;
     background: #EEE;
+    vertical-align: middle;
+}
+
+.poll .author {
+    padding: 0 2em;
+    text-align: right;
 }
 
 .poll .choice-group,
@@ -185,7 +202,7 @@ td.vote-comment {
 
 /* Calendar stuff */
 .calendar, .calendar table {
-    margin-top: 0.5em;
+    margin: 0.5em;
     display: inline-block;
 }
 
@@ -245,10 +262,36 @@ footer {
 
 .poll-details {
     list-style: none;
+    margin: 1em 0;
+    padding: 1em;
+    background: #F6F6F6;
+    border: 1px solid #DDD;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/*@media (min-width: 768px) {
+    .poll-details {
+        margin-left: 2em;
+        float: right;
+    }
+}
+*/
+.poll-details li .title {
+    display: inline-block;
+    width: 9em;
+    text-align: right;
+}
+
+.poll-details li .content {
+    font-weight: bold;
+}
+
+/*.poll-details {
+    list-style: none;
     padding: 0;
     display: table;
     width: 100%;
-    /*float: right;*/
     border-collapse: separate !important;
     border-spacing: 4px !important;
 }
@@ -261,6 +304,7 @@ footer {
     padding: 5px;
 }
 
+*/
 .poll-details li i {
     display: inline-block;
     width: 16px;
@@ -270,7 +314,8 @@ footer {
 .time-input {
     margin: 20px;
     text-align: center;
-    /*width: 400px;*/
+    width: 400px;
+    display: inline-block;
 }
 
 #time-slider {
@@ -340,37 +385,40 @@ footer {
     height: 1.7em;
 }
 
-.time-slots {
-    list-style: none;
-    padding: 0;
-}
-
-.time-slots li {
-    display: inline-block;
-    margin-bottom: 4px;
-}
-
 .calendar-list {
     display: inline-block;
     vertical-align: top;
-    margin: 14px;
-    list-style: none;
-    padding: 0;
+    margin: 0.5em;
 }
 
-.calendar-list li {
+.calendar-list ul {
+    padding: 0;
+    list-style: none;
+}
+
+.calendar-list ul li {
     display: block;
     margin-bottom: 4px;
 }
 
-.nav-tabs {
-    margin-top: -40px;
+@media(max-width: 785px) {
+    .nav-tabs {
+        margin: 1em 0;
+    }
+    .nav-tabs li a {
+        padding: 0.3em 0.6em;
+    }
 }
 
-.nav-tabs li {
-    float: right;
-}
+@media(min-width: 786px) {
+    .nav-tabs {
+        margin-top: -40px;
+    }
 
+    .nav-tabs li {
+        float: right;
+    }
+}
 .special-button {
    padding: 0;
    width: 32px;
@@ -422,4 +470,65 @@ footer {
     vertical-align: middle;
     margin-right: 4px;
     width: 20px;
+}
+
+
+.table-scroll {
+    max-width: 100%;
+    overflow: auto;
+    margin-bottom: 2em;
+    min-height: 300px;
+    padding-bottom: 1em;
+    /*border: 1px solid #DDD;*/
+    /*padding: 3px;*/
+}
+
+
+@media (min-width: 1200px) {
+  .container {
+    /*max-width: 90%;*/
+  }
+}
+
+
+.steps {
+    width: 100%;
+    list-style: none;
+    margin: 1em 0;
+    background: #F6F6F6;
+    border-radius: 4px;
+    border: 1px solid #DDD;
+    display: table;
+    padding: 0;
+}
+
+.steps li {
+    display: table-cell;
+    width: 25%;
+    padding: 0.5em 1em;
+    border-right: 1px solid #DDD;
+    border-left: 1px solid #FFF;
+    background: -webkit-gradient(linear, left top, left bottom, from(#F6F6F6), to(#EEE));
+    color: #888;
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.6);
+}
+
+.steps li.current {
+    background: -webkit-gradient(linear, left top, left bottom, from(#EEE), to(#F6F6F6));
+    font-weight: bold;
+}
+
+.steps li:last-child {
+    border-right: 0;
+}
+
+.steps li:first-child {
+    border-left: 0;
+}
+
+.steps li span {
+    display: block;
+    color: rgba(0, 0, 0, 0.3);
+    vertical-align: middle;
+    font-size: 1.2em;
 }

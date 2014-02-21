@@ -48,7 +48,7 @@ $(document).ready(function() {
         return false;
     });
 
-    $(".calendar-list").on("click", ".date-remove-button", function() {
+    $("#calendar-list").on("click", ".date-remove-button", function() {
         removeDate($(this).attr("data-date"));
         return false;
     });
@@ -80,13 +80,13 @@ function updateDateTimeList() {
 
     $(".time-slots").html("");
     times.forEach(function(time) {
-        $(".time-slots").append('<li><button class="btn btn-default time-remove-button" title="remove time" data-time="' + time + '">' + time + ' <i class="icon-trash-o"></i></li> ');
+        $(".time-slots").append('<li><button class="btn btn-xs btn-default time-remove-button" title="remove time" data-time="' + time + '"><i class="fa fa-trash-o"></i></button> ' + time + '</li> ');
     });
 
-    $(".calendar-list").html("");
+    $("#calendar-list").html("");
     dates.forEach(function(date) {
         var formatDate = moment(date).format("ddd D MMM");
-        $(".calendar-list").append('<li><button class="btn btn-default date-remove-button" title="remove date" data-date="' + date +'">' + formatDate + ' <i class="icon-trash-o"></i></li> ');
+        $("#calendar-list").append('<li><button class="btn btn-xs btn-default date-remove-button" title="remove date" data-date="' + date +'"><i class="fa fa-trash-o"></i></button> ' + formatDate + '</li>');
     });
 
     // $(".date-remove-button, .time-remove-button").tooltip({"placement": "right"});
@@ -95,7 +95,8 @@ function updateDateTimeList() {
 }
 
 function addTime(time) {
-    times.push(time);
+    var formatTime = moment("01.01.1990 " + time).format("HH:mm");
+    times.push(formatTime);
     times = times.uniquify();
     times.sort();
     updateDateTimeList();

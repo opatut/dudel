@@ -1,11 +1,23 @@
+{% macro alert(category, message) %}
+    {% set replace = {"message":"info","error":"danger"} %}
+    {% set c = replace[category] if category in replace else category %}
+
+    {% set icons = {"info": "exclamation-circle", "warning":"warning", "success":"check", "danger": "times"} %}
+
+    <div class="alert alert-{{ c }}">
+        <div class="container">
+            <i class="fa fa-{{ icons[c] }}"></i>
+            {{ message | safe }}
+        </div>
+    </div>
+{% endmacro %}
+
 {% macro form_errors(form) %}
     {% if form.errors %}
 
         {% for field_name in form.errors %}
             {% for error in form.errors[field_name] %}
-                <div class="alert alert-danger">
-                    {{ form[field_name].label.text }}: {{ error }}
-                </div>
+                {{ alert("danger", form[field_name].label.text + ": " + error) }}
             {% endfor %}
         {% endfor %}
 
@@ -16,7 +28,7 @@
     {% if field.errors %}
     <div class="form-errors">
         {% for error in field.errors %}
-            <div class="alert alert-danger">{{ error }}</div>
+            {{ alert("danger", error) }}
         {% endfor %}
     </div>
     {% endif %}
