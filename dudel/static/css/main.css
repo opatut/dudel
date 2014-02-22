@@ -108,6 +108,10 @@ h1.inline {
     margin-top: 0;
 }
 
+.page-header.secondary {
+    margin-top: 3em;
+}
+
 h1 { font-size: 2em; }
 h2 { font-size: 1.75em; }
 h3 { font-size: 1.5em; }

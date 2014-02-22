@@ -17,12 +17,16 @@ def index():
         return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
     polls = Poll.query.filter_by(public_listing=True).all()
+    if current_user.is_authenticated():
+        user_polls = Poll.query.filter_by(author=current_user).all()
+    else:
+        user_polls = None
 
     poll_count = Poll.query.count()
     vote_count = Vote.query.count()
     user_count = User.query.count()
 
-    return render_template("index.html", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count, user_count=user_count)
+    return render_template("index.html", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count, user_count=user_count, user_polls=user_polls)
 
 @app.route("/login", methods=("GET", "POST"))
 def login():
