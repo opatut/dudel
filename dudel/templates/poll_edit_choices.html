@@ -44,6 +44,11 @@
                     <td><input type="submit" value="Add" class="btn btn-default btn-sm" /></td>
                 </tr>
             </table>
+
+            <div class="form-actions">
+                <a class="btn btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}">Vote now</a>
+                <a class="btn btn-primary" href="{{ poll.get_url() }}">Done</a>
+            </div>
         </form>
     {% elif poll.type == "date" %}
 
