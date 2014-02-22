@@ -82,18 +82,8 @@ table.vote label {
     text-align: center;
 }
 
-.vote-choice.comment span.comment-icon {
-	display:none;
-    right: 0;
-    bottom: 0;
-    margin: 4px;
-    position: absolute;
-    font-size: 14px;
-    text-shadow: none;
-    color: rgba(0, 0, 0, 0.3);
-    /*border: 8px solid #FFFFFF;*/
-    /*border-color: rgba(255, 255, 255, 1) rgba(255, 255, 255, 1) rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);*/
-    /*background: #AAA;*/
+.vote-choice.comment {
+    background-image: url("../gfx/comment-background.png");
 }
 
 .auto-width {

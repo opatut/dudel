@@ -36,7 +36,8 @@ def login():
         user = get_user(form.username.data)
         login_user(user)
         flash("You were logged in, %s." % user.displayname, "success")
-        return redirect(url_for("index"))
+
+        return redirect(request.args.get("next") or url_for("index"))
 
     return render_template("login.html", form=form)
 
@@ -183,7 +184,12 @@ def poll_vote(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
 
     if poll.require_login and current_user.is_anonymous():
-        return render_template("vote_error.html", reason="LOGIN_REQUIRED")
+        flash("You need to login to vote on this poll.", "error")
+        return redirect(url_for("login", next=url_for("poll_vote", slug=poll.slug)))
+
+    if poll.one_vote_per_user and not current_user.is_anonymous() and poll.get_user_votes(current_user):
+        flash("You can only vote once on this poll. Please edit your choices by clicking the edit button on the right.", "error")
+        return redirect(poll.get_url())
 
     form = CreateVoteForm()
 
@@ -224,10 +230,17 @@ def poll_vote(slug):
 
 @app.route("/<slug>/vote/<int:vote_id>/edit", methods=("POST", "GET"))
 def poll_vote_edit(slug, vote_id):
-    # TODO
     poll = Poll.query.filter_by(slug=slug).first_or_404()
     vote = Vote.query.filter_by(id=vote_id).first_or_404()
     if vote.poll != poll: abort(404)
+
+    if vote.user and current_user.is_anonymous():
+        flash("This vote was created by %s. If that's you, please login to edit the vote." % vote.user.displayname, "error")
+        return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
+
+    if vote.user and not current_user.is_anonymous() and vote.user != current_user:
+        flash("This vote was created by %s. You cannot edit their choices." % vote.user.displayname, "error")
+        return redirect(poll.get_url())
 
     form = CreateVoteForm(obj=vote)
     if poll.require_login and current_user.is_anonymous():
@@ -238,7 +251,7 @@ def poll_vote_edit(slug, vote_id):
             subform.value.choices = [(v.id, v.title) for v in poll.get_choice_values()]
 
         if form.validate_on_submit():
-            if current_user.is_anonymous():
+            if not vote.user:
                 vote.name = form.name.data
             vote.anonymous = poll.anonymous_allowed and form.anonymous.data
 

@@ -71,7 +71,7 @@
                                         {% if vote_choice and not vote_choice.value.deleted %}
                                         <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}"{% if vote_choice.comment %} title="{{ vote_choice.comment }}"{% endif %}>
                                             <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
-                                            {% if vote_choice.comment %}<span class="comment-icon fa fa-exclamation"></span>{% endif %}
+                                            {#{% if vote_choice.comment %}<span class="comment-icon fa fa-exclamation"></span>{% endif %}#}
                                         </td>
                                         {% else %}
                                         <td class="vote-choice text-center none">
@@ -111,6 +111,13 @@
     <div style="clear: right;"></div>
 
     <center>
-        <p><a class="btn btn-lg btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}" style="min-width: 50%;">Vote now</a></p>
+        {% set user_votes = [] if current_user.is_anonymous() else poll.get_user_votes(current_user) %}
+        {% if poll.one_vote_per_user and user_votes %}
+            <p><a class="btn btn-lg btn-primary" href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=user_votes[0].id) }}" style="min-width: 30%;">Edit vote</a></p>
+        {% elif poll.require_login and current_user.is_anonymous() %}
+            <p><a class="btn btn-lg btn-primary" href="{{ url_for('login', next=url_for('poll_vote', slug=poll.slug)) }}" style="min-width: 30%;">Log in to vote</a></p>
+        {% else %}
+            <p><a class="btn btn-lg btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}" style="min-width: 30%;">Vote now</a></p>
+        {% endif %}
     </center>
 {% endblock %}

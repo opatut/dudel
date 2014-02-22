@@ -117,6 +117,7 @@ class EditPollForm(Form):
     anonymous_allowed = BooleanField("Allow anonymous votes")
     require_login = BooleanField("Require login to vote")
     public_listing = BooleanField("Show in public poll list")
+    one_vote_per_user = BooleanField("One vote per user (only effective with login)")
     # password = TextField("Password")
     # password_level = SelectField("Password mode", choices=[
     #     (0, "Do not use password"),

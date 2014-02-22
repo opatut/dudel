@@ -71,6 +71,7 @@ class Poll(db.Model):
     require_login = db.Column(db.Boolean, default=False)
     show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote", name="poll_show_results"))
     send_mail = db.Column(db.Boolean, default=False)
+    one_vote_per_user = db.Column(db.Boolean, default=True)
 
     RESERVED_NAMES = ["login", "logout", "index"]
 
