@@ -109,6 +109,9 @@ class Poll(db.Model):
     def user_can_edit(self, user):
         return not self.author or self.author == user
 
+    def get_user_votes(self, user):
+        return Vote.query.filter_by(poll = self, user = user).all()
+
     # returns a list of groups
     # each group is sorted
     # the groups are sorted by first item

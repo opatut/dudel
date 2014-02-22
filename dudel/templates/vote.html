@@ -1,9 +1,17 @@
 {% extends "base_poll.html" %}
-{% from "_formhelpers.html" import form_errors %}
+{% from "_formhelpers.html" import form_errors, alert %}
 
 {% block polltitle %}Vote{% endblock %}
 
 {% block poll_content %}
+
+    {% if not current_user.is_anonymous() and poll.get_user_votes(current_user) %}
+        {{ alert("warning", "You have already voted on this poll. Maybe instead of voting again you'd rather edit your choices?") }}
+    {% endif %}
+
+
+    {{ alert("info", "Hold left mouse button and drag mouse to select multiple vote choices.") }}
+
     <form method="POST" class="form-inline">
         {{ form.hidden_tag() }}
         {{ form_errors(form) }}
@@ -63,8 +71,6 @@
                     </td>
                 </tr>
             {% endfor %}
-
-            <tr><td colspan="6">Hold left mouse button and drag mouse to select many vote choices.</td></tr>
 
 			<tr><td colspan="6"><hr /></td></tr>
 

@@ -28,14 +28,23 @@
                     </a>
                 </div>
 
+                {% if current_user.is_anonymous() %}
+                <form class="navbar-form navbar-right" method="POST" action="{{ url_for('login') }}">
+                    <div class="form-group">
+                        {{ login_form.username(class="form-control", placeholder=login_form.username.label.text) }}
+                    </div>
+                    <div class="form-group">
+                        {{ login_form.password(class="form-control", placeholder=login_form.password.label.text) }}
+                    </div>
+                    {{ login_form.hidden_tag() }}
+                    <input type="submit" class="btn navbar-btn btn-primary" value="Login" />
+                </form>
+                {% else %}
                 <div class="navbar-right">
-                    {% if current_user.is_anonymous() %}
-                    <a class="btn navbar-btn btn-primary" href="{{ url_for('login') }}">Login</a>
-                    {% else %}
                     <span class="nav navbar-text">Logged in as {{ current_user.displayname }}</span>
                     <a class="btn navbar-btn btn-default" href="{{ url_for('logout') }}">Logout</a>
-                    {% endif %}
-                </ul>
+                </div>
+                {% endif %}
             </div>
         </nav>
         <div class="container">

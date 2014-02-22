@@ -47,7 +47,9 @@ $(document).ready(function() {
 
     // Button: "all" (selecting the whole column)
     $(".vote-choice-column").click(function() {
-        $('.vote-choice.control[data-choice="' + $(this).data("choice") + '"].off').click();
+        $('.vote-choice.control[data-choice="' + $(this).data("choice") + '"]').each(function() {
+            highlightVoteChoice($(this), true);
+        });
     });
 
     // Fast selecting of voting cells
@@ -62,7 +64,7 @@ $(document).ready(function() {
         });
     }).mouseenter(function() {
         if(fastselectState.active) {
-            highlightVoteChoice($(this));
+            highlightVoteChoice($(this), true);
         }
     });
 
@@ -137,14 +139,14 @@ function showComment() {
     return false;
 }
 
-function highlightVoteChoice(elem) {
+function highlightVoteChoice(elem, onlyEnable) {
     var is_off = elem.hasClass("off");
 
     var tr = elem.closest("tr");
     tr.find("td.vote-choice.control").addClass("off");
     tr.find("input").prop("checked", false);
 
-    if(is_off) {
+    if(is_off || onlyEnable) {
         elem.removeClass("off");
         if(is_off) tr.find("input[value='" + elem.data("choice") + "']").prop("checked", true);
     }

@@ -68,7 +68,7 @@ $(document).ready(function() {
 /* Checkbox stuff */
 
 function updateCheckbox(e) {
-    $(this).closest(".checkbox-cell").removeClass("no yes maybe").addClass($(this).prop("checked") ? "yes" : "no");
+    $(this).closest(".checkbox-cell").removeClass("on off").addClass($(this).prop("checked") ? "on" : "off");
 }
 
 /* ========================================================================== */

@@ -12,6 +12,10 @@
     margin: -1em 0.2em -0.9em 0;
 }
 
+form.navbar-form {
+    margin: 0;
+}
+
 .form-errors {
     margin: 0.5em 0;
 }
@@ -47,6 +51,11 @@ table.vote label {
     white-space: nowrap;
     background: #EEE;
     vertical-align: middle;
+}
+
+.poll .mine .author {
+    background: #444;
+    color: #FFF;
 }
 
 .poll .author {
@@ -175,6 +184,14 @@ label + .help-inline {
 .checkbox-cell {
     background-color: #F6F6F6;
     text-align: center;
+}
+
+.checkbox-cell.on {
+    background-color: #9C6;
+}
+
+.checkbox-cell.off {
+    background-color: #F96 !important;
 }
 
 td.not-padded {
@@ -386,9 +403,7 @@ footer {
 }
 
 .calendar-list {
-    display: inline-block;
-    vertical-align: top;
-    margin: 0.5em;
+    padding: 1em 0;
 }
 
 .calendar-list ul {

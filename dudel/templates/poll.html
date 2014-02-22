@@ -57,7 +57,7 @@
                     </thead>
                     <tbody>
                         {% for vote in poll.votes %}
-                            <tr>
+                            <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
                                 <td class="author">
                                     {% if vote.anonymous %}
                                         anonymous

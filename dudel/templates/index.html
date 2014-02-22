@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_formhelpers.html" import field_error %}
+{% from "_formhelpers.html" import field_error, alert %}
 
 {% block content %}
 <div class="row">
@@ -55,9 +55,7 @@
         </ul>
 
         {% if not polls %}
-        <p class="alert alert-info">
-            There are currently no public polls.
-        </p>
+            {{ alert("info", "There are currently no public polls.") }}
         {% endif %}
 
         <hr />

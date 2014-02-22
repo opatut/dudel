@@ -1,4 +1,6 @@
 from dudel import app, ICONS
+from dudel.forms import LoginForm
+from flask import g
 
 @app.template_filter()
 def date(s):
@@ -11,6 +13,7 @@ def time(s):
 @app.context_processor
 def inject():
     return dict(
-        ICONS=ICONS
+        ICONS=ICONS,
+        login_form=LoginForm()
         )
 
