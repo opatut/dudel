@@ -1,6 +1,6 @@
 from dudel import app, db
 from dudel.models import User, Poll, Vote, Choice, ChoiceValue, VoteChoice, get_user
-from dudel.forms import CreatePollForm, EditPollForm, CreateVoteForm, DateTimeSelectForm, AddChoiceForm, AddValueForm, LoginForm
+from dudel.forms import CreatePollForm, EditPollForm, CreateVoteForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm
 from flask import redirect, abort, request, render_template, flash, url_for, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from dateutil import parser
@@ -131,7 +131,7 @@ def poll_edit_choices(slug, step=1):
             text = form.text.data.strip()
             choice = Choice.query.filter_by(poll_id=poll.id, text=text).first()
             if choice:
-                choice.deleted = not choice.deleted
+                choice.deleted = False
             else:
                 choice = Choice()
                 choice.text = form.text.data
@@ -148,6 +148,23 @@ def poll_edit_choices(slug, step=1):
             db.session.commit()
             flash("The choice was %s." % ("disabled" if choice.deleted else "added"), "success")
             return redirect(url_for("poll_edit_choices", slug=poll.slug))
+
+        elif "edit" in request.args:
+            eid = request.args.get("edit")
+            choice = Choice.query.filter_by(id=eid, poll_id=poll.id).first_or_404()
+            edit_form = EditChoiceForm(obj=choice)
+            if edit_form.validate_on_submit():
+                text = edit_form.text.data.strip()
+                other_choice = Choice.query.filter_by(poll_id=poll.id, text=text).first()
+                if other_choice and other_choice != choice:
+                    flash("A choice with this text already exists.", "error")
+                else:
+                    choice.text = edit_form.text.data.strip()
+                    db.session.commit()
+                    flash("The choice was edited.", "success")
+                    return redirect(url_for("poll_edit_choices", slug=poll.slug))
+            args["edit_form"] = edit_form
+            args["edit_id"] = choice.id
 
         args["form"] = form
 
@@ -262,6 +279,11 @@ def poll_vote_edit(slug, vote_id):
                 if value and value.poll != poll: abort(404)
 
                 vote_choice = poll.get_vote_choice(vote, choice)
+                if not vote_choice:
+                    vote_choice = VoteChoice()
+                    vote_choice.vote = vote
+                    vote_choice.choice = choice
+                    
                 vote_choice.comment = subform.comment.data
                 vote_choice.value = value
                 print("Set vote choice of %s to %s" % (choice, value.title))

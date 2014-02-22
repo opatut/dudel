@@ -10,7 +10,7 @@
             <li{% if request.endpoint == "poll_edit_choices" %} class="active"{% endif %}><a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}"><span class="fa fa-list"></span> Choices</a></li>
         {% endif %}
 
-        <li{% if request.endpoint == "poll_vote" %} class="active"{% endif %}><a href="{{ url_for('poll_vote', slug=poll.slug) }}"><span class="fa fa-check"></span> Vote</a></li>
+        {#<li{% if request.endpoint == "poll_vote" %} class="active"{% endif %}><a href="{{ url_for('poll_vote', slug=poll.slug) }}"><span class="fa fa-check"></span> Vote</a></li>#}
     </ul>
 
     {% block poll_content %}{% endblock %}

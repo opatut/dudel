@@ -13,9 +13,6 @@
             {{ alert("info", "Deleted choices will stay in this list, so votes that have already been made are not lost.") }}
         {% endif %}
 
-        <form class="form" method="POST">
-            {{ form.hidden_tag() }}
-            {{ form_errors(form) }}
             <table class="table auto-width">
                 <tr>
                     <th>Choice</th>
@@ -24,24 +21,57 @@
                 </tr>
                 {% set total_votes = poll.votes|length %}
                 {% for choice in poll.choices|sort() %}
-                    <tr class="choice {% if choice.deleted %}deleted{% endif %}">
-                        <td class="choice">{{ choice.text }}</td>
+                    <tr class="choice {% if choice.deleted %}deleted{% endif %} {% if edit_id == choice.id %}editing{% endif %}">
+                        <td class="choice">
+                            {% if edit_id == choice.id %}
+                                <form class="form form-inline" method="POST">
+                                    <div class="input-group input-group-sm">
+                                        {{ edit_form.hidden_tag() }}
+                                        {{ form_errors(edit_form) }}
+                                        {{ edit_form.text(class="form-control", autofocus=1) }}
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i></button>
+                                        </span>
+                                    </div>
+                                </form>
+                            {% else %}
+                                {{ choice.text }}
+                            {% endif %}
+                        </td>
                         {% set vote_count = choice.vote_choices|length %}
                         <td class="color {{ 'green' if vote_count >= total_votes else ('red' if vote_count == 0 else 'orange') }}">
                             <strong>{{ vote_count }}</strong> / {{ total_votes }}
                         </td>
-                        <td><a href="?toggle={{ choice.id }}" class="btn btn-default btn-xs">
+                        <td>
+                            <a href="?edit={{ choice.id }}" class="btn btn-default btn-xs">
+                                <i class="fa fa-edit"></i>
+                            </a>
+
+                            <a href="?toggle={{ choice.id }}" class="btn btn-default btn-xs">
                             {% if choice.deleted %}
                                 <i class="fa fa-undo"></i>
                             {% else %}
                                 <i class="fa fa-trash-o"></i>
                             {% endif %}
-                        </a></td>
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
                 <tr>
-                    <td colspan="2">{{ form.text(class="form-control input-sm", placeholder="Add a choice") }}</td>
-                    <td><input type="submit" value="Add" class="btn btn-default btn-sm" /></td>
+                    <td>
+                        <form class="form form-inline" method="POST">
+                            <div class="input-group input-group-sm">
+                                {{ form.hidden_tag() }}
+                                {{ form_errors(form) }}
+                                {{ form.text(class="form-control", placeholder="Add a choice") }}
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i></button>
+                                </span>
+                            </div>
+                        </form>
+                    </td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </table>
 

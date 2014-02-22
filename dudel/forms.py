@@ -102,6 +102,9 @@ class DateTimeSelectForm(Form):
 class AddChoiceForm(MultiForm):
     text = TextField("Choice", validators=[Required(), Length(min=1)])
 
+class EditChoiceForm(MultiForm):
+    text = TextField("Choice", validators=[Required(), Length(min=1)])
+
 class AddValueForm(MultiForm):
     title = TextField("Title", validators=[Required(), Length(min=1)])
     color = TextField("Color", validators=[Required(), Regexp("^#?([0-9A-Fa-f]{3}){1,2}$")])

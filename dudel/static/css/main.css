@@ -262,6 +262,10 @@ footer {
     text-decoration: line-through;
 }
 
+tr.choice td {
+    vertical-align: middle !important;
+}
+
 .color.red { color: red; }
 .color.orange { color: #F90; }
 .color.green { color: #0A0; }
