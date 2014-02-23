@@ -44,8 +44,9 @@ def login():
 
 @app.route("/logout")
 def logout():
-    flash("You were logged out, %s. Goodbye!" % current_user.displayname, "success")
-    logout_user()
+    if current_user.is_authenticated():
+        flash("You were logged out, %s. Goodbye!" % current_user.displayname, "success")
+        logout_user()
     return redirect(request.args.get("next") or url_for("index"))
 
 @app.route("/<slug>/", methods=("GET", "POST"))
