@@ -29,7 +29,7 @@
                 </div>
 
                 {% if current_user.is_anonymous() %}
-                <form class="navbar-form navbar-right" method="POST" action="{{ url_for('login') }}">
+                <form class="navbar-form navbar-right" method="POST" action="{{ url_for('login', next=request.url) }}">
                     <div class="form-group">
                         {{ login_form.username(class="form-control", placeholder=login_form.username.label.text) }}
                     </div>
@@ -42,7 +42,7 @@
                 {% else %}
                 <div class="navbar-right">
                     <span class="nav navbar-text">Logged in as {{ current_user.displayname }}</span>
-                    <a class="btn navbar-btn btn-default" href="{{ url_for('logout') }}">Logout</a>
+                    <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}">Logout</a>
                 </div>
                 {% endif %}
             </div>

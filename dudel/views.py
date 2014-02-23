@@ -45,7 +45,7 @@ def login():
 def logout():
     flash("You were logged out, %s. Goodbye!" % current_user.displayname, "success")
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(request.args.get("next") or url_for("index"))
 
 @app.route("/<slug>/")
 def poll(slug):
@@ -220,7 +220,11 @@ def poll_vote(slug):
                 vote.name = form.name.data
             else:
                 vote.user = current_user
+
             vote.anonymous = poll.anonymous_allowed and form.anonymous.data
+            if vote.anonymous and not vote.user:
+                vote.name = "anonymous"
+
             poll.votes.append(vote)
 
             for subform in form.vote_choices:
@@ -252,11 +256,11 @@ def poll_vote_edit(slug, vote_id):
     if vote.poll != poll: abort(404)
 
     if vote.user and current_user.is_anonymous():
-        flash("This vote was created by %s. If that's you, please login to edit the vote." % vote.user.displayname, "error")
+        flash("This vote was created by a logged in user. If that was you, please log in to edit the vote.", "error")
         return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
 
     if vote.user and not current_user.is_anonymous() and vote.user != current_user:
-        flash("This vote was created by %s. You cannot edit their choices." % vote.user.displayname, "error")
+        flash("This vote was created by someone else. You cannot edit their choices.", "error")
         return redirect(poll.get_url())
 
     form = CreateVoteForm(obj=vote)
@@ -272,6 +276,9 @@ def poll_vote_edit(slug, vote_id):
                 vote.name = form.name.data
             vote.anonymous = poll.anonymous_allowed and form.anonymous.data
 
+            if vote.anonymous and not vote.user:
+                vote.name = "anonymous"
+
             for subform in form.vote_choices:
                 choice = Choice.query.filter_by(id=subform.choice_id.data).first()
                 value = ChoiceValue.query.filter_by(id=subform.value.data).first()
@@ -283,10 +290,9 @@ def poll_vote_edit(slug, vote_id):
                     vote_choice = VoteChoice()
                     vote_choice.vote = vote
                     vote_choice.choice = choice
-                    
+
                 vote_choice.comment = subform.comment.data
                 vote_choice.value = value
-                print("Set vote choice of %s to %s" % (choice, value.title))
 
             db.session.commit()
             flash("The vote has been edited.", "success")
