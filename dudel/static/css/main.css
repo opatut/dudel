@@ -67,6 +67,9 @@ table.vote label {
 .poll .choice-sum,
 .poll .choice-text {
     text-align: center;
+    white-space: inherit;
+    max-width: 10em;
+    overflow: auto;
 }
 
 .poll .choice-sum.maximum {
@@ -78,7 +81,8 @@ table.vote label {
     /*border: 5px solid white;*/
     color: white;
     font-size: 16px;
-    width: 70px;
+    min-width: 4em;
+    max-width: 10em;
     text-align: center;
 }
 
