@@ -3,7 +3,7 @@ from flask import request
 from flask.ext.wtf import Form
 from flask.ext.login import current_user
 from wtforms import ValidationError
-from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField
+from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField
 from wtforms.ext.dateutil.fields import DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional, NoneOf
 from dudel.models import Poll, update_user_data
@@ -116,6 +116,7 @@ class LoginForm(MultiForm):
 
 class EditPollForm(Form):
     title = TextField("Title", validators=[Required(), Length(min=3)])
+    description = TextAreaField("Description")
     due_date = DateTimeField("Due date", validators=[Optional()])
     anonymous_allowed = BooleanField("Allow anonymous votes")
     require_login = BooleanField("Require login to vote")

@@ -33,3 +33,9 @@
     </div>
     {% endif %}
 {% endmacro %}
+
+{% macro markdown_info(helpBlock) %}
+    {% if helpBlock %}<p class="help-block">{% endif %}
+        You can use <a href="http://daringfireball.net/projects/markdown/" target="_blank">Markdown</a> syntax for formatting.
+    {% if helpBlock %}</p>{% endif %}
+{% endmacro %}

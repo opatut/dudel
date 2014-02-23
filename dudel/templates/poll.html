@@ -28,6 +28,12 @@
         </div>
     </ul>
 
+    {% if poll.description %}
+        <h3>Poll Description</h3>
+        {{ poll.description | markdown }}
+        <hr />
+    {% endif %}
+
     {% if poll.votes %}
         <div class="table-padding">
             {% set groups = poll.get_choice_groups() %}

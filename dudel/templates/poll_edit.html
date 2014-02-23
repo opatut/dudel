@@ -1,5 +1,4 @@
 {% extends "base_poll.html" %}
-{% from "_formhelpers.html" import field_error %}
 
 {% block polltitle %}Settings{% endblock %}
 
@@ -38,6 +37,12 @@
                     {{ form.show_results.label }}
                     {{ form.show_results(class="form-control") }}
                     {{ field_error(form.show_results) }}
+                </div>
+                <div class="form-group">
+                    {{ form.description.label }}
+                    {{ form.description(class="form-control monospace", rows=6) }}
+                    {{ field_error(form.show_results) }}
+                    {{ markdown_info(true) }}
                 </div>
             </div>
             <div class="col-md-5 col-md-offset-1">

@@ -54,6 +54,7 @@ class User(db.Model):
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))
+    description = db.Column(db.Text)
     slug = db.Column(db.String(80))
     type = db.Column(db.Enum("date", "normal", name="poll_type"), default="normal")
     created = db.Column(db.DateTime)

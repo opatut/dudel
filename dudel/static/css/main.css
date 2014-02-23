@@ -549,3 +549,7 @@ tr.choice td {
     vertical-align: middle;
     font-size: 1.2em;
 }
+
+.monospace {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
