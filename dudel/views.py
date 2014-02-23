@@ -295,7 +295,8 @@ def poll_vote_edit(slug, vote_id):
 
     form = CreateVoteForm(obj=vote)
     if poll.require_login and current_user.is_anonymous():
-        return render_template("vote_error.html", reason="LOGIN_REQUIRED")
+        flash("You need to login to edit votes on this poll.")
+        return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
 
     if request.method == "POST":
         for subform in form.vote_choices:

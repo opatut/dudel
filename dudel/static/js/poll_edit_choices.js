@@ -95,7 +95,7 @@ function updateDateTimeList() {
 }
 
 function addTime(time) {
-    var formatTime = moment("01.01.1990 " + time).format("HH:mm");
+    var formatTime = moment("1990-01-01T" + time).format("HH:mm");
     times.push(formatTime);
     times = times.uniquify();
     times.sort();
