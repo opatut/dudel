@@ -82,6 +82,11 @@ class YourNameRequired(object):
         if not field.data and current_user.is_anonymous():
             raise ValidationError("This field is required.")
 
+class RequiredIfAnonymous(object):
+    def __call__(self, form, field):
+        if not field.data and current_user.is_anonymous():
+            raise ValidationError("This field is required.")
+
 ################################################################################
 
 class CreatePollForm(Form):
@@ -122,6 +127,7 @@ class EditPollForm(Form):
     require_login = BooleanField("Require login to vote")
     public_listing = BooleanField("Show in public poll list")
     one_vote_per_user = BooleanField("One vote per user (only effective with login)")
+    allow_comments = BooleanField("Allow comments")
     # password = TextField("Password")
     # password_level = SelectField("Password mode", choices=[
     #     (0, "Do not use password"),
@@ -149,3 +155,7 @@ class CreateVoteForm(Form):
 
 class PollPassword(Form):
     password = PasswordField("Poll password", validators=[Required()])
+
+class CommentForm(Form):
+    name = TextField("Your Name", validators=[RequiredIfAnonymous()])
+    text = TextAreaField("Comment")

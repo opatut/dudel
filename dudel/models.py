@@ -73,6 +73,7 @@ class Poll(db.Model):
     show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote", name="poll_show_results"))
     send_mail = db.Column(db.Boolean, default=False)
     one_vote_per_user = db.Column(db.Boolean, default=True)
+    allow_comments = db.Column(db.Boolean, default=True)
 
     RESERVED_NAMES = ["login", "logout", "index"]
 
@@ -137,6 +138,9 @@ class Poll(db.Model):
             stats[k]["max"] = (stats[k][main_key] == maximum)
         return stats
 
+    def get_comments(self):
+        return self.comments
+
     def fill_vote_form(self, form):
         while form.vote_choices:
             form.vote_choices.pop_entry()
@@ -183,6 +187,17 @@ class Choice(db.Model):
             return self.date.date()
         else:
             return "default" # normal polls only have one default group
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(80))
+    created = db.Column(db.DateTime)
+    name = db.Column(db.String(80))
+    user = db.relationship("User", backref="comments")
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    poll = db.relationship("Poll", backref="comments")
+    poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
+    deleted = db.Column(db.Boolean, default=False)
 
 class ChoiceValue(db.Model):
     id = db.Column(db.Integer, primary_key=True)

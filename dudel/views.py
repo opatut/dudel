@@ -1,9 +1,10 @@
 from dudel import app, db
-from dudel.models import User, Poll, Vote, Choice, ChoiceValue, VoteChoice, get_user
-from dudel.forms import CreatePollForm, EditPollForm, CreateVoteForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm
+from dudel.models import User, Poll, Vote, Choice, ChoiceValue, VoteChoice, get_user, Comment
+from dudel.forms import CreatePollForm, EditPollForm, CreateVoteForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, CommentForm
 from flask import redirect, abort, request, render_template, flash, url_for, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from dateutil import parser
+from datetime import datetime
 
 @app.route("/", methods=("POST", "GET"))
 def index():
@@ -47,10 +48,27 @@ def logout():
     logout_user()
     return redirect(request.args.get("next") or url_for("index"))
 
-@app.route("/<slug>/")
+@app.route("/<slug>/", methods=("GET", "POST"))
 def poll(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
-    return render_template("poll.html", poll=poll)
+
+    comment_form = CommentForm()
+    if poll.allow_comments and comment_form.validate_on_submit():
+        comment = Comment()
+        comment.created = datetime.utcnow()
+        comment.text = comment_form.text.data.strip()
+
+        if current_user.is_anonymous():
+            comment.name = comment_form.name.data
+        else:
+            comment.user = current_user
+
+        poll.comments.append(comment)
+        flash("Your comment was saved.", "success")
+        db.session.commit()
+        return redirect(poll.get_url() + "#comment-" + str(comment.id))
+
+    return render_template("poll.html", poll=poll, comment_form=comment_form)
 
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
 def poll_edit(slug):
@@ -76,6 +94,18 @@ def poll_claim(slug):
     poll.author = current_user
     db.session.commit()
     flash("You claimed this poll. Only you may edit it now.", "success")
+    return redirect(url_for("poll_edit", slug=poll.slug))
+
+@app.route("/<slug>/unclaim/", methods=("POST", "GET"))
+@login_required
+def poll_unclaim(slug):
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    if not poll.user_can_edit(current_user):
+        abort(403)
+
+    poll.author = None
+    db.session.commit()
+    flash("You freed this poll. Everyone may edit it now.", "success")
     return redirect(url_for("poll_edit", slug=poll.slug))
 
 

@@ -1,4 +1,4 @@
-{% from "_formhelpers.html" import alert, form_errors, field_error, markdown_info %}
+{% from "_macros.html" import alert, form_errors, field_error, markdown_info %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -55,6 +55,9 @@
         </div>
 
         <footer>
+            <div class="container">
+                Powered by <a href="http://github.com/opatut/dudel">Dudel</a>
+            </div>
         </footer>
 
         <script type="text/javascript" src="{{ url_for('static', filename='js/moment.min.js') }}"></script>

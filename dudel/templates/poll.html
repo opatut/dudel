@@ -126,4 +126,54 @@
             <p><a class="btn btn-lg btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}" style="min-width: 30%;">Vote now</a></p>
         {% endif %}
     </center>
+
+
+    {% set comments = poll.get_comments() %}
+
+    {% if comments %}
+        <hr />
+        <h3>Comments</h3>
+        <div class="comments">
+        {% for comment in comments %}
+            <div class="comment">
+                <a name="comment-{{ comment.id }}"></a>
+                <div class="avatar">
+                    <img src="{{ (comment.name or comment.user.email) | gravatar }}" />
+                </div>
+                <div class="meta">
+                    <div class="author">{{ comment.name or comment.user.displayname }}</div>
+                    commented on
+                    <div class="date">{{ comment.created | date }} at {{ comment.created | time }}</div>
+                </div>
+                <div class="text">{{ comment.text | markdown }}</div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if poll.allow_comments %}
+        <hr />
+        <h3>Post a comment</h3>
+        <form method="POST" class="form">
+            {{ comment_form.hidden_tag() }}
+            <div class="form-group">
+                {{ comment_form.name.label }}
+                {% if current_user.is_anonymous() %}
+                    {{ comment_form.name(class="form-control") }}
+                {% else %}
+                    <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
+                {% endif %}
+                {{ field_error(comment_form.name) }}
+            </div>
+            <div class="form-group">
+                {{ comment_form.text.label }}
+                {{ comment_form.text(class="form-control", rows=6) }}
+                {{ field_error(comment_form.text) }}
+                {{ markdown_info(true) }}
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Post comment" class="btn btn-primary" />
+            </div>
+        </form>
+    {% endif %}
 {% endblock %}

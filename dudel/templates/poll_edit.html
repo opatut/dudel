@@ -3,18 +3,31 @@
 {% block polltitle %}Settings{% endblock %}
 
 {% block poll_content %}
-    {% if not poll.author and not current_user.is_anonymous() %}
-    <div class="row">
-        <div class="well col-md-6 col-md-offset-3 text-center">
-            <p>
+    {% if not poll.author %}
+        <p class="well text-center">
+            <span style="margin-right: 1em;">
                 This poll does not belong to any user. While logged in, you can
-                claim authorship to receive exclusive editing rights.
-            </p>
-            <a href="{{ url_for('poll_claim', slug=poll.slug) }}" class="btn btn-primary btn-sm">Claim authorship</a>
-        </div>
-    </div>
-    <hr />
+                claim authorship to receive exclusive editing rights. 
+            </span>
+
+            {% if current_user.is_anonymous() %}
+                <a href="{{ url_for('login', next=url_for('poll_claim', slug=poll.slug)) }}" class="btn btn-primary btn-sm">Log in and claim authorship</a>
+            {% else %}
+                <a href="{{ url_for('poll_claim', slug=poll.slug) }}" class="btn btn-primary btn-sm">Claim authorship</a>
+            {% endif %}
+
+            {{ alert("info", "Please bear in mind that these settings can be changed by anyone as long as
+                the poll is unclaimed, rendering every security setting useless.")}}
+        </p>
+    {% else %}
+        <p class="well text-center">
+            <strong>Note:</strong> 
+            You have exclusive ownership of this poll. <a href="{{ url_for('poll_unclaim', slug=poll.slug) }}">Click here</a> to
+            free the poll and allow other users to edit the settings.
+        </p>
     {% endif %}
+
+    <hr />
 
     <form method="POST">
         <h3>Settings</h3>
@@ -64,6 +77,11 @@
                 #}
 
                 <label>Additional settings</label>
+                <div class="checkbox">
+                    {{ form.allow_comments() }}
+                    {{ form.allow_comments.label }}
+                    {{ field_error(form.allow_comments) }}
+                </div>
                 <div class="checkbox">
                     {{ form.anonymous_allowed() }}
                     {{ form.anonymous_allowed.label }}

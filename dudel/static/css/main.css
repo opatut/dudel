@@ -250,7 +250,9 @@ td.vote-comment {
 }
 
 footer {
-    margin-top: 4em;
+    margin: 3em 0;
+    color: #AAA;
+    text-align: center;
 }
 
 .form-actions {
@@ -500,14 +502,6 @@ tr.choice td {
     /*padding: 3px;*/
 }
 
-
-@media (min-width: 1200px) {
-  .container {
-    /*max-width: 90%;*/
-  }
-}
-
-
 .steps {
     width: 100%;
     list-style: none;
@@ -552,4 +546,56 @@ tr.choice td {
 
 .monospace {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.comment {
+    padding: 10px;
+    min-height: 68px;
+    border: 1px solid #F6F6F6;
+    border-width: 0 2px;
+}
+
+.comment .meta {
+    font-size: 0.8em;
+}
+
+.comment .meta > div {
+    display: inline;
+}
+
+.comment .meta .author {
+    font-weight: bold;
+}
+
+.comment .meta .author {
+    font-weight: bold;
+}
+
+.comment .text > *:last-child {
+    margin-bottom: 0;
+}
+
+.comment:nth-child(2n+1) {
+    background-color: #F6F6F6;
+}
+
+.comment:nth-child(2n):last-child {
+    border-bottom-width: 2px;
+}
+
+.comment .avatar {
+    float: left;
+}
+
+.comment .avatar img {
+    border: 1px solid #DDD;
+    padding: 2px;
+    background: #FFF;
+    width: 48px;
+    height: 48px;
+}
+
+.comment .meta,
+.comment .text {
+    margin-left: 58px;
 }
