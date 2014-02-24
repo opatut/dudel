@@ -94,12 +94,14 @@ function updateDateTimeList() {
     calendarSetDate(calendar.data("date"));
 }
 
-function addTime(time) {
-    var formatTime = moment("1990-01-01T" + time).format("HH:mm");
-    times.push(formatTime);
-    times = times.uniquify();
-    times.sort();
-    updateDateTimeList();
+function addTime(rawTime) {
+    var time = moment(rawTime, "HH:mm", true);
+    if(time.isValid()) {
+        times.push(time.format("HH:mm"));
+        times = times.uniquify();
+        times.sort();
+        updateDateTimeList();
+    }
 }
 
 function addDate(date) {
@@ -138,6 +140,7 @@ function initTimeSlider() {
         var hour = $("#time-hour").val();
         var minute = $("#time-minute").val();
         if(!hour || !minute) return;
+        if(!moment(hour + ":" + minute, "HH:mm", true).isValid()) return;
         setSliderPosition( parseInt(hour), parseInt(minute), true);
     }).focus(function(e) {
         $(this).select();
