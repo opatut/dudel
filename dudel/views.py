@@ -248,6 +248,12 @@ def poll_vote(slug):
         flash("You can only vote once on this poll. Please edit your choices by clicking the edit button on the right.", "error")
         return redirect(poll.get_url())
 
+
+    groups = poll.get_choice_groups()
+    if not groups:
+        flash("The poll author has not yet created any choices. You cannot vote on the poll yet.", "warning")
+        return redirect(poll.get_url())
+
     form = CreateVoteForm()
 
     if request.method == "POST":

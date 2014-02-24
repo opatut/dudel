@@ -34,7 +34,7 @@
         <hr />
     {% endif %}
 
-    {% if poll.votes and (poll.show_votes or poll.show_summary or poll.get_user_votes(current_user)) %}
+    {% if (poll.votes and poll.has_choices) and (poll.show_votes or poll.show_summary or poll.get_user_votes(current_user)) %}
         <div class="table-padding">
             {% set groups = poll.get_choice_groups() %}
             <div class="table-responsive table-scroll">
@@ -130,7 +130,9 @@
             </div>
         </div>
     {% else %}
-        {% if poll.votes %}
+        {% if not poll.has_choices %}
+            {{ alert("warning", "This poll does not have any choices, so no votes can be cast. If this is your poll, please fix that by clicking the 'choices' button on the top.") }}
+        {% elif poll.votes %}
             {{ alert("info", "The results of this poll are currently hidden.") }}
         {% elif poll.is_expired %}
             <p class="text-muted text-center">No-one voted, and the poll expired.</p>
@@ -142,7 +144,7 @@
 
     <div style="clear: right;"></div>
 
-    {% if not poll.is_expired %}
+    {% if not poll.is_expired and poll.has_choices %}
     <center style="margin-bottom: 3em; margin-top: 2em;">
         {% set user_votes = [] if current_user.is_anonymous() else poll.get_user_votes(current_user) %}
         {% if poll.one_vote_per_user and user_votes %}

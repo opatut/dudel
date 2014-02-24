@@ -101,6 +101,10 @@ class Poll(db.Model):
     def show_summary(self):
         return self.show_votes or self.show_results == "summary" or (self.show_results == "summary_after_vote" and self.is_expired)
 
+    @property
+    def has_choices(self):
+        return len(self.get_choices()) > 0
+
     def get_url(self):
         return url_for("poll", slug=self.slug)
 
