@@ -9,6 +9,7 @@ from wtforms.validators import Required, Length, Regexp, Optional, NoneOf
 from dudel.models import Poll, update_user_data
 import ldap
 from ldap.dn import escape_dn_chars
+from datetime import datetime
 
 # Helper class for multiple forms on one page
 class MultiForm(Form):
@@ -87,6 +88,11 @@ class RequiredIfAnonymous(object):
         if not field.data and current_user.is_anonymous():
             raise ValidationError("This field is required.")
 
+class AtLeastNow(object):
+    def __call__(self, form, field):
+        if field.data < datetime.utcnow():
+            raise ValidationError("Please select a date later than right now.")
+
 ################################################################################
 
 class CreatePollForm(Form):
@@ -122,7 +128,7 @@ class LoginForm(MultiForm):
 class EditPollForm(Form):
     title = TextField("Title", validators=[Required(), Length(min=3)])
     description = TextAreaField("Description")
-    due_date = DateTimeField("Due date", validators=[Optional()])
+    due_date = DateTimeField("Due date", validators=[Optional(), AtLeastNow()])
     anonymous_allowed = BooleanField("Allow anonymous votes")
     require_login = BooleanField("Require login to vote")
     public_listing = BooleanField("Show in public poll list")

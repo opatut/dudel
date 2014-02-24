@@ -3,6 +3,10 @@ from flask import url_for, session
 from flask.ext.login import current_user
 from datetime import datetime
 
+class PollExpiredException(Exception):
+    def __init__(self, poll):
+        self.poll = poll
+
 def update_user_data(username, data):
     user = User.query.filter_by(username=username).first()
     if not user:
@@ -126,6 +130,11 @@ class Poll(db.Model):
 
     def get_user_votes(self, user):
         return [] if user.is_anonymous() else Vote.query.filter_by(poll = self, user = user).all()
+
+    def check_expiry(self):
+        if self.is_expired:
+            raise PollExpiredException(self)
+
 
     # returns a list of groups
     # each group is sorted

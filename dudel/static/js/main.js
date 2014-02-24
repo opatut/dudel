@@ -94,6 +94,7 @@ $(document).ready(function() {
         dateFormat: "yy-mm-dd",
         timeFormat: "HH:mm",
         stepMinute: 15,
+        minDateTime: new Date()
     });
 
     $("[data-toggle='tooltip']").tooltip();

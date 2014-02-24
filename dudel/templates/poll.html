@@ -132,6 +132,9 @@
     {% else %}
         {% if poll.votes %}
             {{ alert("info", "The results of this poll are currently hidden.") }}
+        {% elif poll.is_expired %}
+            <p class="text-muted text-center">No-one voted, and the poll expired.</p>
+            <p class="text-muted text-center"><i class="fa fa-2x fa-frown-o"></i></p>
         {% else %}
             <p class="text-muted text-center">No-one voted yet. Be the first!</p>
         {% endif %}
@@ -139,6 +142,7 @@
 
     <div style="clear: right;"></div>
 
+    {% if not poll.is_expired %}
     <center>
         {% set user_votes = [] if current_user.is_anonymous() else poll.get_user_votes(current_user) %}
         {% if poll.one_vote_per_user and user_votes %}
@@ -149,7 +153,7 @@
             <p><a class="btn btn-lg btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}" style="min-width: 30%;">Vote now</a></p>
         {% endif %}
     </center>
-
+    {% endif %}
 
     {% set comments = poll.get_comments() %}
 

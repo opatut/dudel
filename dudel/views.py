@@ -1,6 +1,6 @@
 from dudel import app, db
-from dudel.models import User, Poll, Vote, Choice, ChoiceValue, VoteChoice, get_user, Comment
-from dudel.forms import CreatePollForm, EditPollForm, CreateVoteForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, CommentForm
+from dudel.models import *
+from dudel.forms import *
 from flask import redirect, abort, request, render_template, flash, url_for, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from dateutil import parser
@@ -88,6 +88,7 @@ def poll_edit(slug):
 @login_required
 def poll_claim(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll.check_expiry()
     if poll.author:
         abort(403)
 
@@ -100,6 +101,7 @@ def poll_claim(slug):
 @login_required
 def poll_unclaim(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll.check_expiry()
     if not poll.user_can_edit(current_user):
         abort(403)
 
@@ -113,6 +115,7 @@ def poll_unclaim(slug):
 @app.route("/<slug>/choices/<int:step>", methods=("POST", "GET"))
 def poll_edit_choices(slug, step=1):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll.check_expiry()
     args = {}
 
     if poll.type == "date":
@@ -203,6 +206,7 @@ def poll_edit_choices(slug, step=1):
 @app.route("/<slug>/values/", methods=("POST", "GET"))
 def poll_edit_values(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll.check_expiry()
 
     if "toggle" in request.args:
         value = ChoiceValue.query.filter_by(id=request.args["toggle"]).first_or_404()
@@ -229,6 +233,7 @@ def poll_edit_values(slug):
 @app.route("/<slug>/vote", methods=("POST", "GET"))
 def poll_vote(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll.check_expiry()
 
     if poll.require_login and current_user.is_anonymous():
         flash("You need to login to vote on this poll.", "error")
@@ -282,6 +287,8 @@ def poll_vote(slug):
 @app.route("/<slug>/vote/<int:vote_id>/edit", methods=("POST", "GET"))
 def poll_vote_edit(slug, vote_id):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll.check_expiry()
+
     vote = Vote.query.filter_by(id=vote_id).first_or_404()
     if vote.poll != poll: abort(404)
 
@@ -333,3 +340,9 @@ def poll_vote_edit(slug, vote_id):
         poll.fill_vote_form(form)
 
     return render_template("vote.html", poll=poll, form=form, vote=vote)
+
+@app.errorhandler(PollExpiredException)
+def poll_expired(e):
+    flash("This poll is expired. You cannot vote or edit your choice anymore.", "error")
+    return redirect(e.poll.get_url())
+  
