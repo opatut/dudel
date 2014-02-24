@@ -127,6 +127,30 @@ $(document).ready(function() {
         cell.css('padding', 0).wrapInner(div);
         cell.find('span.comment-icon').css('display', 'block');
     });
+
+    $("select.make-button-group").each(function() {
+        var select = $(this);
+        select.hide();
+
+        var group = $('<div class="btn-group input-group"></div>');
+        select.after(group);
+
+        select.find("option").each(function() {
+            var option = $(this);
+            var button = $('<button type="button" class="btn btn-sm btn-default"></button>');
+            button.text(option.text());
+            button.val(option.val());
+            button.click(function() {
+                group.find(".btn").removeClass("active");
+                button.addClass("active");
+                select.val(button.val());
+                return false;
+            });
+            group.append(button);
+        });
+
+        group.find(".btn[value='" + select.val() + "']").addClass("active");
+    });
 });
 
 /* Vote choices */
