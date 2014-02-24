@@ -367,6 +367,9 @@ def poll_vote_edit(slug, vote_id):
 
     if not request.method == "POST":
         poll.fill_vote_form(form)
+        for subform in form.vote_choices:
+            vote_choice = VoteChoice.query.filter_by(vote_id = vote.id, choice_id = subform.choice_id.data).first()
+            subform.comment.data = vote_choice.comment if vote_choice else ""
 
     return render_template("vote.html", poll=poll, form=form, vote=vote)
 
