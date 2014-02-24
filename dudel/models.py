@@ -1,6 +1,7 @@
 from dudel import app, db, login_manager
 from flask import url_for, session
 from flask.ext.login import current_user
+from flask.ext.babel import lazy_gettext
 from datetime import datetime
 
 class PollExpiredException(Exception):
@@ -136,7 +137,7 @@ class Poll(db.Model):
 
     def check_edit_permission(self):
         if not self.user_can_edit(current_user):
-            raise PollActionException(self, "edit")
+            raise PollActionException(self, lazy_gettext("edit"))
 
     # returns a list of groups
     # each group is sorted

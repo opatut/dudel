@@ -1,10 +1,15 @@
-from dudel import app, db
+from dudel import app, db, babel, supported_languages
 from dudel.models import *
 from dudel.forms import *
 from flask import redirect, abort, request, render_template, flash, url_for, g
+from flask.ext.babel import gettext
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from dateutil import parser
 from datetime import datetime
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(supported_languages)
 
 @app.route("/", methods=("POST", "GET"))
 def index():
@@ -14,7 +19,7 @@ def index():
         form.populate_obj(poll)
         db.session.add(poll)
         db.session.commit()
-        flash("Poll created")
+        flash(gettext("Poll created"))
         return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
     polls = Poll.query.filter_by(public_listing=True).order_by(db.desc(Poll.created)).limit(5).all()
@@ -36,7 +41,7 @@ def login():
     if form.validate_on_submit():
         user = get_user(form.username.data)
         login_user(user)
-        flash("You were logged in, %s." % user.displayname, "success")
+        flash(gettext("You were logged in, %(name)s.", name=user.displayname), "success")
 
         return redirect(request.args.get("next") or url_for("index"))
 
@@ -45,7 +50,7 @@ def login():
 @app.route("/logout")
 def logout():
     if current_user.is_authenticated():
-        flash("You were logged out, %s. Goodbye!" % current_user.displayname, "success")
+        flash(gettext("You were logged out, %(name)s. Goodbye!", name=current_user.displayname), "success")
         logout_user()
     return redirect(request.args.get("next") or url_for("index"))
 
@@ -65,7 +70,7 @@ def poll(slug):
             comment.user = current_user
 
         poll.comments.append(comment)
-        flash("Your comment was saved.", "success")
+        flash(gettext("Your comment was saved."), "success")
         db.session.commit()
         return redirect(poll.get_url() + "#comment-" + str(comment.id))
 
@@ -80,7 +85,7 @@ def poll_edit(slug):
     if form.validate_on_submit():
         form.populate_obj(poll)
         db.session.commit()
-        flash("Poll settings have been saved.", "success")
+        flash(gettext("Poll settings have been saved."), "success")
         #return redirect(poll.get_url())
         return redirect(url_for("poll_edit", slug=poll.slug))
 
@@ -97,7 +102,7 @@ def poll_claim(slug):
 
     poll.author = current_user
     db.session.commit()
-    flash("You claimed this poll. Only you may edit it now.", "success")
+    flash(gettext("You claimed this poll. Only you may edit it now."), "success")
     return redirect(url_for("poll_edit", slug=poll.slug))
 
 @app.route("/<slug>/unclaim/", methods=("POST", "GET"))
@@ -111,7 +116,7 @@ def poll_unclaim(slug):
 
     poll.author = None
     db.session.commit()
-    flash("You freed this poll. Everyone may edit it now.", "success")
+    flash(gettext("You freed this poll. Everyone may edit it now."), "success")
     return redirect(url_for("poll_edit", slug=poll.slug))
 
 
@@ -142,7 +147,7 @@ def poll_edit_choices(slug, step=1):
             datetimes = [parser.parse(data) for data in request.form.getlist("datetimes[]")]
 
             if not datetimes:
-                flash("Please select at least one combination.", "error")
+                flash(gettext("Please select at least one combination."), "error")
             else:
                 existing_datetimes = [choice.date for choice in poll.choices]
 
@@ -159,7 +164,7 @@ def poll_edit_choices(slug, step=1):
                         db.session.add(choice)
 
                 db.session.commit()
-                flash("The choices list has been updated.", "success")
+                flash(gettext("The choices list has been updated."), "success")
                 return redirect(poll.get_url())
 
     else:
@@ -176,7 +181,10 @@ def poll_edit_choices(slug, step=1):
                 poll.choices.append(choice)
                 db.session.add(choice)
             db.session.commit()
-            flash("The choice was %s." % ("disabled" if choice.deleted else "added"), "success")
+            if choice.deleted:
+                flash(gettext("The choice was disabled."), "success")
+            else:
+                flash(gettext("The choice was added."), "success")
             return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
         if "toggle" in request.args:
@@ -184,8 +192,11 @@ def poll_edit_choices(slug, step=1):
             choice = Choice.query.filter_by(id=tid, poll_id=poll.id).first_or_404()
             choice.deleted = not choice.deleted
             db.session.commit()
-            flash("The choice was %s." % ("disabled" if choice.deleted else "added"), "success")
-            return redirect(url_for("poll_edit_choices", slug=poll.slug))
+            if choice.deleted:
+                flash(gettext("The choice was disabled."), "success")
+            else:
+                flash(gettext("The choice was added."), "success")
+                return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
         elif "edit" in request.args:
             eid = request.args.get("edit")
@@ -195,11 +206,11 @@ def poll_edit_choices(slug, step=1):
                 text = edit_form.text.data.strip()
                 other_choice = Choice.query.filter_by(poll_id=poll.id, text=text).first()
                 if other_choice and other_choice != choice:
-                    flash("A choice with this text already exists.", "error")
+                    flash(gettext("A choice with this text already exists."), "error")
                 else:
                     choice.text = edit_form.text.data.strip()
                     db.session.commit()
-                    flash("The choice was edited.", "success")
+                    flash(gettext("The choice was edited."), "success")
                     return redirect(url_for("poll_edit_choices", slug=poll.slug))
             args["edit_form"] = edit_form
             args["edit_id"] = choice.id
@@ -221,7 +232,11 @@ def poll_edit_values(slug):
         if value.poll != poll: abort(404)
         value.deleted = not value.deleted
         db.session.commit()
-        flash("The choice value was %s." % ("removed" if value.deleted else "restored"), "success")
+        if value.deleted:
+            flash(gettext("The choice value was removed."), "success")
+        else:
+            flash(gettext("The choice value restored."), "success")
+
         return redirect(url_for("poll_edit_values", slug=poll.slug))
 
     elif "edit" in request.args:
@@ -233,7 +248,7 @@ def poll_edit_values(slug):
             value.icon = form.icon.data
             value.color = form.color.data.lstrip("#")
             db.session.commit()
-            flash("The choice value was edited.", "success")
+            flash(gettext("The choice value was edited."), "success")
             return redirect(url_for("poll_edit_values", slug=poll.slug))
         args["form"] = form
         args["edit_value"] = value
@@ -248,7 +263,7 @@ def poll_edit_values(slug):
             value.poll = poll
             db.session.add(value)
             db.session.commit()
-            flash("The choice value was added.", "success")
+            flash(gettext("The choice value was added."), "success")
             return redirect(url_for("poll_edit_values", slug=poll.slug))
         args["form"] = form
 
@@ -260,17 +275,17 @@ def poll_vote(slug):
     poll.check_expiry()
 
     if poll.require_login and current_user.is_anonymous():
-        flash("You need to login to vote on this poll.", "error")
+        flash(gettext("You need to login to vote on this poll."), "error")
         return redirect(url_for("login", next=url_for("poll_vote", slug=poll.slug)))
 
     if poll.one_vote_per_user and not current_user.is_anonymous() and poll.get_user_votes(current_user):
-        flash("You can only vote once on this poll. Please edit your choices by clicking the edit button on the right.", "error")
+        flash(gettext("You can only vote once on this poll. Please edit your choices by clicking the edit button on the right."), "error")
         return redirect(poll.get_url())
 
 
     groups = poll.get_choice_groups()
     if not groups:
-        flash("The poll author has not yet created any choices. You cannot vote on the poll yet.", "warning")
+        flash(gettext("The poll author has not yet created any choices. You cannot vote on the poll yet."), "warning")
         return redirect(poll.get_url())
 
     form = CreateVoteForm()
@@ -305,7 +320,7 @@ def poll_vote(slug):
                 vote_choice.choice = choice
                 db.session.add(vote_choice)
 
-            flash("You have voted.", "success")
+            flash(gettext("You have voted."), "success")
             db.session.commit()
             return redirect(poll.get_url())
 
@@ -323,16 +338,16 @@ def poll_vote_edit(slug, vote_id):
     if vote.poll != poll: abort(404)
 
     if vote.user and current_user.is_anonymous():
-        flash("This vote was created by a logged in user. If that was you, please log in to edit the vote.", "error")
+        flash(gettext("This vote was created by a logged in user. If that was you, please log in to edit the vote."), "error")
         return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
 
     if vote.user and not current_user.is_anonymous() and vote.user != current_user:
-        flash("This vote was created by someone else. You cannot edit their choices.", "error")
+        flash(gettext("This vote was created by someone else. You cannot edit their choices."), "error")
         return redirect(poll.get_url())
 
     form = CreateVoteForm(obj=vote)
     if poll.require_login and current_user.is_anonymous():
-        flash("You need to login to edit votes on this poll.")
+        flash(gettext("You need to login to edit votes on this poll."))
         return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
 
     if request.method == "POST":
@@ -363,7 +378,7 @@ def poll_vote_edit(slug, vote_id):
                 vote_choice.value = value
 
             db.session.commit()
-            flash("The vote has been edited.", "success")
+            flash(gettext("The vote has been edited."), "success")
             return redirect(poll.get_url())
 
     if not request.method == "POST":
@@ -376,15 +391,15 @@ def poll_vote_edit(slug, vote_id):
 
 @app.errorhandler(PollExpiredException)
 def poll_expired(e):
-    flash("This poll is expired. You cannot vote or edit your choice anymore.", "error")
+    flash(gettext("This poll is expired. You cannot vote or edit your choice anymore."), "error")
     return redirect(e.poll.get_url())
 
 @app.errorhandler(PollActionException)
 def poll_expired(e):
     if current_user.is_anonymous():
-        flash("You do not have permission to %s this poll. Please log in and try again." % e.action, "error")
+        flash(gettext("You do not have permission to %(action)s this poll. Please log in and try again.", action=e.action), "error")
         return redirect(url_for("login", next=request.url))
     else:
-        flash("You do not have permission to %s this poll." % e.action, "error")
+        flash(gettext("You do not have permission to %(action)s this poll.", action=e.action), "error")
         return redirect(e.poll.get_url())
   
