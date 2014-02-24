@@ -69,7 +69,7 @@ class Poll(db.Model):
     anonymous_allowed = db.Column(db.Boolean, default=True)
     public_listing = db.Column(db.Boolean, default=False)
     require_login = db.Column(db.Boolean, default=False)
-    show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote"), default="complete")
+    show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote", name="poll_show_results"), default="complete")
     send_mail = db.Column(db.Boolean, default=False)
     one_vote_per_user = db.Column(db.Boolean, default=True)
     allow_comments = db.Column(db.Boolean, default=True)
