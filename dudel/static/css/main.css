@@ -53,6 +53,11 @@ table.vote label {
     vertical-align: middle;
 }
 
+.poll .info {
+    background: #EEE;
+    text-align: center;
+}
+
 .poll .mine .author {
     background: #444;
     color: #FFF;

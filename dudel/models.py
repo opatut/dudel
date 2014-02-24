@@ -84,6 +84,18 @@ class Poll(db.Model):
         self.choice_values.append(ChoiceValue("no", "ban", "F96"))
         self.choice_values.append(ChoiceValue("maybe", "question", "FF6"))
 
+    @property 
+    def is_expired(self):
+        return self.due_date and self.due_date < datetime.utcnow()
+
+    @property
+    def show_votes(self):
+        return self.show_results == "complete" or (self.show_results == "complete_after_vote" and self.is_expired)
+
+    @property
+    def show_summary(self):
+        return self.show_votes or self.show_results == "summary" or (self.show_results == "summary_after_vote" and self.is_expired)
+
     def get_url(self):
         return url_for("poll", slug=self.slug)
 
@@ -113,7 +125,7 @@ class Poll(db.Model):
         return not self.author or self.author == user
 
     def get_user_votes(self, user):
-        return Vote.query.filter_by(poll = self, user = user).all()
+        return [] if user.is_anonymous() else Vote.query.filter_by(poll = self, user = user).all()
 
     # returns a list of groups
     # each group is sorted
