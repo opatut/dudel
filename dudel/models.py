@@ -7,6 +7,11 @@ class PollExpiredException(Exception):
     def __init__(self, poll):
         self.poll = poll
 
+class PollActionException(Exception):
+    def __init__(self, poll, action):
+        self.poll = poll
+        self.action = action
+
 def update_user_data(username, data):
     user = User.query.filter_by(username=username).first()
     if not user:
@@ -67,10 +72,6 @@ class Poll(db.Model):
 
     # === Extra settings ===
     due_date = db.Column(db.DateTime)
-    password = db.Column(db.String)
-    # "What is impossible without password?"
-    # 0: nothing, 1: editing, 2: vote, 3: show
-    password_level = db.Column(db.Integer, default=0)
     anonymous_allowed = db.Column(db.Boolean, default=True)
     public_listing = db.Column(db.Boolean, default=False)
     require_login = db.Column(db.Boolean, default=False)
@@ -135,6 +136,9 @@ class Poll(db.Model):
         if self.is_expired:
             raise PollExpiredException(self)
 
+    def check_edit_permission(self):
+        if not self.user_can_edit(current_user):
+            raise PollActionException(self, "edit")
 
     # returns a list of groups
     # each group is sorted
@@ -172,24 +176,6 @@ class Poll(db.Model):
 
         for subform in form.vote_choices:
             subform.value.choices = [(v.id, v.title) for v in self.get_choice_values()]
-
-
-    # @property
-    # def password_session_key(self):
-    #     return "poll-password-%s" % self.id
-
-    # def has_password(self):
-    #     return (self.password_session_key in session and session[self.password_session_key] == self.password) \
-    #         or (self.author and self.author == current_user)
-
-    # def set_password(self):
-    #     session[self.password_session_key] = self.password
-
-    #e.g. "require_password(2)" for voting page, returns false if the password is
-    # not set, and this poll requires pw level 2 or higher
-    # def require_password(self, level):
-    #     if not self.has_password():
-    #         return level <= self.password_level???
 
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)

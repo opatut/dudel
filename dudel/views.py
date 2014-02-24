@@ -73,6 +73,7 @@ def poll(slug):
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
 def poll_edit(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll.check_edit_permission()
     form = EditPollForm(obj=poll)
 
     if form.validate_on_submit():
@@ -89,6 +90,7 @@ def poll_edit(slug):
 def poll_claim(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
     poll.check_expiry()
+    poll.check_edit_permission()
     if poll.author:
         abort(403)
 
@@ -102,6 +104,7 @@ def poll_claim(slug):
 def poll_unclaim(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
     poll.check_expiry()
+    poll.check_edit_permission()
     if not poll.user_can_edit(current_user):
         abort(403)
 
@@ -116,6 +119,7 @@ def poll_unclaim(slug):
 def poll_edit_choices(slug, step=1):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
     poll.check_expiry()
+    poll.check_edit_permission()
     args = {}
 
     if poll.type == "date":
@@ -207,6 +211,7 @@ def poll_edit_choices(slug, step=1):
 def poll_edit_values(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
     poll.check_expiry()
+    poll.check_edit_permission()
 
     if "toggle" in request.args:
         value = ChoiceValue.query.filter_by(id=request.args["toggle"]).first_or_404()
@@ -345,4 +350,13 @@ def poll_vote_edit(slug, vote_id):
 def poll_expired(e):
     flash("This poll is expired. You cannot vote or edit your choice anymore.", "error")
     return redirect(e.poll.get_url())
+
+@app.errorhandler(PollActionException)
+def poll_expired(e):
+    if current_user.is_anonymous():
+        flash("You do not have permission to %s this poll. Please log in and try again." % e.action, "error")
+        return redirect(url_for("login", next=request.url))
+    else:
+        flash("You do not have permission to %s this poll." % e.action, "error")
+        return redirect(e.poll.get_url())
   
