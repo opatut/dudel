@@ -218,7 +218,9 @@
                     {% for date in dates %}
                         {% set dateloop = loop %}
                         <tr>
-                            <th class="choice-text">{{ date|date }}</th>
+                            <th class="author">
+                                {{ date|date }}
+                            </th>
                             {% for time in times %}
                             <td class="checkbox-cell">
                                 <input type="checkbox" name="datetimes[]" value="{{date}} {{time}}"{% if poll.has_choice_date_time(date, time) %} checked="CHECKED"{% endif %} />

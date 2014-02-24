@@ -39,13 +39,7 @@ class User(db.Model):
 
     @property
     def displayname(self):
-        return "%s (%s)" % (self.firstname, self.username)
-        if self.firstname and self.lastname:
-            return "%s %s" % (self.firstname, self.lastname)
-        if self.lastname:
-            return self.lastname
-        else:
-            return self.username
+        return (app.config["NAME_FORMAT"] or "%(firstname)s (%(username)s)") % self.__dict__
 
     # login stuff
     def get_id(self):
@@ -75,7 +69,7 @@ class Poll(db.Model):
     anonymous_allowed = db.Column(db.Boolean, default=True)
     public_listing = db.Column(db.Boolean, default=False)
     require_login = db.Column(db.Boolean, default=False)
-    show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote", name="poll_show_results"))
+    show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote"), default="complete")
     send_mail = db.Column(db.Boolean, default=False)
     one_vote_per_user = db.Column(db.Boolean, default=True)
     allow_comments = db.Column(db.Boolean, default=True)

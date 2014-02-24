@@ -91,6 +91,10 @@ table.vote label {
     text-align: center;
 }
 
+.vote .vote-choice {
+    width: 4em !important;
+}
+
 .vote-choice.comment {
     background-image: url("../gfx/comment-background.png");
 }
@@ -133,11 +137,12 @@ table.poll {
     border-spacing: 0 !important;
 }
 
+/*
 table.poll tr td:nth-of-type(1) {
     width: 1px;
     white-space: nowrap;
 }
-
+*/
 .table-padding {
     padding: 0 10px;
 }
