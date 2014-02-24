@@ -6,8 +6,8 @@
     <p>
         Here you can edit which options the voters have for each choice you
         give them. By default, <b>yes</b>, <b>no</b> and <b>maybe</b> are always
-        enabled, but you can disabled any of these. You should have at least one value
-        in this list for the voting to make sense.
+        enabled, but you can disable or change any of these. You should have at 
+        least one value in this list for the voting to make sense.
     </p>
 
     <script>
@@ -26,11 +26,12 @@
                     <th>Title</th>
                     <th>Color/Icon</th>
                     <th>Votes cast</th>
+                    <th>Actions</th>
                 </tr>
                 {% set total_votes = poll.votes|length %}
                 {% for value in poll.choice_values %}
-                    <tr class="choice {% if value.deleted %}deleted{% endif %}">
-                        <td class="choice">{{ value.title }}</td>
+                    <tr class="choice {% if value.deleted %}deleted{% endif %} {% if value == edit_value %}editing mine{% endif %}">
+                        <td class="author choice">{{ value.title }}</td>
                         <td class="vote-choice" style="background-color: #{{ value.color }}">
                             <i class="fa fa-{{ value.icon }}"></i>
                         </td>
@@ -38,19 +39,28 @@
                         <td class="color {{ 'green' if vote_count >= total_votes else ('red' if vote_count == 0 else 'orange') }}">
                             <strong>{{ vote_count }}</strong> / {{ total_votes }}
                         </td>
-                        <td><a href="?toggle={{ value.id }}" class="btn btn-default btn-xs">
-                            {% if value.deleted %}
-                                <i class="fa fa-undo"></i>
-                            {% else %}
-                                <i class="fa fa-trash-o"></i>
-                            {% endif %}
-                        </a></td>
+                        <td>
+                            <a href="?edit={{ value.id }}" class="btn btn-default btn-xs">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                            <a href="?toggle={{ value.id }}" class="btn btn-default btn-xs">
+                                {% if value.deleted %}
+                                    <i class="fa fa-undo"></i>
+                                {% else %}
+                                    <i class="fa fa-trash-o"></i>
+                                {% endif %}
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
             </table>
         </div>
         <div class="col-md-8">
-            <h2>Add a choice value</h2>
+            {% if edit_value %}
+                <h2>Edit choice value: {{ edit_value.title }}</h2>
+            {% else %}
+                <h2>Add a choice value</h2>
+            {% endif %}
 
             <form method="POST">
                 {{ form.hidden_tag() }}
@@ -78,7 +88,7 @@
                     </div>
                 </div>
 
-                <input type="submit" value="Add" class="btn btn-primary btn-sm" />
+                <input type="submit" value="{{ 'Save' if edit_value else 'Add' }}" class="btn btn-primary btn-sm" />
             </form>
 
             <h3>Available icons</h3>

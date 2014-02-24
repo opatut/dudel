@@ -213,6 +213,8 @@ def poll_edit_values(slug):
     poll.check_expiry()
     poll.check_edit_permission()
 
+    args = {}
+
     if "toggle" in request.args:
         value = ChoiceValue.query.filter_by(id=request.args["toggle"]).first_or_404()
         if value.poll != poll: abort(404)
@@ -221,19 +223,35 @@ def poll_edit_values(slug):
         flash("The choice value was %s." % ("removed" if value.deleted else "restored"), "success")
         return redirect(url_for("poll_edit_values", slug=poll.slug))
 
-    form = AddValueForm()
-    if form.validate_on_submit():
-        value = ChoiceValue()
-        value.title = form.title.data
-        value.icon = form.icon.data
-        value.color = form.color.data.lstrip("#")
-        value.poll = poll
-        db.session.add(value)
-        db.session.commit()
-        flash("The choice value was added.", "success")
-        return redirect(url_for("poll_edit_values", slug=poll.slug))
+    elif "edit" in request.args:
+        id = request.args.get("edit")
+        value = ChoiceValue.query.filter_by(poll_id=poll.id, id=id).first_or_404()
+        form = AddValueForm(obj=value)
+        if form.validate_on_submit():
+            value.title = form.title.data
+            value.icon = form.icon.data
+            value.color = form.color.data.lstrip("#")
+            db.session.commit()
+            flash("The choice value was edited.", "success")
+            return redirect(url_for("poll_edit_values", slug=poll.slug))
+        args["form"] = form
+        args["edit_value"] = value
 
-    return render_template("poll_edit_values.html", poll=poll, form=form)
+    else:
+        form = AddValueForm()
+        if form.validate_on_submit():
+            value = ChoiceValue()
+            value.title = form.title.data
+            value.icon = form.icon.data
+            value.color = form.color.data.lstrip("#")
+            value.poll = poll
+            db.session.add(value)
+            db.session.commit()
+            flash("The choice value was added.", "success")
+            return redirect(url_for("poll_edit_values", slug=poll.slug))
+        args["form"] = form
+
+    return render_template("poll_edit_values.html", poll=poll, **args)
 
 @app.route("/<slug>/vote", methods=("POST", "GET"))
 def poll_vote(slug):
