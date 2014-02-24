@@ -599,3 +599,7 @@ tr.choice td {
 .comment .text {
     margin-left: 58px;
 }
+
+.navbar {
+    border-radius: 0;
+}

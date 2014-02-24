@@ -17,35 +17,49 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-default" role="navigation">
+        <nav class="navbar navbar-default navbar-inverse" role="navigation">
             <div class="container">
                 <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
                     <a href="/" class="navbar-brand">Dudel</a>
+
+                    <div class="navbar-left visible-sm visible-xs">
+                        <a class="btn navbar-btn btn-sm btn-default" href="https://mafiasi.de" style="margin-top: 10px;">
+                            <i class="fa fa-home"></i> Mafiasi Hub
+                        </a>
+                    </div>
                 </div>
 
-                <div class="navbar-left">
-                    <a class="btn navbar-btn btn-default" href="https://mafiasi.de">
+                <div class="navbar-left hidden-sm hidden-xs">
+                    <a class="btn navbar-btn btn-sm btn-default" href="https://mafiasi.de" style="margin-top: 10px;">
                         <i class="fa fa-home"></i> Mafiasi Hub
                     </a>
                 </div>
 
-                {% if current_user.is_anonymous() %}
-                <form class="navbar-form navbar-right" method="POST" action="{{ url_for('login', next=request.url) }}">
-                    <div class="form-group">
-                        {{ login_form.username(class="form-control", placeholder=login_form.username.label.text) }}
+                <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                    {% if current_user.is_anonymous() %}
+                    <form class="navbar-form navbar-right" method="POST" action="{{ url_for('login', next=request.url) }}" style="border: 0; padding-right: 0; padding-left: 0;">
+                        <div class="form-group">
+                            {{ login_form.username(class="form-control", placeholder=login_form.username.label.text) }}
+                        </div>
+                        <div class="form-group">
+                            {{ login_form.password(class="form-control", placeholder=login_form.password.label.text) }}
+                        </div>
+                        {{ login_form.hidden_tag() }}
+                        <input type="submit" class="btn navbar-btn btn-primary" value="Login" />
+                    </form>
+                    {% else %}
+                    <div class="navbar-right">
+                        <span class="nav navbar-text">Logged in as {{ current_user.displayname }}</span>
+                        <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}">Logout</a>
                     </div>
-                    <div class="form-group">
-                        {{ login_form.password(class="form-control", placeholder=login_form.password.label.text) }}
-                    </div>
-                    {{ login_form.hidden_tag() }}
-                    <input type="submit" class="btn navbar-btn btn-primary" value="Login" />
-                </form>
-                {% else %}
-                <div class="navbar-right">
-                    <span class="nav navbar-text">Logged in as {{ current_user.displayname }}</span>
-                    <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}">Logout</a>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
         </nav>
         <div class="container">
