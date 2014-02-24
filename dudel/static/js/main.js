@@ -97,7 +97,10 @@ $(document).ready(function() {
         minDateTime: new Date()
     });
 
-    $("[data-toggle='tooltip']").tooltip();
+    $("[data-toggle='tooltip']").tooltip({content: function () {
+              return $(this).attr('data-tooltip');
+          }
+    });
 
     $(".icon-preview button").click(function() {
         $("#icon").val($(this).data("icon"));

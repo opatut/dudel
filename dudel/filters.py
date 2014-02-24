@@ -10,6 +10,10 @@ def date(s):
 def time(s):
     return s.strftime("%H:%M")
 
+@app.template_filter()
+def datetime(s):
+    return s.strftime("%a %d %b %H:%M")
+
 @app.context_processor
 def inject():
     return dict(
