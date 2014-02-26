@@ -57,12 +57,12 @@
                             {{ login_form.password(class="form-control", placeholder=login_form.password.label.text) }}
                         </div>
                         {{ login_form.hidden_tag() }}
-                        <input type="submit" class="btn navbar-btn btn-primary" value="Login" />
+                        <input type="submit" class="btn navbar-btn btn-primary" value="{{ _('Login') }}" />
                     </form>
                     {% else %}
                     <div class="navbar-right">
-                        <span class="nav navbar-text">Logged in as {{ current_user.displayname }}</span>
-                        <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}">Logout</a>
+                        <span class="nav navbar-text">{{ _("Logged in as %(name)s", name=current_user.displayname) }}</span>
+                        <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}">{{ _("Logout") }}</a>
                     </div>
                     {% endif %}
                 </div>

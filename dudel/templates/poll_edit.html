@@ -1,36 +1,33 @@
 {% extends "base_poll.html" %}
 
-{% block polltitle %}Settings{% endblock %}
+{% block polltitle %}{{ _("Settings") }}{% endblock %}
 
 {% block poll_content %}
     {% if not poll.author %}
         <p class="well text-center">
             <span style="margin-right: 1em;">
-                This poll does not belong to any user. While logged in, you can
-                claim authorship to receive exclusive editing rights. 
+                {{ _("This poll does not belong to any user. While logged in, you can claim authorship to receive exclusive editing rights.") }}
             </span>
 
             {% if current_user.is_anonymous() %}
-                <a href="{{ url_for('login', next=url_for('poll_claim', slug=poll.slug)) }}" class="btn btn-primary btn-sm">Log in and claim authorship</a>
+            <a href="{{ url_for('login', next=url_for('poll_claim', slug=poll.slug)) }}" class="btn btn-primary btn-sm">{{ _("Log in and claim authorship") }}</a>
             {% else %}
-                <a href="{{ url_for('poll_claim', slug=poll.slug) }}" class="btn btn-primary btn-sm">Claim authorship</a>
+            <a href="{{ url_for('poll_claim', slug=poll.slug) }}" class="btn btn-primary btn-sm">{{ _("Claim authorship") }}</a>
             {% endif %}
 
-            {{ alert("info", "Please bear in mind that these settings can be changed by anyone as long as
-                the poll is unclaimed, rendering every security setting useless.")}}
+            {{ alert("info", _("Please bear in mind that these settings can be changed by anyone as long as the poll is unclaimed, rendering every security setting useless."))}}
         </p>
     {% else %}
         <p class="well text-center">
-            <strong>Note:</strong> 
-            You have exclusive ownership of this poll. <a href="{{ url_for('poll_unclaim', slug=poll.slug) }}">Click here</a> to
-            free the poll and allow other users to edit the settings.
+            <strong>{{ _("Note:") }}</strong>
+            {{ _("You have exclusive ownership of this poll. <a href=%(link)s>Click here</a> to free the poll and allow other users to edit the settings.", link=url_for('poll_unclaim', slug=poll.slug)) }}
         </p>
     {% endif %}
 
     <hr />
 
     <form method="POST">
-        <h3>Settings</h3>
+        <h3>{{ _("Settings") }}</h3>
         <div class="row">
             <div class="col-md-5">
                 {{ form.hidden_tag() }}
@@ -76,7 +73,7 @@
                 </div>
                 #}
 
-                <label>Additional settings</label>
+                <label>{{ _("Additional settings") }}</label>
                 <div class="checkbox">
                     {{ form.allow_comments() }}
                     {{ form.allow_comments.label }}
@@ -112,14 +109,14 @@
 
                 <hr />
 
-                <label>Very advanced stuff</label>
-                <p><a href="{{ url_for('poll_edit_values', slug=poll.slug) }}">Edit possible answer values</a></p>
+                <label>{{ _("Very advanced stuff") }}</label>
+                <p><a href="{{ url_for('poll_edit_values', slug=poll.slug) }}">{{ _("Edit possible answer values") }}</a></p>
             </div>
         </div>
 
         <hr />
 
-        <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="fa fa-arrow-left"></span> Back to poll</a>
-        <input type="submit" class="btn btn-primary" value="Save settings" />
+        <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="fa fa-arrow-left"></span> {{ _("Back to poll") }}</a>
+        <input type="submit" class="btn btn-primary" value="{{ _("Save settings") }}" />
     </form>
 {% endblock %}

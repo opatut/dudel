@@ -1,6 +1,6 @@
 {% extends "base_poll.html" %}
 
-{% block polltitle %}Choices{% endblock %}
+{% block polltitle %}{{ _("Choices") }}{% endblock %}
 
 {% block foot %}
     <script src="{{ url_for('static', filename='js/poll_edit_choices.js') }}" type="text/javascript" lang="javascript"></script>
@@ -9,14 +9,14 @@
 {% block poll_content %}
     {% if poll.type == "normal" %}
         {% if poll.get_choices()|length != poll.choices|length %}
-            {{ alert("info", "Deleted choices will stay in this list, so votes that have already been made are not lost.") }}
+            {{ alert("info", _("Deleted choices will stay in this list, so votes that have already been made are not lost.")) }}
         {% endif %}
 
             <table class="table auto-width">
                 <tr>
-                    <th>Choice</th>
-                    <th>Votes cast</th>
-                    <th>Actions</th>
+                    <th>{{ _("Choice") }}</th>
+                    <th>{{ _("Votes cast") }}</th>
+                    <th>{{ _("Actions") }}</th>
                 </tr>
                 {% set total_votes = poll.votes|length %}
                 {% for choice in poll.choices|sort() %}
@@ -75,36 +75,32 @@
             </table>
 
             <div class="form-actions">
-                <a class="btn btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}">Vote now</a>
-                <a class="btn btn-primary" href="{{ poll.get_url() }}">Done</a>
+                <a class="btn btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}">{{ _("Vote now") }}</a>
+                <a class="btn btn-primary" href="{{ poll.get_url() }}">{{ _("Done") }}</a>
             </div>
         </form>
     {% elif poll.type == "date" %}
 
         <div class="visible-xs visible-sm">
             <ul class="steps">
-                <li{% if step == 1 %} class="current"{% endif %}><span>Step 1</span>Days</li>
-                <li{% if step == 2 %} class="current"{% endif %}><span>Step 2</span>Times</li>
-                <li{% if step in (3, 4) %} class="current"{% endif %}><span>Step 3</span>Combine</li>
+                <li{% if step == 1 %} class="current"{% endif %}><span>{{ _("Step 1") }}</span>{{ _("Days") }}</li>
+                <li{% if step == 2 %} class="current"{% endif %}><span>{{ _("Step 2") }}</span>{{ _("Times") }}</li>
+                <li{% if step in (3, 4) %} class="current"{% endif %}><span>{{ _("Step 3") }}</span>{{ _("Combine") }}</li>
             </ul>
         </div>
 
         <div class="hidden-xs hidden-sm">
             <ul class="steps">
-                <li{% if step == 1 %} class="current"{% endif %}><span>Step 1</span>Select days</li>
-                <li{% if step == 2 %} class="current"{% endif %}><span>Step 2</span>Select time slots</li>
-                <li{% if step in (3, 4) %} class="current"{% endif %}><span>Step 3</span>Choose combinations</li>
+                <li{% if step == 1 %} class="current"{% endif %}><span>{{ _("Step 1") }}</span>{{ _("Select days") }}</li>
+                <li{% if step == 2 %} class="current"{% endif %}><span>{{ _("Step 2") }}</span>{{ _("Select time slots") }}</li>
+                <li{% if step in (3, 4) %} class="current"{% endif %}><span>{{ _("Step 3") }}</span>{{ _("Choose combinations") }}</li>
             </ul>
         </div>
 
         {% if step in (1, 2) %}
             <noscript>
                 <p class="alert alert-warning">
-                    It's a pity you don't have <b>JavaScript</b> turned on, so you'll have
-                    to type in comma separated values in the correct format yourself,
-                    no spaces allowed. Or just stop being paranoid and enable
-                    JavaScript on this site. You'll get a certainly fancy interface
-                    for date and time input...
+                {{ _("It's a pity you don't have <b>JavaScript</b> turned on, so you'll have to type in comma separated values in the correct format yourself, no spaces allowed. Or just stop being paranoid and enable JavaScript on this site. You'll get a certainly fancy interface for date and time input...") }}
                 </p>
             </noscript>
 
@@ -144,10 +140,9 @@
                         </div>
                         <div class="col-md-8">
                             <div class="calendar-list">
-                                {{ alert("info", "Please select the days that you want to be able to choose.
-                                    In the next step, you will select time slots.") }}
+                                {{ alert("info", _("Please select the days that you want to be able to choose. In the next step, you will select time slots.")) }}
 
-                                <h2>Selected days</h2>
+                                <h2>{{ _("Selected days") }}</h2>
                                 <ul id="calendar-list"></ul>
                             </div>
                         </div>
@@ -174,17 +169,15 @@
                                 <div class="form-inline" id="time-slider-form">
                                     <input type="text" id="time-hour" class="form-control" placeholder="HH" />
                                     <input type="text" id="time-minute" class="form-control" placeholder="MM" />
-                                    <input type="button" id="time-add-button" value="Add" class="btn btn-default" style="height: 3.4em;" />
+                                    <input type="button" id="time-add-button" value="{{ _('Add') }}" class="btn btn-default" style="height: 3.4em;" />
                                 </div>
                             </div>
                         </div>
 
                         <div class="calendar-list col-md-7">
-                            {{ alert("info", "Please select the time slots that you want to be able 
-                                to choose. In the next step, you will match them against 
-                                the selected days.") }}
+                            {{ alert("info", _("Please select the time slots that you want to be able to choose. In the next step, you will match them against the selected days.")) }}
 
-                            <h2>Selected time slots</h2>
+                            <h2>{{ _("Selected time slots") }}</h2>
                             <ul class="time-slots"></ul>
                         </div>
                     </div>
@@ -192,13 +185,13 @@
                 {% endif %}
 
                 <div class="form-actions">
-                    <a href="javascript: history.back();" class="btn btn-default">Back</a>
-                    <input type="submit" value="Next" class="btn btn-primary" />
+                    <a href="javascript: history.back();" class="btn btn-default">{{ _("Back") }}</a>
+                    <input type="submit" value="{{ _('Next') }}" class="btn btn-primary" />
                 </div>
             </form>
 
         {% elif step in (3, 4) %}
-            {{ alert("info", "Here you can select which day/time combinations are available for voting.") }}
+            {{ alert("info", _("Here you can select which day/time combinations are available for voting.")) }}
 
             <form class="form form-inline" method="POST" action="{{ url_for('poll_edit_choices', slug=poll.slug, step=4) }}">
                 {{ form.hidden_tag() }}
@@ -227,8 +220,8 @@
                             </td>
                             {% endfor %}
                             <td class="choice-text">
-                                <input type="button" class="btn btn-xs btn-link toggle toggle-select   toggle-row" value="all" />
-                                <input type="button" class="btn btn-xs btn-link toggle toggle-deselect toggle-row" value="none" />
+                                <input type="button" class="btn btn-xs btn-link toggle toggle-select   toggle-row" value="{{ _('all') }}" />
+                                <input type="button" class="btn btn-xs btn-link toggle toggle-deselect toggle-row" value="{{ _('none') }}" />
                             </td>
                         </tr>
                     {% endfor %}
@@ -236,8 +229,8 @@
                             <td></td>
                             {% for time in times+[0] %}
                             <td class="choice-text">
-                                <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-select   toggle-{{ 'all' if loop.last else 'column' }}" value="all" />
-                                <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-deselect toggle-{{ 'all' if loop.last else 'column' }}" value="none" />
+                                <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-select   toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('all') }}" />
+                                <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-deselect toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('none') }}" />
                             </td>
                             {% endfor %}
 
@@ -247,8 +240,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="javascript: history.back();" class="btn btn-default">Back</a>
-                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <a href="javascript: history.back();" class="btn btn-default">{{ _("Back") }}</a>
+                    <input type="submit" value="{{ _('Next') }}" class="btn btn-primary" />
                 </div>
 
             </form>
