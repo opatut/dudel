@@ -577,8 +577,8 @@ tr.choice td {
     font-weight: bold;
 }
 
-.comment .meta .author {
-    font-weight: bold;
+.comment .meta .edit {
+    float: right;
 }
 
 .comment .text > *:last-child {

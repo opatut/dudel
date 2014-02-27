@@ -71,6 +71,18 @@ def poll(slug):
 
     return render_template("poll.html", poll=poll, comment_form=comment_form)
 
+@app.route("/<slug>/comment/delete/<int:id>", methods=("POST", "GET"))
+def poll_delete_comment(slug, id):
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    comment = Comment.query.filter_by(id=id,poll=poll).first_or_404()
+    if not comment.user_can_edit(current_user):
+        abort(403)
+
+    comment.deleted = True
+    db.session.commit()
+    flash("The comment was deleted.", "success")
+    return redirect(poll.get_url())
+
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
 def poll_edit(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
@@ -85,6 +97,7 @@ def poll_edit(slug):
         return redirect(url_for("poll_edit", slug=poll.slug))
 
     return render_template("poll_edit.html", poll=poll, form=form)
+
 
 @app.route("/<slug>/claim/", methods=("POST", "GET"))
 @login_required

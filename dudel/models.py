@@ -162,7 +162,7 @@ class Poll(db.Model):
         return stats
 
     def get_comments(self):
-        return self.comments
+        return Comment.query.filter_by(poll=self, deleted=False).order_by(db.asc(Comment.created)).all()
 
     def fill_vote_form(self, form):
         while form.vote_choices:
@@ -203,6 +203,11 @@ class Comment(db.Model):
     poll = db.relationship("Poll", backref="comments")
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
     deleted = db.Column(db.Boolean, default=False)
+
+    def user_can_edit(self, user):
+        if not self.user: return True
+        if user.is_anonymous(): return False
+        return user == self.user or user == self.poll.author
 
 class ChoiceValue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
