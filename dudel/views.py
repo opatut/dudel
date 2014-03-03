@@ -9,7 +9,12 @@ from datetime import datetime
 
 @babel.localeselector
 def get_locale():
-    return request.accept_languages.best_match(supported_languages)
+    if current_user.is_authenticated() and current_user.preferred_language:
+        return current_user.preferred_language
+    elif request.cookies.get("lang"):
+        return request.cookies.get("lang")
+    else:
+        return request.accept_languages.best_match(supported_languages)
 
 @app.route("/", methods=("POST", "GET"))
 def index():
@@ -53,6 +58,21 @@ def logout():
         flash(gettext("You were logged out, %(name)s. Goodbye!", name=current_user.displayname), "success")
         logout_user()
     return redirect(request.args.get("next") or url_for("index"))
+
+@app.route("/user/language", methods=("GET", "POST"))
+def user_change_language():
+    response = redirect(request.args.get("next") or url_for("index"))
+
+    form = LanguageForm()
+    if form.validate_on_submit():
+        lang = form.lang.data
+        if lang in supported_languages:
+            if current_user.is_authenticated():
+                current_user.preferred_language = lang
+                db.session.commit()
+            else:
+                response.set_cookie("lang", lang)
+    return response
 
 @app.route("/<slug>/", methods=("GET", "POST"))
 def poll(slug):

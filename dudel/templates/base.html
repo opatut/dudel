@@ -77,6 +77,12 @@
         <footer>
             <div class="container">
                 Powered by <a href="http://github.com/opatut/dudel">Dudel</a>
+                <form class="form-inline" action="{{ url_for('user_change_language', next=request.url) }}" method="POST">
+                    {{ lang_form.hidden_tag() }}
+                    {% for lang in lang_form.lang %}
+                        &middot; {{ lang() }}
+                    {% endfor %}
+                </form>
             </div>
         </footer>
 

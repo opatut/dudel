@@ -37,6 +37,7 @@ class User(db.Model):
     lastname = db.Column(db.String(80))
     username = db.Column(db.String(80))
     email = db.Column(db.String(80))
+    preferred_language = db.Column(db.String(80))
 
     @property
     def displayname(self):
@@ -75,7 +76,7 @@ class Poll(db.Model):
     one_vote_per_user = db.Column(db.Boolean, default=True)
     allow_comments = db.Column(db.Boolean, default=True)
 
-    RESERVED_NAMES = ["login", "logout", "index"]
+    RESERVED_NAMES = ["login", "logout", "index", "user"]
 
     def __init__(self):
         self.created = datetime.utcnow()

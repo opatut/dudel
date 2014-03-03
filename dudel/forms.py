@@ -1,5 +1,5 @@
 from dudel import app
-from flask import request
+from flask import request, Markup
 from flask.ext.babel import gettext, lazy_gettext
 from flask.ext.wtf import Form
 from flask.ext.login import current_user
@@ -76,6 +76,11 @@ class LDAPAuthenticator(object):
             raise ValidationError(self.message)
         except ldap.LDAPError, e:
             raise ValidationError("LDAP Error: " + (e.message["desc"] if e.message else "%s (%s)"%(e[1],e[0])))
+
+class SelectButtonInput:
+    def __call__(self, field, **kwargs):
+        return Markup('<button name="%s" type="submit" value="%s" class="btn-link">%s</button>'
+                        % (field.name, field.data, field.label.text))
 
 class YourNameRequired(object):
     def __call__(self, form, field):
@@ -166,3 +171,9 @@ class PollPassword(Form):
 class CommentForm(Form):
     name = TextField(lazy_gettext("Your Name"), validators=[RequiredIfAnonymous()])
     text = TextAreaField(lazy_gettext("Comment"))
+
+class LanguageForm(Form):
+    lang = SelectField(lazy_gettext("Language"), choices=[
+        ('en', 'English'),
+        ('de', 'Deutsch')],
+    option_widget=SelectButtonInput())

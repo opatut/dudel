@@ -1,5 +1,5 @@
 from dudel import app, ICONS
-from dudel.forms import LoginForm
+from dudel.forms import LoginForm, LanguageForm
 from flask import g
 
 @app.template_filter()
@@ -18,6 +18,6 @@ def datetime(s):
 def inject():
     return dict(
         ICONS=ICONS,
-        login_form=LoginForm()
+        login_form=LoginForm(),
+        lang_form=LanguageForm()
         )
-
