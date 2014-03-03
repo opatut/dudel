@@ -5,13 +5,13 @@
 {% block poll_content %}
 
     {% if not vote and not current_user.is_anonymous() and poll.get_user_votes(current_user) %}
-        {{ alert("warning", "You have already voted on this poll. Maybe instead of voting again you'd rather edit your choices?") }}
+        {{ alert("warning", _("You have already voted on this poll. Maybe instead of voting again you'd rather edit your choices?")) }}
     {% endif %}
 
-    {{ alert("info", "Hold left mouse button and drag mouse to select multiple vote choices.") }}
+    {{ alert("info", _("Hold left mouse button and drag mouse to select multiple vote choices.")) }}
 
     {% if vote %}
-        {{ alert("warning", "You are editing a vote, not casting a new one.") }}
+        {{ alert("warning", _("You are editing a vote, not casting a new one.")) }}
     {% endif %}
 
     <form method="POST" class="form-inline">
@@ -23,11 +23,11 @@
                 <td></td><td></td>
                 {% for value in poll.get_choice_values() %}
                 <td class="text-center">
-                    <input type="button" class="btn btn-xs btn-link vote-choice-column" value="all" data-choice="{{ value.id }}"/>
+                    <input type="button" class="btn btn-xs btn-link vote-choice-column" value="{{ _('all') }}" data-choice="{{ value.id }}"/>
                 </td>
                 {% endfor %}
                 <td>
-                    <input type="button" class="btn btn-xs btn-link vote-choice-edit-all" value="Show all comment fields" />
+                    <input type="button" class="btn btn-xs btn-link vote-choice-edit-all" value="{{ _('Show all comment fields') }}" />
                 </td>
             </tr>
             {% set groups = poll.get_choice_groups() %}
@@ -99,7 +99,7 @@
                 <td></td>
                 <td></td>
                 <td colspan="3">
-                    <button type="submit" class="btn btn-success btn-block"><span class="fa fa-check"></span> Save vote</button>
+                    <button type="submit" class="btn btn-success btn-block"><span class="fa fa-check"></span>{{ _("Save vote") }}</button>
                 </td>
                 <td></td>
             </tr>

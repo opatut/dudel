@@ -1,6 +1,7 @@
 from dudel import app, db, login_manager
 from flask import url_for, session
 from flask.ext.login import current_user
+from flask.ext.babel import lazy_gettext
 from datetime import datetime
 
 class PollExpiredException(Exception):
@@ -36,6 +37,7 @@ class User(db.Model):
     lastname = db.Column(db.String(80))
     username = db.Column(db.String(80))
     email = db.Column(db.String(80))
+    preferred_language = db.Column(db.String(80))
 
     @property
     def displayname(self):
@@ -74,7 +76,7 @@ class Poll(db.Model):
     one_vote_per_user = db.Column(db.Boolean, default=True)
     allow_comments = db.Column(db.Boolean, default=True)
 
-    RESERVED_NAMES = ["login", "logout", "index"]
+    RESERVED_NAMES = ["login", "logout", "index", "user"]
 
     def __init__(self):
         self.created = datetime.utcnow()
@@ -136,7 +138,7 @@ class Poll(db.Model):
 
     def check_edit_permission(self):
         if not self.user_can_edit(current_user):
-            raise PollActionException(self, "edit")
+            raise PollActionException(self, lazy_gettext("edit"))
 
     # returns a list of groups
     # each group is sorted

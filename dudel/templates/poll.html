@@ -13,23 +13,23 @@
 {% block poll_content %}
     <ul class="poll-details well row">
         <div class="col-md-4">
-        {{ pollDetail("Created on", poll.created|date, "calendar") }}
+        {{ pollDetail(_("Created on"), poll.created|date, "calendar") }}
 
-        {{ pollDetail("Expires", poll.due_date|date if poll.due_date else "never", "clock-o") }} 
+        {{ pollDetail(_("Expires"), poll.due_date|date if poll.due_date else _("never"), "clock-o") }} 
         </div>
         <div class="col-md-4">
 
-        {{ pollDetail("Ownership", ("you" if poll.author == current_user else poll.author.displayname) if poll.author else "unclaimed", "briefcase") }} 
-        {{ pollDetail("Anonymous voting", "allowed" if poll.anonymous_allowed else "disabled", "exclamation") }}
+        {{ pollDetail(_("Ownership"), (_("you") if poll.author == current_user else poll.author.displayname) if poll.author else "unclaimed", "briefcase") }} 
+        {{ pollDetail(_("Anonymous voting"), _("allowed") if poll.anonymous_allowed else _("disabled"), "exclamation") }}
         </div>
         <div class="col-md-4">
-        {{ pollDetail("Public listing", "visible" if poll.public_listing else "hidden", "list") }}
-        {{ pollDetail("Login required", "yes" if poll.public_listing else "no", "user") }}
+        {{ pollDetail(_("Public listing"), _("visible") if poll.public_listing else _("hidden"), "list") }}
+        {{ pollDetail(_("Login required"), _("yes") if poll.require_login else _("no"), "user") }}
         </div>
     </ul>
 
     {% if poll.description %}
-        <h3>Poll Description</h3>
+        <h3>{{ _("Poll Description") }}</h3>
         {{ poll.description | markdown }}
         <hr />
     {% endif %}
@@ -131,14 +131,14 @@
         </div>
     {% else %}
         {% if not poll.has_choices %}
-            {{ alert("warning", "This poll does not have any choices, so no votes can be cast. If this is your poll, please fix that by clicking the 'choices' button on the top.") }}
+            {{ alert("warning", _("This poll does not have any choices, so no votes can be cast. If this is your poll, please fix that by clicking the 'choices' button on the top.")) }}
         {% elif poll.votes %}
-            {{ alert("info", "The results of this poll are currently hidden.") }}
+            {{ alert("info", _("The results of this poll are currently hidden.")) }}
         {% elif poll.is_expired %}
-            <p class="text-muted text-center">No-one voted, and the poll expired.</p>
+            <p class="text-muted text-center">{{ _("No-one voted, and the poll expired.") }}</p>
             <p class="text-muted text-center"><i class="fa fa-2x fa-frown-o"></i></p>
         {% else %}
-            <p class="text-muted text-center">No-one voted yet. Be the first!</p>
+            <p class="text-muted text-center">{{ _("No-one voted yet. Be the first!") }}</p>
         {% endif %}
     {% endif %}
 
@@ -148,11 +148,11 @@
     <center style="margin-bottom: 3em; margin-top: 2em;">
         {% set user_votes = [] if current_user.is_anonymous() else poll.get_user_votes(current_user) %}
         {% if poll.one_vote_per_user and user_votes %}
-            <p><a class="btn btn-lg btn-primary" href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=user_votes[0].id) }}" style="min-width: 30%;">Edit vote</a></p>
+            <p><a class="btn btn-lg btn-primary" href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=user_votes[0].id) }}" style="min-width: 30%;">{{ _("Edit vote") }}</a></p>
         {% elif poll.require_login and current_user.is_anonymous() %}
-            <p><a class="btn btn-lg btn-primary" href="{{ url_for('login', next=url_for('poll_vote', slug=poll.slug)) }}" style="min-width: 30%;">Log in to vote</a></p>
+            <p><a class="btn btn-lg btn-primary" href="{{ url_for('login', next=url_for('poll_vote', slug=poll.slug)) }}" style="min-width: 30%;">{{ _("Log in to vote") }}</a></p>
         {% else %}
-            <p><a class="btn btn-lg btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}" style="min-width: 30%;">Vote now</a></p>
+            <p><a class="btn btn-lg btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}" style="min-width: 30%;">{{ _("Vote now") }}</a></p>
         {% endif %}
     </center>
     {% endif %}
@@ -161,7 +161,7 @@
 
     {% if comments %}
         <hr />
-        <h3>Comments</h3>
+        <h3>{{ _("Comments") }}</h3>
         <div class="comments">
         {% for comment in comments %}
             <div class="comment">
@@ -171,7 +171,7 @@
                 </div>
                 <div class="meta">
                     <div class="author">{{ comment.name or comment.user.displayname }}</div>
-                    commented on
+                    {{ _("commented on") }}
                     <div class="date">{{ comment.created | date }} at {{ comment.created | time }}</div>
                     {% if comment.user_can_edit(current_user) %}
                     <div class="edit">
@@ -187,7 +187,7 @@
 
     {% if poll.allow_comments %}
         <hr />
-        <h3>Post a comment</h3>
+        <h3>{{ _("Post a comment") }}</h3>
         <form method="POST" class="form">
             {{ comment_form.hidden_tag() }}
             <div class="form-group">
@@ -206,7 +206,7 @@
                 {{ markdown_info(true) }}
             </div>
             <div class="form-group">
-                <input type="submit" value="Post comment" class="btn btn-primary" />
+                <input type="submit" value="{{ _('Post comment') }}" class="btn btn-primary" />
             </div>
         </form>
     {% endif %}

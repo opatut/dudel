@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="page-header">
-            <h1>Create a poll</h1>
+            <h1>{{ _("Create a poll") }}</h1>
         </div>
         <form class="form" method="POST">
             {{ form.hidden_tag() }}
@@ -43,7 +43,7 @@
 
     <div class="col-md-6">
         <div class="page-header">
-            <h1>Recent polls</h1>
+            <h1>{{ _("Recent polls") }}</h1>
         </div>
 
         {% if polls %}
@@ -55,12 +55,12 @@
                 {% endfor %}
             </ul>
         {% else %}
-            {{ alert("info", "There are currently no public polls.") }}
+            {{ alert("info", _("There are currently no public polls.")) }}
         {% endif %}
 
         {% if current_user.is_authenticated() %}
             <div class="page-header secondary">
-                <h1>My polls</h1>
+                <h1>{{ _("My polls") }}</h1>
             </div>
             {% if user_polls %}
             <ul>
@@ -71,17 +71,17 @@
                 {% endfor %}
             </ul>
             {% else %}
-                {{ alert("info", "You do not own any polls.") }}
+                {{ alert("info", _("You do not own any polls.")) }}
             {% endif %}
         {% endif %}
 
         <div class="page-header secondary">
-            <h1>Dudel statistics</h1>
+            <h1>{{ _("Dudel statistics") }}</h1>
         </div>
         <table class="table">
-            <tr><th>Polls created</th><td>{{ poll_count }}</td></tr>
-            <tr><th>Votes cast</th><td>{{ vote_count }}</td></tr>
-            <tr><th>Users</th><td>{{ user_count }}</td></tr>
+            <tr><th>{{ _("Polls created") }}</th><td>{{ poll_count }}</td></tr>
+            <tr><th>{{ _("Votes cast") }}</th><td>{{ vote_count }}</td></tr>
+            <tr><th>{{ _("Users") }}</th><td>{{ user_count }}</td></tr>
         </table>
     </div>
 </div>

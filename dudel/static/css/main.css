@@ -265,6 +265,18 @@ footer {
     text-align: center;
 }
 
+form.form-inline {
+    display: inline-block;
+}
+
+footer .btn-link,
+footer .btn-link:focus,
+footer .btn-link:hover,
+footer .btn-link:active {
+    color: #AAA;
+    padding: 0;
+}
+
 .form-actions {
     padding: 20px;
     background: #EEE;
