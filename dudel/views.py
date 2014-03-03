@@ -105,7 +105,7 @@ def poll_delete_comment(slug, id):
 
     comment.deleted = True
     db.session.commit()
-    flash("The comment was deleted.", "success")
+    flash(gettext("The comment was deleted."), "success")
     return redirect(poll.get_url())
 
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
