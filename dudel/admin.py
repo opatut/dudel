@@ -11,7 +11,7 @@ from datetime import datetime
 def admin_index():
     current_user.require_admin()
     polls = Poll.query.order_by(db.desc(Poll.created)).limit(5)
-    users = User.query.limit(5)
+    users = User.query.order_by(db.desc(User.id)).limit(5)
     return render_template("admin/index.html", polls=polls, users=users)
 
 @app.route("/admin/polls/")
