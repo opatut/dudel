@@ -66,7 +66,7 @@
                             {% if poll.show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
                                 <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
                                     <td class="author">
-                                        {{ voter(vote) }}
+                                        {{ vote|voter }}
                                     </td>
                                     {% for group in groups %}
                                         {% for choice in group %}
@@ -74,8 +74,8 @@
                                             {% if vote_choice and not vote_choice.value.deleted %}
                                             <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}"
                                                 style="background-color: #{{ vote_choice.value.color }}"
-                                                title="{{ voter(vote) }}, {{choice.text or choice.date|datetime }}{% if vote_choice.comment %}: {{ vote_choice.comment }}{% endif %}"
-                                                data-tooltip="<b>{{ voter(vote) }}</b><br>{{ choice.text or choice.date|datetime }}{% if vote_choice.comment %}<br>{{ vote_choice.comment }}{% endif %}"
+                                                title="{{ vote|voter }}, {{choice.text or choice.date|datetime }}{% if vote_choice.comment %}: {{ vote_choice.comment }}{% endif %}"
+                                                data-tooltip="<b>{{ vote|voter }}</b><br>{{ choice.text or choice.date|datetime }}{% if vote_choice.comment %}<br>{{ vote_choice.comment }}{% endif %}"
                                                 data-toggle="tooltip">
                                                 <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
                                                 {#{% if vote_choice.comment %}<span class="comment-icon fa fa-exclamation"></span>{% endif %}#}

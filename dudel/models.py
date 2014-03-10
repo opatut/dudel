@@ -1,5 +1,5 @@
 from dudel import app, db, login_manager
-from flask import url_for, session
+from flask import url_for, session, abort
 from flask.ext.login import current_user
 from datetime import datetime
 
@@ -54,6 +54,15 @@ class User(db.Model):
     def is_authenticated(self):
         return True
 
+    @property
+    def is_admin(self):
+        return "ADMINS" in app.config and self.username in app.config["ADMINS"]
+
+    def require_admin(self):
+        if not current_user.is_authenticated() or not current_user.is_admin:
+            abort(403)
+
+
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))
@@ -74,7 +83,7 @@ class Poll(db.Model):
     one_vote_per_user = db.Column(db.Boolean, default=True)
     allow_comments = db.Column(db.Boolean, default=True)
 
-    RESERVED_NAMES = ["login", "logout", "index"]
+    RESERVED_NAMES = ["login", "logout", "index", "admin"]
 
     def __init__(self):
         self.created = datetime.utcnow()
@@ -125,7 +134,7 @@ class Poll(db.Model):
         return [choice for choice in self.get_choices() if choice.date == dt and not choice.deleted]
 
     def user_can_edit(self, user):
-        return not self.author or self.author == user
+        return not self.author or self.author == user or user.is_admin
 
     def get_user_votes(self, user):
         return [] if user.is_anonymous() else Vote.query.filter_by(poll = self, user = user).all()

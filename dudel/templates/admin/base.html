@@ -1,0 +1,40 @@
+{% from "_macros.html" import alert, form_errors, field_error, markdown_info %}
+{% from "admin/_macros.html" import poll_table, user_table %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>dudel admin</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" media="screen">
+        <link href="{{ url_for('static', filename='css/bootstrap-theme.css') }}" rel="stylesheet" media="screen">
+        <link href="{{ url_for('static', filename='css/admin.css') }}" rel="stylesheet" media="screen">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}" media="screen">
+        {% block head %}{% endblock %}
+    </head>
+
+    <body>
+        <nav class="navbar navbar-default navbar-inverse" role="navigation">
+            Admin
+        </nav>
+        <div class="container">
+            {% include "_flashes.html" %}
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <footer>
+            <div class="container">
+                <a href="{{ url_for('index') }}">Main Site</a> &mdash;
+                Powered by <a href="http://github.com/opatut/dudel">Dudel</a>
+            </div>
+        </footer>
+
+        <script type="text/javascript" src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/admin.js') }}"></script>
+        {% block foot %}{% endblock %}
+    </body>
+</html>

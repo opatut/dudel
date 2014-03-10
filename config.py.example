@@ -31,3 +31,7 @@ SENTRY_DSN = "https://user:password@sentry.mafiasi.de/X"
 
 # may contain fields: firstname, lastname, username, email
 NAME_FORMAT = "%(firstname)s (%(username)s)"
+
+# Usernames of administrators
+# e.g. ["13musterm", "14musterf"]
+ADMINS = [] 

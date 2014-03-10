@@ -20,5 +20,6 @@ import dudel.models
 import dudel.forms
 import dudel.filters
 import dudel.views
+import dudel.admin
 
 login_manager.login_view = "login"
