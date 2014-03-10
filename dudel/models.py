@@ -155,10 +155,18 @@ class Poll(db.Model):
 
     def get_statistics(self):
         stats = {choice: {choice_value.title: sum([1 if vc.value == choice_value else 0 for vc in choice.vote_choices]) for choice_value in self.choice_values} for choice in self.get_choices()}
-        main_key = "yes"
-        maximum = max([v[main_key] for k,v in stats.iteritems()]) if stats else 0
-        for k in stats:
-            stats[k]["max"] = (stats[k][main_key] == maximum)
+        vals = self.get_choice_values()
+        main_choice_value = vals[0] if vals else None
+        if main_choice_value:
+            main_key = main_choice_value.title
+            maximum = max([v[main_key] for k,v in stats.iteritems()]) if stats else 0
+            for k in stats:
+                stats[k]["max"] = (stats[k][main_key] == maximum)
+                stats[k]["value"] = stats[k][main_key]
+        else:
+            for k in stats:
+                stats[k]["max"] = False
+                stats[k]["value"] = 0
         return stats
 
     def get_comments(self):

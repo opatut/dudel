@@ -119,7 +119,7 @@
                                 {% for choice in group %}
                                     {% set stat = stats[choice] %}
                                     <th class="choice-sum {% if stat["max"] %}maximum{% endif %}" title="{% for value in poll.get_choice_values() %}{{ stat[value.title] }} {{ value.title }}{% if not loop.last %}, {% endif %}{% endfor %}">
-                                        {{ "%2.0f" % (stat["yes"]/total*100) }}%
+                                        {{ "%2.0f" % (stat["value"]/total*100) }}%
                                     </th>
                                 {% endfor %}
                             {% endfor %}
