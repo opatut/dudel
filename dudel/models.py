@@ -134,7 +134,7 @@ class Poll(db.Model):
         return [choice for choice in self.get_choices() if choice.date == dt and not choice.deleted]
 
     def user_can_edit(self, user):
-        return not self.author or self.author == user or user.is_admin
+        return not self.author or self.author == user or (user.is_authenticated() and user.is_admin)
 
     def get_user_votes(self, user):
         return [] if user.is_anonymous() else Vote.query.filter_by(poll = self, user = user).all()
