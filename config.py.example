@@ -1,5 +1,5 @@
 # SQL-Alchemy Settings
-SQLALCHEMY_DATABASE_URI = "sqlite:///dudel.db"
+SQLALCHEMY_DATABASE_URI = "sqlite:///tmp/dudel.db" # DO NOT USE RELATIVE PATHS IF USING MIGRATION!!!
 SQLALCHEMY_ECHO = False
 
 # Debug mode, set to False in productive environment
