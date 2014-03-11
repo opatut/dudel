@@ -14,6 +14,10 @@ def time(s):
 def datetime(s):
     return s.strftime("%a %d %b %H:%M")
 
+@app.template_filter()
+def voter(vote):
+    return "anonymous" if vote.anonymous else (vote.name or vote.user.displayname)
+
 @app.context_processor
 def inject():
     return dict(

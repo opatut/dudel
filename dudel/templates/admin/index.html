@@ -1,0 +1,16 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Overview</h1>
+    </div>
+
+    <h2>Recent Polls</h2>
+    {{ poll_table(polls) }}
+    <a href="{{ url_for('admin_polls') }}" class="btn btn-large btn-default">Show all polls &raquo;</a>
+
+    <h2>New Users</h2>
+    {{ user_table(users) }}
+    <a href="{{ url_for('admin_users') }}" class="btn btn-large btn-default">Show all users &raquo;</a>
+
+{% endblock %}

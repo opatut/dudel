@@ -1,0 +1,70 @@
+{% from "_macros.html" import alert %}
+
+{% macro user_link(user) %}
+    <a href="{{ url_for('admin_user', id=user.id) }}">{{ user.displayname }}</a>
+{% endmacro %}
+
+{% macro poll_table(polls) %}
+    {% if polls %}
+    <div class="table-responsive table-scroll">
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Link name</th>
+                <th>Created</th>
+                <th>Author</th>
+                <th>Due date</th>
+                <th>Votes</th>
+            </tr>
+            {% for poll in polls %}
+            <tr>
+                <td>
+                    <i class="fa fa-{{ {"normal":"list", "date":"clock-o"}[poll.type] }}" title="Type: {{ poll.type }}"></i>
+                </td>
+                <td>
+                    <a href="{{ url_for('admin_poll', id=poll.id) }}">{{ poll.title }}</a>
+                </td>
+                <td><a href="{{ poll.get_url() }}">{{ poll.slug }}</a></td>
+                <td>{{ poll.created | datetime }}</td>
+                <td>{{ user_link(poll.author) if poll.author else "unclaimed" }}</td>
+                <td>{{ (poll.due_date|datetime) if poll.due_date else "never" }}</td>
+                <td>{{ poll.votes|length }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+        {{ alert("info", "No polls found") }}
+    {% endif %}
+{% endmacro %}    
+
+{% macro user_table(users) %}
+    {% if users %}
+    <div class="table-responsive table-scroll">
+        <table class="table">
+            <tr>
+                <th>Display Name</th>
+                <th>Login</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>
+                    {{ user_link(user) }}
+                    {% if user.is_admin %}<span class="label label-danger">ADMIN</span>{% endif %}
+                </td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.firstname }}</td>
+                <td>{{ user.lastname }}</td>
+                <td>{{ user.email  }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+        {{ alert("info", "No users found") }}
+    {% endif %}
+{% endmacro %}    

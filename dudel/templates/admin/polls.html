@@ -1,0 +1,9 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Poll List</h1>
+    </div>
+
+    {{ poll_table(polls) }}
+{% endblock %}

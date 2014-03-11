@@ -39,12 +39,3 @@
         {{ _('You can use <a href="http://daringfireball.net/projects/markdown/" target="_blank">Markdown</a> syntax for formatting.') }}
     {% if helpBlock %}</p>{% endif %}
 {% endmacro %}
-
-{% macro voter(vote) -%}
-    {%- if vote.anonymous -%}
-        anonymous
-    {%- else -%}
-        {{ vote.name or vote.user.displayname }}
-    {%- endif -%}
-{% endmacro %}
-

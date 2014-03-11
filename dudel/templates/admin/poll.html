@@ -1,0 +1,32 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Poll: {{ poll.title }}</h1>
+    </div>
+
+    <p>
+        <a href="{{ poll.get_url() }}" class="btn btn-primary">Visit poll page</a>
+        <a href="{{ url_for('poll_edit', slug=poll.slug) }}" class="btn btn-default">Edit poll</a>
+    </p>
+
+    <h2>Details</h2>
+
+    <table class="table auto-width">
+        <tr><th>ID</th><td>{{ poll.id }}</td></tr>
+        <tr><th>Title</th><td>{{ poll.title }}</td></tr>
+        <tr><th>Description</th><td>{{ poll.description }}</td></tr>
+        <tr><th>Slug</th><td>{{ poll.slug }}</td></tr>
+        <tr><th>Type</th><td>{{ poll.type }}</td></tr>
+        <tr><th>Created</th><td>{{ poll.created }}</td></tr>
+        <tr><th>Author</th><td>{{ poll.author }}</td></tr>
+        <tr><th>Due date</th><td>{{ poll.due_date }}</td></tr>
+        <tr><th>Anonymous allowed</th><td>{{ poll.anonymous_allowed }}</td></tr>
+        <tr><th>Public listing</th><td>{{ poll.public_listing }}</td></tr>
+        <tr><th>Require login</th><td>{{ poll.require_login }}</td></tr>
+        <tr><th>Show results</th><td>{{ poll.show_results }}</td></tr>
+        <tr><th>Send mail</th><td>{{ poll.send_mail }}</td></tr>
+        <tr><th>One vote per user</th><td>{{ poll.one_vote_per_user }}</td></tr>
+        <tr><th>Allow comments</th><td>{{ poll.allow_comments }}</td></tr>
+    </table>
+{% endblock %}
