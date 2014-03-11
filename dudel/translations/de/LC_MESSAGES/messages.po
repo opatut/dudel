@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-03-03 22:31+0100\n"
+"POT-Creation-Date: 2014-03-11 11:54+0100\n"
 "PO-Revision-Date: 2014-02-24 20:50+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -172,7 +172,7 @@ msgstr "Passwort der Umfrage"
 msgid "Language"
 msgstr "Sprache"
 
-#: dudel/models.py:141
+#: dudel/models.py:150
 msgid "edit"
 msgstr "bearbeiten"
 
@@ -351,7 +351,7 @@ msgid "Poll"
 msgstr "Umfrage"
 
 #: dudel/templates/base_poll.html:9 dudel/templates/poll_edit.html:3
-#: dudel/templates/poll_edit.html:30
+#: dudel/templates/poll_edit.html:35
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -533,37 +533,48 @@ msgstr ""
 "niemand diese Umfrage besitzt. Daher ist jede Sicherheitseinstellung "
 "nutzlos."
 
-#: dudel/templates/poll_edit.html:22
+#: dudel/templates/poll_edit.html:22 dudel/templates/poll_edit.html:27
 msgid "Note:"
 msgstr "Hinweis:"
 
 #: dudel/templates/poll_edit.html:23
 #, python-format
 msgid ""
-"You have exclusive ownership of this poll. <a href=%(link)s>Click "
+"You have exclusive ownership of this poll. <a href=\"%(link)s\">Click "
 "here</a> to free the poll and allow other users to edit the settings."
 msgstr ""
-"Du bist der alleinige Besitzer dieser Umfrage. <a href=%(link)s>Klick "
-"hier</a>, um die Umfrage freizugeben, so dass andere Benutzer diese "
+"Du bist der alleinige Besitzer dieser Umfrage. <a href=\"%(link)s\">Klick "
+"hier</a>, um die Umfrage freizugeben, sodass andere Benutzer diese "
 "Einstellungen ändern können."
 
-#: dudel/templates/poll_edit.html:76
+#: dudel/templates/poll_edit.html:28
+#, python-format
+msgid ""
+"This poll is owned by %(author)s, but you can edit it due to your "
+"administrator privileges. <a href=\"%(link)s\">Click here</a> to free the"
+" poll and allow other users to edit the settings."
+msgstr ""
+"Dise Umfrage gehört %(author)s, aber du kannst sie editieren, da du "
+"Administrator bist. <a href=\"%(link)s\">Klick hier</a>, um die Umfrage  "
+"freizugeben, sodass andere Benutzer diese Einstellungen ändern können."
+
+#: dudel/templates/poll_edit.html:81
 msgid "Additional settings"
 msgstr "Zusätzliche Einstellung"
 
-#: dudel/templates/poll_edit.html:112
+#: dudel/templates/poll_edit.html:117
 msgid "Very advanced stuff"
 msgstr "Sehr fortgeschrittene Einstellungen"
 
-#: dudel/templates/poll_edit.html:113
+#: dudel/templates/poll_edit.html:118
 msgid "Edit possible answer values"
 msgstr "Mögliche Antworten bearbeiten"
 
-#: dudel/templates/poll_edit.html:119
+#: dudel/templates/poll_edit.html:124
 msgid "Back to poll"
 msgstr "Zurück zur Umfrage"
 
-#: dudel/templates/poll_edit.html:120
+#: dudel/templates/poll_edit.html:125
 msgid "Save settings"
 msgstr "Einstellungen speichern"
 

@@ -1,3 +1,5 @@
 config.py
+messages.mo
+messages.pot
 *.pyc
 *.db
