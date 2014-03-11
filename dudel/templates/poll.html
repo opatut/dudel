@@ -19,7 +19,7 @@
         </div>
         <div class="col-md-4">
 
-        {{ pollDetail(_("Ownership"), (_("you") if poll.author == current_user else poll.author.displayname) if poll.author else "unclaimed", "briefcase") }} 
+        {{ pollDetail(_("Ownership"), (_("you") if poll.author == current_user else poll.author.displayname) if poll.author else _("unclaimed"), "briefcase") }}
         {{ pollDetail(_("Anonymous voting"), _("allowed") if poll.anonymous_allowed else _("disabled"), "exclamation") }}
         </div>
         <div class="col-md-4">
