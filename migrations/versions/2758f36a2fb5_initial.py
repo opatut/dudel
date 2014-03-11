@@ -1,4 +1,4 @@
-"""empty message
+"""Initial table layout
 
 Revision ID: 2758f36a2fb5
 Revises: None

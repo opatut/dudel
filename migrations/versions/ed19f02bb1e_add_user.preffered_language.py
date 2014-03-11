@@ -1,4 +1,4 @@
-"""empty message
+"""Added User.preferred_language
 
 Revision ID: ed19f02bb1e
 Revises: 2758f36a2fb5
