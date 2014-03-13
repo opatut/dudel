@@ -218,16 +218,28 @@ function initCalendar(calendar) {
     });
 
     calendar.on("click", "button.day", function() {
-        var date = calendar.data("date");
-        date.date($(this).text());
-        var datetime = date.format("YYYY-MM-DD");
-        if(dates.contains(datetime)) {
-            removeDate(datetime);
-        } else {
-            addDate(datetime);
-        }
+        toggleDay($(this));
+        return false;
+    }).on("click", "button.week", function() {
+        var off = $(this).closest("tr").find("button.day.btn-default").size() > 0;
+        var cls = off ? ".btn-default" : ".btn-success";
+
+        $(this).closest("tr").find("button.day" + cls).each(function() {
+            toggleDay($(this));
+        });
         return false;
     });
+}
+
+function toggleDay(btn) {
+    var date = calendar.data("date");
+    date.date(btn.text());
+    var datetime = date.format("YYYY-MM-DD");
+    if(dates.contains(datetime)) {
+        removeDate(datetime);
+    } else {
+        addDate(datetime);
+    }
 }
 
 function calendarSetDate(date) {
@@ -258,6 +270,19 @@ function updateMonth() {
 
 function makeWeek(week) {
     var tr = $('<tr class="week"></tr>');
+
+    var end = moment(calendar.data("date"));
+    end.date(week[6]);
+    var start = moment(calendar.data("date"));
+    start.date(week[0]);
+    var past = end.isBefore(moment());
+    var future = start.isAfter(moment());
+    if(past && !future) {
+        tr.append($('<td class="left"></td>'))
+    } else {
+        tr.append($('<td class="left"><button class="week btn-xs btn btn-default"><i class="fa fa-angle-double-right"></i></button></td>'))
+    }
+    
     for(var i = 0; i < 7; ++i) {
         var btn = "";
         if(week[i] != 0) {

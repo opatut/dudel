@@ -244,6 +244,13 @@ td.vote-comment {
     padding: 4pt !important;
 }
 
+.calendar table td.left {
+    border-right: 1px solid #DDD;
+    border-bottom: 0;
+    border-top: 0;
+}
+
+
 .time-buttons .btn,
 .calendar table td .btn {
     display: inline-block;
