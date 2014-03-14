@@ -227,13 +227,16 @@
                     {% endfor %}
                         <tr>
                             <td></td>
-                            {% for time in times+[0] %}
-                            <td class="choice-text">
-                                <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-select   toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('all') }}" />
-                                <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-deselect toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('none') }}" />
-                            </td>
-                            {% endfor %}
-
+                            {% if times %}
+                                {% for time in times+[0] %}
+                                <td class="choice-text">
+                                    <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-select   toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('all') }}" />
+                                    <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-deselect toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('none') }}" />
+                                </td>
+                                {% endfor %}
+                            {% else %}
+                                {{ alert("warning", _("An Error occurred, you can try to go back to fix it.")) }}
+                            {% endif %}
                             <td></td>
                         </tr>
                     </table>
