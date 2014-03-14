@@ -102,10 +102,10 @@ class AtLeastNow(object):
 ################################################################################
 
 class CreatePollForm(Form):
-    title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3)])
+    title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
     type = SelectField(lazy_gettext("Type"), choices=[("date", lazy_gettext("Schedule a meeting")), ("normal", lazy_gettext("Normal poll"))])
     slug = TextField(lazy_gettext("URL name"), validators=[Required(),
-        Length(min=3),
+        Length(min=3, max=80),
         Regexp(r"^[a-zA-Z0-9_-]*$", message=lazy_gettext("Invalid character.")),
         UniqueObject(Poll, "slug", message=lazy_gettext("A poll with this URL name already exists.")),
         NoneOf(Poll.RESERVED_NAMES, message=lazy_gettext("This is a reserved name."))
@@ -117,15 +117,15 @@ class DateTimeSelectForm(Form):
     times = TextField(lazy_gettext("Times"), validators = [Regexp("([\d]{2}:[\d]{2}(:[\d]{2})?,?)*")])
 
 class AddChoiceForm(MultiForm):
-    text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(min=1)])
+    text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(min=1, max=80)])
 
 class EditChoiceForm(MultiForm):
-    text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(min=1)])
+    text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(min=1, max=80)])
 
 class AddValueForm(MultiForm):
-    title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=1)])
+    title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=1, max=80)])
     color = TextField(lazy_gettext("Color"), validators=[Required(), Regexp("^#?([0-9A-Fa-f]{3}){1,2}$")])
-    icon = TextField(lazy_gettext("Icon"), validators=[Required()], default="question")
+    icon = TextField(lazy_gettext("Icon"), validators=[Required(), Length(min=1, max=80)], default="question")
 
 class LoginForm(MultiForm):
     username = TextField(lazy_gettext("Username"), validators=[Required()])
@@ -161,7 +161,7 @@ class CreateVoteChoiceForm(Form):
     choice_id = HiddenField("choice id", validators=[Required()])
 
 class CreateVoteForm(Form):
-    name = TextField(lazy_gettext("Your Name"), validators=[YourNameRequired()])
+    name = TextField(lazy_gettext("Your Name"), validators=[YourNameRequired(), Length(min=3, max=80)])
     anonymous = BooleanField(lazy_gettext("Post anonymous vote"))
     vote_choices = FieldList(FormField(CreateVoteChoiceForm))
 
@@ -169,7 +169,7 @@ class PollPassword(Form):
     password = PasswordField(lazy_gettext("Poll password"), validators=[Required()])
 
 class CommentForm(Form):
-    name = TextField(lazy_gettext("Your Name"), validators=[RequiredIfAnonymous()])
+    name = TextField(lazy_gettext("Your Name"), validators=[RequiredIfAnonymous(), Length(max=80)])
     text = TextAreaField(lazy_gettext("Comment"))
 
 class LanguageForm(Form):
