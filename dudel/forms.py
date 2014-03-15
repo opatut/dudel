@@ -117,22 +117,22 @@ class DateTimeSelectForm(Form):
     times = TextField(lazy_gettext("Times"), validators = [Regexp("([\d]{2}:[\d]{2}(:[\d]{2})?,?)*")])
 
 class AddChoiceForm(MultiForm):
-    text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(min=1, max=80)])
+    text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(max=80)])
 
 class EditChoiceForm(MultiForm):
-    text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(min=1, max=80)])
+    text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(max=80)])
 
 class AddValueForm(MultiForm):
-    title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=1, max=80)])
+    title = TextField(lazy_gettext("Title"), validators=[Required(), Length(max=80)])
     color = TextField(lazy_gettext("Color"), validators=[Required(), Regexp("^#?([0-9A-Fa-f]{3}){1,2}$")])
-    icon = TextField(lazy_gettext("Icon"), validators=[Required(), Length(min=1, max=80)], default="question")
+    icon = TextField(lazy_gettext("Icon"), validators=[Required(), Length(max=80)], default="question")
 
 class LoginForm(MultiForm):
     username = TextField(lazy_gettext("Username"), validators=[Required()])
     password = PasswordField(lazy_gettext("Password"), validators=[Required(), LDAPAuthenticator("username")])
 
 class EditPollForm(Form):
-    title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3)])
+    title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
     description = TextAreaField(lazy_gettext("Description"))
     due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional(), AtLeastNow()])
     anonymous_allowed = BooleanField(lazy_gettext("Allow anonymous votes"))
@@ -161,7 +161,7 @@ class CreateVoteChoiceForm(Form):
     choice_id = HiddenField("choice id", validators=[Required()])
 
 class CreateVoteForm(Form):
-    name = TextField(lazy_gettext("Your Name"), validators=[YourNameRequired(), Length(min=3, max=80)])
+    name = TextField(lazy_gettext("Your Name"), validators=[YourNameRequired(), Length(max=80)])
     anonymous = BooleanField(lazy_gettext("Post anonymous vote"))
     vote_choices = FieldList(FormField(CreateVoteChoiceForm))
 
