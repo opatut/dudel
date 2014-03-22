@@ -41,8 +41,12 @@ class User(db.Model):
 
     @property
     def displayname(self):
-        return (app.config["NAME_FORMAT"] if "NAME_FORMAT" in app.config else "%(firstname)s (%(username)s)") % self.__dict__
-
+        return (app.config["NAME_FORMAT"] if "NAME_FORMAT" in app.config else "%(firstname)s (%(username)s)") % {
+            "firstname": self.firstname,
+            "lastname": self.lastname,
+            "username": self.username,
+            "email": self.email
+            }
     # login stuff
     def get_id(self):
         return self.username
