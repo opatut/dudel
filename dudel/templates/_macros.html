@@ -17,7 +17,15 @@
 
         {% for field_name in form.errors %}
             {% for error in form.errors[field_name] %}
-                {{ alert("danger", form[field_name].label.text + ": " + error) }}
+                {% if error is mapping %}
+                    {% for key, val in error.iteritems() %}
+                        {{ alert("danger",
+                          ": ".join([form[field_name].label.text, key,
+                                    ", ".join(val)])) }}
+                    {% endfor %}
+                {% else %}
+                    {{ alert("danger", form[field_name].label.text + ": " + error) }}
+                {% endif %}
             {% endfor %}
         {% endfor %}
 
@@ -28,7 +36,13 @@
     {% if field.errors %}
     <div class="form-errors">
         {% for error in field.errors %}
-            {{ alert("danger", error) }}
+            {% if error is mapping %}
+                {% for key, val in error.iteritems() %}
+                    {{ alert("danger", key + ": " + ", ".join(val)) }}
+                {% endfor %}
+            {% else %}
+                {{ alert("danger", error) }}
+            {% endif %}
         {% endfor %}
     </div>
     {% endif %}
