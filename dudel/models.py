@@ -94,9 +94,9 @@ class Poll(db.Model):
     def __init__(self):
         self.created = datetime.utcnow()
         # create yes/no/maybe default choice values
-        self.choice_values.append(ChoiceValue("yes", "check", "9C6"))
-        self.choice_values.append(ChoiceValue("no", "ban", "F96"))
-        self.choice_values.append(ChoiceValue("maybe", "question", "FF6"))
+        self.choice_values.append(ChoiceValue("yes", "check", "9C6", 1.0))
+        self.choice_values.append(ChoiceValue("no", "ban", "F96", 0.0))
+        self.choice_values.append(ChoiceValue("maybe", "question", "FF6", 0.5))
 
     @property 
     def is_expired(self):
@@ -168,22 +168,6 @@ class Poll(db.Model):
     def get_choices_by_group(self, group):
         return [choice for choice in self.get_choices() if choice.group == group]
 
-    def get_statistics(self):
-        stats = {choice: {choice_value.title: sum([1 if vc.value == choice_value else 0 for vc in choice.vote_choices]) for choice_value in self.choice_values} for choice in self.get_choices()}
-        vals = self.get_choice_values()
-        main_choice_value = vals[0] if vals else None
-        if main_choice_value:
-            main_key = main_choice_value.title
-            maximum = max([v[main_key] for k,v in stats.iteritems()]) if stats else 0
-            for k in stats:
-                stats[k]["max"] = (stats[k][main_key] == maximum)
-                stats[k]["value"] = stats[k][main_key]
-        else:
-            for k in stats:
-                stats[k]["max"] = False
-                stats[k]["value"] = 0
-        return stats
-
     def get_comments(self):
         return Comment.query.filter_by(poll=self, deleted=False).order_by(db.asc(Comment.created)).all()
 
@@ -198,6 +182,23 @@ class Poll(db.Model):
         for subform in form.vote_choices:
             subform.value.choices = [(v.id, v.title) for v in self.get_choice_values()]
 
+    def get_stats(self):
+        counts = {}
+        for choice in self.choices:
+            counts[choice] = choice.get_counts()
+
+        scores = {}
+        totals = {}
+        for choice, choice_counts in counts.items():
+            totals[choice] = len(choice.vote_choices)
+            scores[choice] = 0
+            for value, count in choice_counts.items():
+                scores[choice] += count * value.weight 
+
+        max_score = max(scores.values())
+
+        return scores, counts, totals, max_score
+
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(80))
@@ -208,6 +209,12 @@ class Choice(db.Model):
 
     def __cmp__(self,other):
         return cmp(self.date, other.date) or cmp(self.deleted, other.deleted) or cmp(self.text, other.text)
+
+    def get_counts(self):
+        counts = {vc: 0 for vc in self.poll.choice_values}
+        for vote_choice in self.vote_choices:
+            counts[vote_choice.value] += 1
+        return counts
 
     @property
     def group(self):
@@ -240,11 +247,13 @@ class ChoiceValue(db.Model):
     poll = db.relationship("Poll", backref="choice_values")
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
     deleted = db.Column(db.Boolean, default=False)
+    weight = db.Column(db.Float, default=0.0)
 
-    def __init__(self, title="", icon="question", color="EEEEEE"):
+    def __init__(self, title="", icon="question", color="EEEEEE", weight = 0.0):
         self.title = title
         self.icon = icon
         self.color = color
+        self.weight = weight
 
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)

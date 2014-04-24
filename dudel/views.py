@@ -229,7 +229,7 @@ def poll_edit_choices(slug, step=1):
                 flash(gettext("The choice was disabled."), "success")
             else:
                 flash(gettext("The choice was added."), "success")
-                return redirect(url_for("poll_edit_choices", slug=poll.slug))
+            return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
         elif "edit" in request.args:
             eid = request.args.get("edit")
@@ -280,6 +280,7 @@ def poll_edit_values(slug):
             value.title = form.title.data
             value.icon = form.icon.data
             value.color = form.color.data.lstrip("#")
+            value.weight = form.weight.data
             db.session.commit()
             flash(gettext("The choice value was edited."), "success")
             return redirect(url_for("poll_edit_values", slug=poll.slug))
@@ -293,6 +294,7 @@ def poll_edit_values(slug):
             value.title = form.title.data
             value.icon = form.icon.data
             value.color = form.color.data.lstrip("#")
+            value.weight = form.weight.data
             value.poll = poll
             db.session.add(value)
             db.session.commit()

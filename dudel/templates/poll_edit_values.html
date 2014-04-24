@@ -7,6 +7,11 @@
         {{ _("Here you can edit which options the voters have for each choice you give them. By default, <b>yes</b>, <b>no</b> and <b>maybe</b> are always enabled, but you can disable or change any of these. You should have at least one value in this list for the voting to make sense.") }}
     </p>
 
+    <p>
+        {{ _("Weights are factors on how the total score for a choice is calculated. These values are normally somewhere between 0 and 1. The total score is displayed both as
+        a percentage and as the weight sum, so you are allowed to use other values if you want them to \"cancel out\".") }}
+    </p>
+
     <script>
         var ICONS = {
             {% for icon in ICONS %}
@@ -16,31 +21,37 @@
     </script>
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <h2>{{ _("Available choices") }}</h2>
             <table class="table auto-width poll">
                 <tr>
                     <th>{{ _("Title") }}</th>
                     <th>{{ _("Color/Icon") }}</th>
+                    <th>{{ _("Weight") }}</th>
                     <th>{{ _("Votes cast") }}</th>
                     <th>{{ _("Actions") }}</th>
                 </tr>
                 {% set total_votes = poll.votes|length %}
                 {% for value in poll.choice_values %}
                     <tr class="choice {% if value.deleted %}deleted{% endif %} {% if value == edit_value %}editing mine{% endif %}">
-                        <td class="author choice">{{ value.title }}</td>
+                        <td class="author choice">
+                            {{ value.title }}
+                        </td>
                         <td class="vote-choice" style="background-color: #{{ value.color }}">
                             <i class="fa fa-{{ value.icon }}"></i>
                         </td>
+                        <td class="author">
+                            {{ value.weight }}
+                        </td>
                         {% set vote_count = value.vote_choices|length %}
-                        <td class="color {{ 'green' if vote_count >= total_votes else ('red' if vote_count == 0 else 'orange') }}">
+                        <td class="author">
                             <strong>{{ vote_count }}</strong> / {{ total_votes }}
                         </td>
-                        <td>
-                            <a href="?edit={{ value.id }}" class="btn btn-default btn-xs">
+                        <td class="author">
+                            <a href="?edit={{ value.id }}" class="btn btn-default btn-xs" title="{{ _('Edit') }}">
                                 <i class="fa fa-edit"></i>
                             </a>
-                            <a href="?toggle={{ value.id }}" class="btn btn-default btn-xs">
+                            <a href="?toggle={{ value.id }}" class="btn btn-default btn-xs" title="{{ _('Recover' if value.deleted else 'Delete') }}">
                                 {% if value.deleted %}
                                     <i class="fa fa-undo"></i>
                                 {% else %}
@@ -52,7 +63,7 @@
                 {% endfor %}
             </table>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-6">
             {% if edit_value %}
                 <h2>{{ _("Edit choice value: %(title)s", title=edit_value.title) }}</h2>
             {% else %}
@@ -63,9 +74,15 @@
                 {{ form.hidden_tag() }}
                 {{ form_errors(form) }}
 
-                <div class="form-group">
-                    {{ form.title.label }}
-                    {{ form.title(class="form-control input-sm") }}
+                <div class="row">
+                    <div class="col-sm-6 form-group">
+                        {{ form.title.label }}
+                            {{ form.title(class="form-control input-sm") }}
+                    </div>
+                    <div class="col-sm-6 form-group">
+                        {{ form.weight.label }} <span class="help-inline">{{ _("(usually between 0 and 1)") }}</span>
+                        {{ form.weight(class="form-control input-sm", placeholder=form.weight.label.text, placeholder="0.00") }}
+                    </div>
                 </div>
 
                 <div class="row">

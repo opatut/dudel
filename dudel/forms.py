@@ -4,7 +4,7 @@ from flask.ext.babel import gettext, lazy_gettext
 from flask.ext.wtf import Form
 from flask.ext.login import current_user
 from wtforms import ValidationError
-from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField
+from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField
 from wtforms.ext.dateutil.fields import DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional, NoneOf
 from dudel.models import Poll, update_user_data
@@ -126,6 +126,7 @@ class AddValueForm(MultiForm):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(max=80)])
     color = TextField(lazy_gettext("Color"), validators=[Required(), Regexp("^#?([0-9A-Fa-f]{3}){1,2}$")])
     icon = TextField(lazy_gettext("Icon"), validators=[Required(), Length(max=80)], default="question")
+    weight = DecimalField(lazy_gettext("Weight"), validators=[], default=0)
 
 class LoginForm(MultiForm):
     username = TextField(lazy_gettext("Username"), validators=[Required()])
