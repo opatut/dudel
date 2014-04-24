@@ -1,6 +1,6 @@
 {% extends "base_poll.html" %}
 
-{% block polltitle %}Vote{% endblock %}
+{% block polltitle %}{{ _("Vote") }}{% endblock %}
 
 {% block poll_content %}
 
@@ -68,7 +68,7 @@
                     <td class="vote-comment">
                         {{ subform.comment(class="form-control input-sm vote-choice-comment", placeholder=subform.comment.label.text) }}
                         <div class="script-only">
-                            <button class="btn btn-sm btn-default vote-choice-edit" title="Add a comment"><i class="fa fa-comment-o"></i></button>
+                            <button class="btn btn-sm btn-default vote-choice-edit" title="{{ _('Add a comment') }}"><i class="fa fa-comment-o"></i></button>
                         </div>
                     </td>
                 </tr>

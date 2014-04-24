@@ -41,8 +41,12 @@ class User(db.Model):
 
     @property
     def displayname(self):
-        return (app.config["NAME_FORMAT"] if "NAME_FORMAT" in app.config else "%(firstname)s (%(username)s)") % self.__dict__
-
+        return (app.config["NAME_FORMAT"] if "NAME_FORMAT" in app.config else "%(firstname)s (%(username)s)") % {
+            "firstname": self.firstname,
+            "lastname": self.lastname,
+            "username": self.username,
+            "email": self.email
+            }
     # login stuff
     def get_id(self):
         return self.username
@@ -214,7 +218,7 @@ class Choice(db.Model):
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(80))
+    text = db.Column(db.Text)
     created = db.Column(db.DateTime)
     name = db.Column(db.String(80))
     user = db.relationship("User", backref="comments")
@@ -253,7 +257,7 @@ class Vote(db.Model):
 
 class VoteChoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    comment = db.Column(db.String(64))
+    comment = db.Column(db.Text)
     value = db.relationship("ChoiceValue", backref="vote_choices")
     value_id = db.Column(db.Integer, db.ForeignKey("choice_value.id"))
     vote = db.relationship("Vote", backref="vote_choices")

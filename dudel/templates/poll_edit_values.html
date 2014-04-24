@@ -1,6 +1,6 @@
 {% extends "base_poll.html" %}
 
-{% block polltitle %}Values{% endblock %}
+{% block polltitle %}{{ _("Values") }}{% endblock %}
 
 {% block poll_content %}
     <p>
@@ -17,13 +17,13 @@
 
     <div class="row">
         <div class="col-md-4">
-            <h2>Available choices</h2>
+            <h2>{{ _("Available choices") }}</h2>
             <table class="table auto-width poll">
                 <tr>
-                    <th>Title</th>
-                    <th>Color/Icon</th>
-                    <th>Votes cast</th>
-                    <th>Actions</th>
+                    <th>{{ _("Title") }}</th>
+                    <th>{{ _("Color/Icon") }}</th>
+                    <th>{{ _("Votes cast") }}</th>
+                    <th>{{ _("Actions") }}</th>
                 </tr>
                 {% set total_votes = poll.votes|length %}
                 {% for value in poll.choice_values %}
@@ -54,9 +54,9 @@
         </div>
         <div class="col-md-8">
             {% if edit_value %}
-                <h2>Edit choice value: {{ edit_value.title }}</h2>
+                <h2>{{ _("Edit choice value: %(title)s", title=edit_value.title) }}</h2>
             {% else %}
-                <h2>Add a choice value</h2>
+                <h2>{{ _("Add a choice value") }}</h2>
             {% endif %}
 
             <form method="POST">
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                     <div class="col-sm-6 form-group">
-                        {{ form.icon.label }} <span class="help-inline">(any FontAwesome icon)</span>
+                        {{ form.icon.label }} <span class="help-inline">{{ _("(any FontAwesome icon)") }}</span>
                         <div class="input-group">
                             <div class="input-group-addon">fa fa-</div>
                             {{ form.icon(class="form-control input-sm", placeholder=form.icon.label.text) }}
@@ -85,12 +85,12 @@
                     </div>
                 </div>
 
-                <input type="submit" value="{{ 'Save' if edit_value else 'Add' }}" class="btn btn-primary btn-sm" />
+                <input type="submit" value="{{ _('Save') if edit_value else _('Add') }}" class="btn btn-primary btn-sm" />
             </form>
 
-            <h3>Available icons</h3>
+            <h3>{{ _("Available icons") }}</h3>
 
-            <p class="script-only">Click icon to insert it into the form.</p>
+            <p class="script-only">{{ _("Click icon to insert it into the form.") }}</p>
 
             <ul class="icon-preview">
             {% for icon in ICONS %}

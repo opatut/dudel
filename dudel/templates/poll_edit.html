@@ -17,10 +17,15 @@
 
             {{ alert("info", _("Please bear in mind that these settings can be changed by anyone as long as the poll is unclaimed, rendering every security setting useless."))}}
         </p>
+    {% elif poll.author == current_user %}
+        <p class="well text-center">
+            <strong>{{ _("Note:") }}</strong>
+            {{ _("You have exclusive ownership of this poll. <a href=\"%(link)s\">Click here</a> to free the poll and allow other users to edit the settings.", link=url_for('poll_unclaim', slug=poll.slug)) }}
+        </p>
     {% else %}
         <p class="well text-center">
             <strong>{{ _("Note:") }}</strong>
-            {{ _("You have exclusive ownership of this poll. <a href=%(link)s>Click here</a> to free the poll and allow other users to edit the settings.", link=url_for('poll_unclaim', slug=poll.slug)) }}
+            {{ _("This poll is owned by %(author)s, but you can edit it due to your administrator privileges. <a href=\"%(link)s\">Click here</a> to free the poll and allow other users to edit the settings.", author=poll.author.displayname, link=url_for('poll_unclaim', slug=poll.slug)) }}
         </p>
     {% endif %}
 

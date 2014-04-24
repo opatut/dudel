@@ -62,7 +62,7 @@
                             <div class="input-group input-group-sm">
                                 {{ form.hidden_tag() }}
                                 {{ form_errors(form) }}
-                                {{ form.text(class="form-control", placeholder="Add a choice") }}
+                                {{ form.text(class="form-control", placeholder=_("Add a choice")) }}
                                 <span class="input-group-btn">
                                     <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i></button>
                                 </span>
@@ -126,15 +126,15 @@
                                 <table class="table auto-width">
                                     <tr>
                                         <th><button id="calendar-prev-month" class="btn btn-default btn-xs">&laquo;</button></th>
-                                        <th class="title" colspan="5">monthname</th>
+                                        <th class="title" colspan="6">monthname</th>
                                         <th><button id="calendar-next-month" class="btn btn-default btn-xs">&raquo;</button></th>
                                     </tr>
-                                    <tr><td>Mo</td><td>Tu</td><td>We</td><td>Th</td><td>Fr</td><td>Sa</td><td>Su</td></tr>
-                                    <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-                                    <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-                                    <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-                                    <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
-                                    <tr class="week"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                    <tr><td></td><td>Mo</td><td>Tu</td><td>We</td><td>Th</td><td>Fr</td><td>Sa</td><td>Su</td></tr>
+                                    <tr class="week"><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                    <tr class="week"><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                    <tr class="week"><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                    <tr class="week"><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                                    <tr class="week"><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
                                 </table>
                             </div>
                         </div>
@@ -227,13 +227,16 @@
                     {% endfor %}
                         <tr>
                             <td></td>
-                            {% for time in times+[0] %}
-                            <td class="choice-text">
-                                <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-select   toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('all') }}" />
-                                <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-deselect toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('none') }}" />
-                            </td>
-                            {% endfor %}
-
+                            {% if times %}
+                                {% for time in times+[0] %}
+                                <td class="choice-text">
+                                    <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-select   toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('all') }}" />
+                                    <input type="button" class="btn btn-block btn-xs btn-link toggle toggle-deselect toggle-{{ 'all' if loop.last else 'column' }}" value="{{ _('none') }}" />
+                                </td>
+                                {% endfor %}
+                            {% else %}
+                                {{ alert("warning", _("An Error occurred, you can try to go back to fix it.")) }}
+                            {% endif %}
                             <td></td>
                         </tr>
                     </table>

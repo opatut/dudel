@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-03-03 22:31+0100\n"
+"POT-Creation-Date: 2014-03-16 22:09+0100\n"
 "PO-Revision-Date: 2014-02-24 20:50+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -32,6 +32,7 @@ msgid "Please select a date later than right now."
 msgstr "Bitte wähle einen Zeitpunkt in der Zukunft."
 
 #: dudel/forms.py:105 dudel/forms.py:126 dudel/forms.py:135
+#: dudel/templates/poll_edit_values.html:23
 msgid "Title"
 msgstr "Titel"
 
@@ -172,7 +173,7 @@ msgstr "Passwort der Umfrage"
 msgid "Language"
 msgstr "Sprache"
 
-#: dudel/models.py:141
+#: dudel/models.py:150
 msgid "edit"
 msgstr "bearbeiten"
 
@@ -333,7 +334,8 @@ msgstr ""
 msgid "Create poll"
 msgstr "Umfrage erstellen"
 
-#: dudel/templates/base.html:60
+#: dudel/templates/base.html:60 dudel/templates/login.html:5
+#: dudel/templates/login.html:24
 msgid "Login"
 msgstr "Anmelden"
 
@@ -363,6 +365,10 @@ msgstr "Wahlmöglichkeiten"
 msgid "Create a poll"
 msgstr "Eine Umfrage erstellen"
 
+#: dudel/templates/index.html:39
+msgid "Create"
+msgstr "Erstellen"
+
 #: dudel/templates/index.html:46
 msgid "Recent polls"
 msgstr "Neuste Umfragen"
@@ -388,12 +394,17 @@ msgid "Polls created"
 msgstr "Erstellte Umfragen"
 
 #: dudel/templates/index.html:83 dudel/templates/poll_edit_choices.html:18
+#: dudel/templates/poll_edit_values.html:25
 msgid "Votes cast"
 msgstr "Abgegebene Stimmen"
 
 #: dudel/templates/index.html:84
 msgid "Users"
 msgstr "Benutzer"
+
+#: dudel/templates/login.html:23
+msgid "Register at mafiasi.de"
+msgstr "Auf mafiasi.de registrieren"
 
 #: dudel/templates/poll.html:16
 msgid "Created on"
@@ -414,6 +425,10 @@ msgstr "Besitzer"
 #: dudel/templates/poll.html:22
 msgid "you"
 msgstr "du"
+
+#: dudel/templates/poll.html:22
+msgid "unclaimed"
+msgstr "niemand"
 
 #: dudel/templates/poll.html:23
 msgid "Anonymous voting"
@@ -533,37 +548,48 @@ msgstr ""
 "niemand diese Umfrage besitzt. Daher ist jede Sicherheitseinstellung "
 "nutzlos."
 
-#: dudel/templates/poll_edit.html:22
+#: dudel/templates/poll_edit.html:22 dudel/templates/poll_edit.html:27
 msgid "Note:"
 msgstr "Hinweis:"
 
 #: dudel/templates/poll_edit.html:23
 #, python-format
 msgid ""
-"You have exclusive ownership of this poll. <a href=%(link)s>Click "
+"You have exclusive ownership of this poll. <a href=\"%(link)s\">Click "
 "here</a> to free the poll and allow other users to edit the settings."
 msgstr ""
 "Du bist der alleinige Besitzer dieser Umfrage. <a href=%(link)s>Klick "
-"hier</a>, um die Umfrage freizugeben, so dass andere Benutzer diese "
+"hier</a> um die Umfrage freizugeben, so dass andere Benutzer diese "
 "Einstellungen ändern können."
 
-#: dudel/templates/poll_edit.html:76
+#: dudel/templates/poll_edit.html:28
+#, python-format
+msgid ""
+"This poll is owned by %(author)s, but you can edit it due to your "
+"administrator privileges. <a href=\"%(link)s\">Click here</a> to free the"
+" poll and allow other users to edit the settings."
+msgstr ""
+"Dise Umfrage gehört %(author)s, aber du kannst sie editieren, da du "
+"Administrator bist. <a href=\"%(link)s\">Klick hier</a>, um die Umfrage  "
+"freizugeben, sodass andere Benutzer diese Einstellungen ändern können."
+
+#: dudel/templates/poll_edit.html:81
 msgid "Additional settings"
 msgstr "Zusätzliche Einstellung"
 
-#: dudel/templates/poll_edit.html:112
+#: dudel/templates/poll_edit.html:117
 msgid "Very advanced stuff"
 msgstr "Sehr fortgeschrittene Einstellungen"
 
-#: dudel/templates/poll_edit.html:113
+#: dudel/templates/poll_edit.html:118
 msgid "Edit possible answer values"
 msgstr "Mögliche Antworten bearbeiten"
 
-#: dudel/templates/poll_edit.html:119
+#: dudel/templates/poll_edit.html:124
 msgid "Back to poll"
 msgstr "Zurück zur Umfrage"
 
-#: dudel/templates/poll_edit.html:120
+#: dudel/templates/poll_edit.html:125
 msgid "Save settings"
 msgstr "Einstellungen speichern"
 
@@ -576,8 +602,13 @@ msgstr ""
 "bereits abgegeben wurden, nicht verloren gehen."
 
 #: dudel/templates/poll_edit_choices.html:19
+#: dudel/templates/poll_edit_values.html:26
 msgid "Actions"
 msgstr "Aktionen"
+
+#: dudel/templates/poll_edit_choices.html:65
+msgid "Add a choice"
+msgstr "Eine Wahlmöglichkeit hinzufügen"
 
 #: dudel/templates/poll_edit_choices.html:79
 msgid "Done"
@@ -639,6 +670,7 @@ msgid "Selected days"
 msgstr "Ausgewählte Tage"
 
 #: dudel/templates/poll_edit_choices.html:172
+#: dudel/templates/poll_edit_values.html:88
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -680,6 +712,10 @@ msgstr "alle"
 msgid "none"
 msgstr "keine"
 
+#: dudel/templates/poll_edit_values.html:3
+msgid "Values"
+msgstr "Antworten"
+
 #: dudel/templates/poll_edit_values.html:7
 msgid ""
 "Here you can edit which options the voters have for each choice you give "
@@ -693,9 +729,46 @@ msgstr ""
 "jede davon bearbeiten oder deaktivieren. Es sollte mindestens eine "
 "Antwort in der Liste geben, damit die Abstimmung sinnvoll ist."
 
+#: dudel/templates/poll_edit_values.html:20
+msgid "Available choices"
+msgstr "Mögliche Antworten"
+
+#: dudel/templates/poll_edit_values.html:24
+msgid "Color/Icon"
+msgstr "Farbe/Symbol"
+
+#: dudel/templates/poll_edit_values.html:57
+#, python-format
+msgid "Edit choice value: %(title)s"
+msgstr "Antwort bearbeiten: %(title)s"
+
+#: dudel/templates/poll_edit_values.html:59
+msgid "Add a choice value"
+msgstr "Eine Antwort hinzufügen"
+
+#: dudel/templates/poll_edit_values.html:80
+msgid "(any FontAwesome icon)"
+msgstr "(ein beliebiges FontAwesome-Icon)"
+
+#: dudel/templates/poll_edit_values.html:88
+msgid "Save"
+msgstr "Speichern"
+
+#: dudel/templates/poll_edit_values.html:91
+msgid "Available icons"
+msgstr "Verfügbare Symbole"
+
+#: dudel/templates/poll_edit_values.html:93
+msgid "Click icon to insert it into the form."
+msgstr "Klick auf ein Symbol, um es hinzuzufügen."
+
 #: dudel/templates/poll_password.html:7
 msgid "Please insert the poll password to continue:"
 msgstr "Bitte gibt das Passwort der Umfrage ein:"
+
+#: dudel/templates/vote.html:3
+msgid "Vote"
+msgstr "Abstimmung"
 
 #: dudel/templates/vote.html:8
 msgid ""
@@ -718,6 +791,10 @@ msgstr "Du beabeitest gerade eine Stimme und gibst keine neue ab."
 #: dudel/templates/vote.html:30
 msgid "Show all comment fields"
 msgstr "Alle Kommentarfelder anzeigen"
+
+#: dudel/templates/vote.html:71
+msgid "Add a comment"
+msgstr "Füge einen Kommentar hinzu"
 
 #: dudel/templates/vote.html:102
 msgid "Save vote"
