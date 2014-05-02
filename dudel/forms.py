@@ -86,7 +86,7 @@ class YourNameRequired(object):
     def __call__(self, form, field):
         if form["anonymous"].data:
             return # nevermind if we are anonymous!
-        if not field.data and current_user.is_anonymous():
+        if not field.data:
             raise ValidationError(gettext("This field is required."))
 
 class RequiredIfAnonymous(object):
