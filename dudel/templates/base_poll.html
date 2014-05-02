@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}{{ poll.title }} - {{ super() }}{% endblock %}
+
 {% block content %}
     <h1>{{ poll.title }} <small>{% block polltitle %}{% endblock %}</small></h1>
     <ul class="nav nav-tabs" style="margin-bottom: 10px;">
