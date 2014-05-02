@@ -48,6 +48,7 @@
                                     {{ group[0].group|date if poll.type=="date" else group[0].group }}
                                 </th>
                             {% endfor %}
+                            <th class="noprint"></th>
                         </tr>
                         {% endif %}
                         <tr>
@@ -59,6 +60,7 @@
                                     </th>
                                 {% endfor %}
                             {% endfor %}
+                            <th class="noprint"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,7 +89,7 @@
                                             {% endif%}
                                         {% endfor %}
                                     {% endfor %}
-                                    <td>
+                                    <td class="noprint">
                                         <a href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
                                     </td>
                                 </tr>
@@ -106,6 +108,7 @@
                                         <a href="{{ url_for('login', next=request.url) }}">Log in</a> to display your own vote.
                                     {% endif %}
                                 </td>
+                                <td class="noprint"></td>
                             </tr>
                         {% endif %}
                     </tbody>
@@ -113,15 +116,21 @@
                     <tfoot>
                         <tr>
                             {% set total = poll.votes|length %}
-                            <th></th>
+                            <th>
+                                <span class="print-only">
+                                    <b>Percent<br/>Score</b>
+                                </span>
+                            </th>
                             {% set scores, counts, totals, max_score = poll.get_stats() %}
                             {% for group in groups %}
                                 {% for choice in group %}
                                     <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}" title="{% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }} x {{ choice_value.title }}{% if not loop.last %}, {% endif %}{% endfor %} (Score {{ '%.f' % scores[choice] }})">
                                         {{ "%.02f %%" % (scores[choice]*100.0/totals[choice]) }}
+                                        <span class="print-only">{{ '%.f' % scores[choice] }}</span>
                                     </th>
                                 {% endfor %}
                             {% endfor %}
+                            <th class="noprint"></th>
                         </tr>
                     </tfoot>
                     {% endif %}
@@ -144,7 +153,7 @@
     <div style="clear: right;"></div>
 
     {% if not poll.is_expired and poll.has_choices %}
-    <center style="margin-bottom: 3em; margin-top: 2em;">
+    <center style="margin-bottom: 3em; margin-top: 2em;" class="noprint">
         {% set user_votes = [] if current_user.is_anonymous() else poll.get_user_votes(current_user) %}
         {% if poll.one_vote_per_user and user_votes %}
             <p><a class="btn btn-lg btn-primary" href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=user_votes[0].id) }}" style="min-width: 30%;">{{ _("Edit vote") }}</a></p>
@@ -186,27 +195,29 @@
 
     {% if poll.allow_comments %}
         <hr />
-        <h3>{{ _("Post a comment") }}</h3>
-        <form method="POST" class="form">
-            {{ comment_form.hidden_tag() }}
-            <div class="form-group">
-                {{ comment_form.name.label }}
-                {% if current_user.is_anonymous() %}
-                    {{ comment_form.name(class="form-control") }}
-                {% else %}
-                    <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
-                {% endif %}
-                {{ field_error(comment_form.name) }}
-            </div>
-            <div class="form-group">
-                {{ comment_form.text.label }}
-                {{ comment_form.text(class="form-control", rows=6) }}
-                {{ field_error(comment_form.text) }}
-                {{ markdown_info(true) }}
-            </div>
-            <div class="form-group">
-                <input type="submit" value="{{ _('Post comment') }}" class="btn btn-primary" />
-            </div>
-        </form>
+        <div class="noprint">
+            <h3>{{ _("Post a comment") }}</h3>
+            <form method="POST" class="form">
+                {{ comment_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ comment_form.name.label }}
+                    {% if current_user.is_anonymous() %}
+                        {{ comment_form.name(class="form-control") }}
+                    {% else %}
+                        <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
+                    {% endif %}
+                    {{ field_error(comment_form.name) }}
+                </div>
+                <div class="form-group">
+                    {{ comment_form.text.label }}
+                    {{ comment_form.text(class="form-control", rows=6) }}
+                    {{ field_error(comment_form.text) }}
+                    {{ markdown_info(true) }}
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="{{ _('Post comment') }}" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
     {% endif %}
 {% endblock %}

@@ -248,6 +248,7 @@ td.vote-comment {
     border-right: 1px solid #DDD;
     border-bottom: 0;
     border-top: 0;
+        {% endif %}
 }
 
 
@@ -631,4 +632,8 @@ tr.choice td {
 
 .navbar {
     border-radius: 0;
+}
+
+.print-only {
+    display: none;
 }

@@ -8,8 +8,13 @@
 
         <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" media="screen">
         <link href="{{ url_for('static', filename='css/bootstrap-theme.css') }}" rel="stylesheet" media="screen">
+        {% if "print" in request.args %}
+        <link href="{{ url_for('static', filename='css/print.css') }}" rel="stylesheet" media="screen">
+        {% else %}
         <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" media="screen">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}" media="screen">
+        <link href="{{ url_for('static', filename='css/print.css') }}" rel="stylesheet" media="print">
+        {% endif %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.css') }}" media="screen" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui-timepicker-addon.css') }}" media="screen" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.colorpicker.css') }}" media="screen" />
