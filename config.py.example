@@ -35,3 +35,7 @@ NAME_FORMAT = "%(firstname)s (%(username)s)"
 # Usernames of administrators
 # e.g. ["13musterm", "14musterf"]
 ADMINS = [] 
+
+# Locale
+BABEL_DEFAULT_LOCALE = "en"
+BABEL_DEFAULT_TIMEZONE = "Europe/Berlin"
