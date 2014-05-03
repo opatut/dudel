@@ -45,7 +45,7 @@
                             <th></th>
                             {% for group in groups %}
                                 <th colspan="{{ group|length }}" class="choice-group">
-                                    {{ group[0].group|date if poll.type=="date" else group[0].group }}
+                                    {{ group[0].group|date(False) if poll.type=="date" else group[0].group }}
                                 </th>
                             {% endfor %}
                         </tr>
@@ -55,7 +55,7 @@
                             {% for group in groups %}
                                 {% for choice in group %}
                                     <th class="choice-text">
-                                        {{ choice.text or choice.date|time }}
+                                        {{ choice.text or choice.date|time(False) }}
                                     </th>
                                 {% endfor %}
                             {% endfor %}
@@ -75,7 +75,7 @@
                                             <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}"
                                                 style="background-color: #{{ vote_choice.value.color }}"
                                                 title="{{ vote|voter }}, {{choice.text or choice.date|datetime }}{% if vote_choice.comment %}: {{ vote_choice.comment }}{% endif %}"
-                                                data-tooltip="<b>{{ vote|voter }}</b><br>{{ choice.text or choice.date|datetime }}{% if vote_choice.comment %}<br>{{ vote_choice.comment }}{% endif %}"
+                                                data-tooltip="<b>{{ vote|voter }}</b><br>{{ choice.text or choice.date|datetime(False) }}{% if vote_choice.comment %}<br>{{ vote_choice.comment }}{% endif %}"
                                                 data-toggle="tooltip">
                                                 <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
                                                 {#{% if vote_choice.comment %}<span class="comment-icon fa fa-exclamation"></span>{% endif %}#}
