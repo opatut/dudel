@@ -424,6 +424,22 @@ def poll_vote_edit(slug, vote_id):
 
     return render_template("vote.html", poll=poll, form=form, vote=vote)
 
+@app.route("/<slug>/vote/<int:vote_id>/delete", methods=("POST", "GET"))
+def poll_vote_delete(slug, vote_id):
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll.check_expiry()
+
+    vote = Vote.query.filter_by(id=vote_id).first_or_404()
+    if vote.poll != poll: abort(404)
+
+    if not vote.user_can_delete(current_user): abort(403)
+
+    db.session.delete(vote)
+    db.session.commit()
+    flash(gettext("The vote has been deleted"), "success")
+    return redirect(poll.get_url())
+
+
 @app.errorhandler(PollExpiredException)
 def poll_expired(e):
     flash(gettext("This poll is expired. You cannot vote or edit your choice anymore."), "error")

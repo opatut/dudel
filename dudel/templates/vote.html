@@ -99,12 +99,23 @@
                 <td></td>
                 <td></td>
                 <td colspan="3">
-                    <button type="submit" class="btn btn-success btn-block"><span class="fa fa-check"></span>{{ _("Save vote") }}</button>
+                    <button type="submit" class="btn btn-success btn-block"><span class="fa fa-check"></span> {{ _("Save vote") }}</button>
                 </td>
                 <td></td>
             </tr>
         </table>
 
-
     </form>
+
+    {% if vote.user_can_delete(current_user) %}
+        <h3>Delete vote</h3>
+
+        <p>
+            You can delete this vote if it has been cast accidentally. Please do
+            not abuse this feature, else we'll have to remove it again. Also, we log
+            who uses this, just to make sure.
+        </p>
+
+        <a href="{{ url_for('poll_vote_delete', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-danger btn-xs"><span class="fa fa-trash-o"></span> {{ _("Delete vote") }}</a>
+    {% endif %}
 {% endblock %}

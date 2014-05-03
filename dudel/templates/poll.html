@@ -90,7 +90,12 @@
                                         {% endfor %}
                                     {% endfor %}
                                     <td class="noprint">
-                                        <a href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
+                                        {% if vote.user_can_edit(current_user) %}
+                                            <a href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
+                                        {% endif %}
+                                        {% if vote.user_can_delete(current_user) %}
+                                            <a href="{{ url_for('poll_vote_delete', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-trash-o"></i></a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endif %}

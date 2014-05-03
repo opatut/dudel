@@ -264,6 +264,24 @@ class Vote(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     anonymous = db.Column(db.Boolean, default=False)
 
+    def user_can_delete(self, user):
+        # only if logged in
+        if not user.is_authenticated(): return False
+        # allow for poll author 
+        if self.poll.author and self.poll.author == user: return True
+        # allow for user
+        if self.user: return self.user == user
+        # disallow
+        return False
+
+    def user_can_edit(self, user):
+        # allow for author
+        if self.poll.author and self.poll.author == user: return True
+        # allow for creator
+        if self.user: return user == self.user
+        # allow everyone, if no creator
+        return True
+
 class VoteChoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.Text)
