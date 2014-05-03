@@ -135,7 +135,7 @@ class LoginForm(MultiForm):
 class EditPollForm(Form):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
     description = TextAreaField(lazy_gettext("Description"))
-    due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional(), AtLeastNow()])
+    due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional()])
     anonymous_allowed = BooleanField(lazy_gettext("Allow anonymous votes"))
     require_login = BooleanField(lazy_gettext("Require login to vote"))
     public_listing = BooleanField(lazy_gettext("Show in public poll list"))
