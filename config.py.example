@@ -25,7 +25,8 @@ LDAP_DEBUG_DATA = {
     "uid": "13musterm"
 }
 
-SENTRY_DSN = "https://user:password@sentry.mafiasi.de/X"
+# Sentry settings
+# SENTRY_DSN = "https://user:password@sentry.host.tld/X"
 
 # more settings
 
