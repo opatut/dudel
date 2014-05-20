@@ -49,7 +49,9 @@
         </div>
 
         <div class="col-md-4">
-            <h1>{{ _("Settings") }}</h1> <form method="POST"> {{ form.hidden_tag() }}
+            <h1>{{ _("Settings") }}</h1>
+            <form method="POST">
+                {{ form.hidden_tag() }}
                 {{ field_error(form.hidden_tag) }}
 
                 <div class="form-group">
@@ -57,6 +59,43 @@
                     {{ form.language(class="form-control", **{'data-slug-field':"#slug"}) }}
                     {{ field_error(form.language) }}
                 </div>
+
+                {% if config.AUTH_MODE == "password" %}
+                <div class="form-group">
+                    {{ form.firstname.label(class="control-label") }}
+                    {{ form.firstname(class="form-control") }}
+                    {{ field_error(form.firstname) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.lastname.label(class="control-label") }}
+                    {{ form.lastname(class="form-control") }}
+                    {{ field_error(form.lastname) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.email.label(class="control-label") }}
+                    {{ form.email(class="form-control") }}
+                    {{ field_error(form.email) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.password1.label(class="control-label")}}
+                    {{ form.password1(class="form-control") }}
+                    {{ field_error(form.password1) }}
+
+                    <div class="help-block">
+                        Leave empty to keep your current password.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.password2.label(class="control-label")}}
+                    {{ form.password2(class="form-control") }}
+                    {{ field_error(form.password2) }}
+                </div>
+                {% endif %}
+
                 <div class="form-group">
                     <input type="submit" value="{{ _('Save') }}" class="btn btn-primary"/>
                 </div>

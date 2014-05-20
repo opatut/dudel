@@ -29,18 +29,21 @@
                     <a href="/" class="navbar-brand">Dudel</a>
 
                     <div class="navbar-left visible-sm visible-xs">
-                        <a class="btn navbar-btn btn-default" href="https://mafiasi.de" style="margin-top: 10px;">
-                            <i class="fa fa-home"></i> Mafiasi Hub
+                        {% if config.HOME_URL %}
+                        <a class="btn navbar-btn btn-default" href="{{ config.HOME_URL }}" style="margin-top: 10px;" target="_blank">
+                            <i class="fa fa-home"></i> {{ config.HOME_TEXT }}
                         </a>
-                    <a class="btn navbar-btn btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
-                        <i class="fa fa-plus"></i>
-                    </a>
+                        {% endif %}
+
+                        <a class="btn navbar-btn btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
+                            <i class="fa fa-plus"></i>
+                        </a>
                     </div>
                 </div>
 
                 <div class="navbar-left hidden-sm hidden-xs">
-                    <a class="btn navbar-btn btn-default" href="https://mafiasi.de" style="margin-top: 10px;">
-                        <i class="fa fa-home"></i> Mafiasi Hub
+                    <a class="btn navbar-btn btn-default" href="{{ config.HOME_URL }}" style="margin-top: 10px;" target="_blank">
+                        <i class="fa fa-home"></i> {{ config.HOME_TEXT }}
                     </a>
                     <a class="btn navbar-btn btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
                         <i class="fa fa-plus"></i> {{ _("Create poll") }}
@@ -65,7 +68,7 @@
                             <img src="{{ current_user.get_avatar(40) }}">
                             {{ current_user.displayname }}
                         </a>
-                        <a class="btn navbar-btn btn-default" href="{{ url_for('user_settings') }}"><i class="fa fa-cog"></i></a>
+                        <a class="btn navbar-btn btn-default" href="{{ url_for('user_settings') }}"><i class="fa fa-wrench"></i></a>
                         <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}"><i class="fa fa-sign-out"></i></a>
                     </div>
                     {% endif %}

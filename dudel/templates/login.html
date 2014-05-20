@@ -20,8 +20,15 @@
             {{ field_error(form.password) }}
         </div>
         <div class="form-group">
-            <a href="https://mafiasi.de/registration/request_account" class="btn btn-default">{{ _("Register at mafiasi.de") }}</a>
-            <input type="submit" class="btn btn-primary" value="{{ _('Login') }}" />
+            {% if config.AUTH_MODE == "ldap" %}
+                <a href="{{ config.LDAP_REGISTER_URL }}" target="_blank" class="btn btn-default"><i class="fa fa-external-link-square"></i> {{ _("Registration (external)") }}</a>
+            {% elif config.AUTH_MODE == "password" %}
+                {% if config.REGISTRATIONS_ENABLED %}
+                    <a href="{{ url_for('register', next=request.args.get('next')) }}" class="btn btn-default"><i class="fa fa-pencil"></i> {{ _("Register") }}</a>
+                {% endif %}
+            {% endif %}
+            <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> {{ _('Login') }}</button>
         </div>
     </form>
 {% endblock %}
+

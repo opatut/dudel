@@ -1,3 +1,7 @@
+# Home button in menu bar
+HOME_URL = "https://mafiasi.de/"
+HOME_TEXT = "Mafiasi Hub"
+
 # SQL-Alchemy Settings
 SQLALCHEMY_DATABASE_URI = "sqlite:///tmp/dudel.db" # DO NOT USE RELATIVE PATHS IF USING MIGRATION!!!
 SQLALCHEMY_ECHO = False
@@ -8,29 +12,24 @@ DEBUG = True
 # Secret key, required for cookies etc.
 SECRET_KEY = "change me!!!"
 
+# Select which authentication method to use.
+AUTH_MODE = "password" # password|ldap|none
+
+# Used only when AUTH_MODE == "ldap"
 LDAP_SERVER = "ldap://localhost"
 LDAP_BIND_DN = "uid={uid},ou=People,dc=mafiasi,dc=de"
 LDAP_BASE_DN = "ou=People,dc=mafiasi,dc=de"
 LDAP_FILTER = "(uid={uid})"
+LDAP_REGISTER_URL = "https://mafiasi.de/registration/request_account"
 
-# Debug mode skips LDAP and pretends to receive data when the password is entered
-LDAP_DEBUG_MODE = False
-LDAP_DEBUG_PASSWORD = "hunter2"
-LDAP_DEBUG_DATA = {
-    "cn": "13musterm",
-    "sn": "Mustermann",
-    "employeeNumber": 42,
-    "givenName": "Max",
-    "mail": "3musterm@informatik.uni-hamburg.de",
-    "uid": "13musterm"
-}
+# Used only when AUTH_MODE == "password"
+REGISTRATIONS_ENABLED = True
 
 # Sentry settings
 # SENTRY_DSN = "https://user:password@sentry.host.tld/X"
 
-# more settings
-
-# may contain fields: firstname, lastname, username, email
+# How user's display name is created
+# May contain fields: firstname, lastname, username, email
 NAME_FORMAT = "%(firstname)s (%(username)s)"
 
 # Usernames of administrators

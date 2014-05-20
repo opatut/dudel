@@ -2,7 +2,7 @@ default: run
 
 setup:
 	pip install --upgrade -r requirements.txt
-	
+
 init:
 	python2 scripts/init.py
 

@@ -1,7 +1,7 @@
 from dudel import app, db, babel, supported_languages
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch
 from dudel.models.user import get_user
-from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsForm
+from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword
 from dudel.util import PollExpiredException, PollActionException
 from flask import redirect, abort, request, render_template, flash, url_for, g
 from flask.ext.babel import gettext
@@ -54,6 +54,28 @@ def login():
 
     return render_template("login.html", form=form)
 
+@app.route("/register", methods=("GET", "POST"))
+def register():
+    if app.config["AUTH_MODE"] != "password" or not app.config["REGISTRATIONS_ENABLED"]:
+        abort(404)
+    if current_user.is_authenticated():
+        flash("You are already logged in.", "success")
+        return redirect(request.args.get("next") or url_for("index"))
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        user = User()
+        form.populate_obj(user)
+        user.set_password(form.password1.data)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        flash(gettext("You were logged in, %(name)s.", name=user.displayname), "success")
+
+        return redirect(request.args.get("next") or url_for("index"))
+
+    return render_template("register.html", form=form)
+
 @app.route("/logout")
 def logout():
     if current_user.is_authenticated():
@@ -79,9 +101,19 @@ def user_change_language():
 @app.route("/user/settings", methods=("GET", "POST"))
 @login_required
 def user_settings():
-    form = SettingsForm()
+    if app.config["AUTH_MODE"] == "password":
+        form = SettingsFormPassword(obj=current_user)
+    else:
+        form = SettingsFormLdap()
+
     if form.validate_on_submit():
         current_user.preferred_language = form.language.data
+
+        if app.config["AUTH_MODE"] == "password":
+            form.populate_obj(current_user)
+            if form.password1.data:
+                current_user.set_password(form.password1.data)
+
         db.session.commit()
         flash(gettext("Your user settings were updated."), "success")
         return redirect(url_for('user_settings'))

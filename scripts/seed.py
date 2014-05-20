@@ -21,6 +21,14 @@ def fill_with_random_votes(poll, n):
 db.drop_all()
 db.create_all()
 
+user = User()
+user.username = "13musterm"
+user.firstname = "Max"
+user.lastname = "Mustermann"
+user.set_password("hunter2")
+user.email = "test@localhost"
+db.session.add(user)
+
 poll = Poll()
 poll.title = "What is the best Coffee"
 poll.due_date = datetime.utcnow() + timedelta(days=5)

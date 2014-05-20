@@ -7,12 +7,14 @@ from flask.ext.login import current_user
 from wtforms import ValidationError
 from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField
 from wtforms.ext.dateutil.fields import DateTimeField
-from wtforms.validators import Required, Length, Regexp, Optional, NoneOf
+from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, EqualTo, Email
 from dudel.models.poll import Poll
-from dudel.models.user import update_user_data
+from dudel.models.user import User, update_user_data, verify_password
 import ldap
 from ldap.dn import escape_dn_chars
 from datetime import datetime
+
+LANGUAGES = [('en', 'English'), ('de', 'Deutsch')]
 
 # Helper class for multiple forms on one page
 class MultiForm(Form):
@@ -44,7 +46,7 @@ class UniqueObject(object):
         if len([x for x in self.type.query.filter_by(**c).all() if not x in self.allowed_objects]):
             raise ValidationError(self.message)
 
-class LDAPAuthenticator(object):
+class CustomAuthenticator(object):
     def __init__(self, username_value_or_field, message = lazy_gettext("Invalid credentials.")):
         self.username_value_or_field = username_value_or_field
         self.message = message
@@ -54,34 +56,33 @@ class LDAPAuthenticator(object):
         if self.username_value_or_field in form.data:
             username = form.data[self.username_value_or_field]
 
-        if "LDAP_DEBUG_MODE" in app.config and app.config["LDAP_DEBUG_MODE"]:
-            if username != app.config["LDAP_DEBUG_DATA"]["uid"] or  app.config["LDAP_DEBUG_PASSWORD"] != field.data:
-                raise ValidationError("LDAP_DEBUG_PASSWORD set but incorrect, log in as %s, password %s." %
-                        (app.config["LDAP_DEBUG_DATA"]["uid"], app.config["LDAP_DEBUG_PASSWORD"]))
-            else:
-                update_user_data(username, app.config["LDAP_DEBUG_DATA"])
-                return
+        if app.config["AUTH_MODE"] == "password":
+            user = User.query.filter_by(username=username).first()
+            if not user or not verify_password(user.password, field.data):
+                raise ValidationError(self.message)
+        elif app.config["AUTH_MODE"] == "ldap":
+            try:
+                connection = ldap.initialize(app.config["LDAP_SERVER"])
 
-        try:
-            connection = ldap.initialize(app.config["LDAP_SERVER"])
+                # At this point, we update the user info (since we already have
+                # a connection to LDAP)
+                #connection.start_tls_s()
+                escaped_username = escape_dn_chars(username)
+                connection.simple_bind_s(app.config["LDAP_BIND_DN"].format(uid=escaped_username), field.data)
+                filter = app.config["LDAP_FILTER"].format(uid=escaped_username)
+                base_dn = app.config["LDAP_BASE_DN"].format(uid=escaped_username)
+                results = connection.search_s(base_dn, ldap.SCOPE_SUBTREE, filter)
+                results = {k:(v if len(v)>1 else v[0]) for k,v in results[0][1].iteritems()}
+                connection.unbind_s()
 
-            # At this point, we update the user info (since we already have
-            # a connection to LDAP)
-            #connection.start_tls_s()
-            escaped_username = escape_dn_chars(username)
-            connection.simple_bind_s(app.config["LDAP_BIND_DN"].format(uid=escaped_username), field.data)
-            filter = app.config["LDAP_FILTER"].format(uid=escaped_username)
-            base_dn = app.config["LDAP_BASE_DN"].format(uid=escaped_username)
-            results = connection.search_s(base_dn, ldap.SCOPE_SUBTREE, filter)
-            results = {k:(v if len(v)>1 else v[0]) for k,v in results[0][1].iteritems()}
-            connection.unbind_s()
+                update_user_data(username, results)
 
-            update_user_data(username, results)
-
-        except ldap.INVALID_CREDENTIALS:
-            raise ValidationError(self.message)
-        except ldap.LDAPError, e:
-            raise ValidationError("LDAP Error: " + (e.message["desc"] if e.message else "%s (%s)"%(e[1],e[0])))
+            except ldap.INVALID_CREDENTIALS:
+                raise ValidationError(self.message)
+            except ldap.LDAPError, e:
+                raise ValidationError("LDAP Error: " + (e.message["desc"] if e.message else "%s (%s)"%(e[1],e[0])))
+        else:
+            raise ValidationError("Authentication not enabled, please set AUTH_MODE configuration variable.")
 
 class SelectButtonInput:
     def __call__(self, field, **kwargs):
@@ -141,7 +142,28 @@ class AddValueForm(MultiForm):
 
 class LoginForm(MultiForm):
     username = TextField(lazy_gettext("Username"), validators=[Required()])
-    password = PasswordField(lazy_gettext("Password"), validators=[Required(), LDAPAuthenticator("username")])
+    password = PasswordField(lazy_gettext("Password"), validators=[Required(), CustomAuthenticator("username")])
+
+class RegisterForm(MultiForm):
+    username = TextField(lazy_gettext("Username"), validators=[Required()])
+    firstname = TextField(lazy_gettext("First name"))
+    lastname = TextField(lazy_gettext("Last name"))
+    password1 = PasswordField(lazy_gettext("Password"), validators=[Required(), Length(min=4)])
+    password2 = PasswordField(lazy_gettext("Password again"), validators=[Required(), EqualTo("password1")])
+    email = TextField(lazy_gettext("Email"), validators=[Required(), Email()])
+
+class SettingsForm(MultiForm):
+    language = SelectField(lazy_gettext("Language"), choices=LANGUAGES)
+
+class SettingsFormPassword(SettingsForm):
+    firstname = TextField(lazy_gettext("First name"))
+    lastname = TextField(lazy_gettext("Last name"))
+    password1 = PasswordField(lazy_gettext("Password"), validators=[Optional(), Length(min=4)])
+    password2 = PasswordField(lazy_gettext("Password again"), validators=[EqualTo("password1")])
+    email = TextField(lazy_gettext("Email"), validators=[Required(), Email()])
+
+class SettingsFormLdap(SettingsForm):
+    pass
 
 class EditPollForm(Form):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
@@ -186,10 +208,6 @@ class CommentForm(Form):
     text = TextAreaField(lazy_gettext("Comment"))
     captcha = RecaptchaField(validators=[RecaptchaIfAnonymous()])
 
-LANGUAGES = [('en', 'English'), ('de', 'Deutsch')]
-
 class LanguageForm(Form):
     language = SelectField(lazy_gettext("Language"), choices=LANGUAGES, option_widget=SelectButtonInput())
 
-class SettingsForm(Form):
-    language = SelectField(lazy_gettext("Language"), choices=LANGUAGES)

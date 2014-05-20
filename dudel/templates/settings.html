@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="inline">{{ _("Settings") }}</h1>
+    </div>
+
+    <form method="POST" class="form form-horizontal">
+        {{ form.hidden_tag() }}
+        {{ field_error(form.hidden_tag) }}
+
+        <div class="form-group">
+            {{ form.firstname.label(class="control-label col-sm-2") }}
+            <div class="col-sm-4">
+                {{ form.firstname(class="form-control") }}
+                {{ field_error(form.firstname) }}
+            </div>
+
+            {{ form.lastname.label(class="control-label col-sm-2") }}
+            <div class="col-sm-4">
+                {{ form.lastname(class="form-control") }}
+                {{ field_error(form.lastname) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.email.label(class="control-label col-sm-2") }}
+            <div class="col-sm-10">
+                {{ form.email(class="form-control") }}
+                {{ field_error(form.email) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.password1.label(class="control-label col-sm-2")}}
+            <div class="col-sm-4">
+                {{ form.password1(class="form-control") }}
+                {{ field_error(form.password1) }}
+
+                <div class="help-block">
+                    Leave empty to keep your current password.
+                </div>
+            </div>
+
+            {{ form.password2.label(class="control-label col-sm-2")}}
+            <div class="col-sm-4">
+                {{ form.password2(class="form-control") }}
+                {{ field_error(form.password2) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> {{ _('Save') }}</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
