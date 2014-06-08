@@ -113,8 +113,8 @@ class CreatePollForm(Form):
     due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional()])
 
 class DateTimeSelectForm(Form):
-    dates = TextField(lazy_gettext("Dates"), validators = [Regexp("([\d]{4}-[\d]{2}-[\d]{2},?)*")])
-    times = TextField(lazy_gettext("Times"), validators = [Regexp("([\d]{2}:[\d]{2}(:[\d]{2})?,?)*")])
+    dates = TextField(lazy_gettext("Dates"), validators = [Regexp("^([\d]{4}-[\d]{2}-[\d]{2},?)*$")])
+    times = TextField(lazy_gettext("Times"), validators = [Regexp("^([\d]{2}:[\d]{2}(:[\d]{2})?,?)*$")])
 
 class AddChoiceForm(MultiForm):
     text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(max=80)])
