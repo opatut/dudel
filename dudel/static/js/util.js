@@ -2,6 +2,7 @@ function get_slug(s) {
     s = s.replace(/[\s+]+/g, '-');
     s = s.replace(/[^a-zA-Z0-9_-]+/g, '');
     s = s.replace(/-+/g, '-');
+    s = s.replace(/(^\-*|\-*$)/g, '');
     s = s.toLowerCase();
     return s;
 }

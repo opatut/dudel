@@ -436,6 +436,10 @@ tr.choice td {
     height: 1.7em;
 }
 
+#ui-datepicker-div {
+    z-index: 2 !important;
+}
+
 .calendar-list {
     padding: 1em 0;
 }

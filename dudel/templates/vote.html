@@ -83,6 +83,7 @@
                         {{ form.name(class="form-control", id="nameInput") }}
                     {% else %}
                         <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
+                        <input type="hidden" value="PLACEHOLDER" name="name" />
                     {% endif %}
 
                     {% if poll.anonymous_allowed %}
