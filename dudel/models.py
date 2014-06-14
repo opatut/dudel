@@ -23,6 +23,10 @@ def update_user_data(username, data):
 
     if "givenName" in data:
         user.firstname = data["givenName"]
+    if "displayName" in data:
+        user._displayname = data["displayName"]
+    else:
+        user._displayname = ""
     user.lastname = data["sn"]
     user.email = data["mail"]
     db.session.commit()
@@ -36,17 +40,24 @@ class User(db.Model):
     firstname = db.Column(db.String(80))
     lastname = db.Column(db.String(80))
     username = db.Column(db.String(80))
+    _displayname = db.Column(db.String(80), default="", nullable=False)
     email = db.Column(db.String(80))
     preferred_language = db.Column(db.String(80))
 
     @property
     def displayname(self):
-        return (app.config["NAME_FORMAT"] if "NAME_FORMAT" in app.config else "%(firstname)s (%(username)s)") % {
-            "firstname": self.firstname,
-            "lastname": self.lastname,
-            "username": self.username,
-            "email": self.email
-            }
+        if self._displayname:
+            return self._displayname
+        else:
+            return (app.config["NAME_FORMAT"]
+                    if "NAME_FORMAT" in app.config
+                    else "%(firstname)s (%(username)s)") % {
+                        "firstname": self.firstname,
+                        "lastname": self.lastname,
+                        "username": self.username,
+                        "email": self.email
+                    }
+
     # login stuff
     def get_id(self):
         return self.username
