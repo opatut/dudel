@@ -213,7 +213,8 @@ class Choice(db.Model):
     def get_counts(self):
         counts = {vc: 0 for vc in self.poll.choice_values}
         for vote_choice in self.vote_choices:
-            counts[vote_choice.value] += 1
+            if vote_choice.value:
+                counts[vote_choice.value] += 1
         return counts
 
     @property
