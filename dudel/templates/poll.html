@@ -219,6 +219,15 @@
                     {{ field_error(comment_form.text) }}
                     {{ markdown_info(true) }}
                 </div>
+                {% if current_user.is_anonymous() %}
+                <div class="form-group">
+                    {{ comment_form.captcha }}
+                    {{ field_error(comment_form.captcha) }}
+                    <p class="help-block">
+                        {{ _("You can avoid this captcha if you login.") }}
+                    </p>
+                </div>
+                {% endif %}
                 <div class="form-group">
                     <input type="submit" value="{{ _('Post comment') }}" class="btn btn-primary" />
                 </div>

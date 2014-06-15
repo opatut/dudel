@@ -40,3 +40,9 @@ ADMINS = []
 # Locale
 BABEL_DEFAULT_LOCALE = "en"
 BABEL_DEFAULT_TIMEZONE = "Europe/Berlin"
+
+# recaptcha
+RECAPTCHA_USE_SSL = True
+RECAPTCHA_PUBLIC_KEY = "..."
+RECAPTCHA_PRIVATE_KEY = "..."
+RECAPTCHA_OPTIONS = {"theme_name": "white"}

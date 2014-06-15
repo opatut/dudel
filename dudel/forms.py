@@ -1,7 +1,8 @@
 from dudel import app
 from flask import request, Markup
 from flask.ext.babel import gettext, lazy_gettext
-from flask.ext.wtf import Form
+from flask.ext.wtf import Form, RecaptchaField
+from flask.ext.wtf.recaptcha.validators import Recaptcha as RecaptchaValidator
 from flask.ext.login import current_user
 from wtforms import ValidationError
 from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField
@@ -94,6 +95,11 @@ class RequiredIfAnonymous(object):
         if not field.data and current_user.is_anonymous():
             raise ValidationError(gettext("This field is required."))
 
+class RecaptchaIfAnonymous(RecaptchaValidator):
+    def __call__(self, form, field):
+        if current_user.is_anonymous():
+            super(RecaptchaIfAnonymous, self).__call__(form, field)
+
 class AtLeastNow(object):
     def __call__(self, form, field):
         if field.data < datetime.utcnow():
@@ -172,6 +178,7 @@ class PollPassword(Form):
 class CommentForm(Form):
     name = TextField(lazy_gettext("Your Name"), validators=[RequiredIfAnonymous(), Length(max=80)])
     text = TextAreaField(lazy_gettext("Comment"))
+    captcha = RecaptchaField(validators=[RecaptchaIfAnonymous()])
 
 class LanguageForm(Form):
     lang = SelectField(lazy_gettext("Language"), choices=[
