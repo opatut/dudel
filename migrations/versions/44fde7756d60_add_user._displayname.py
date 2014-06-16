@@ -14,7 +14,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 def upgrade():
-    op.add_column('user', sa.Column('_displayname', sa.String(length=80), default="", nullable=False))
+    op.add_column('user', sa.Column('_displayname', sa.String(length=80)))
 
 def downgrade():
     op.drop_column('user', '_displayname')

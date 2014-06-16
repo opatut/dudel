@@ -26,7 +26,7 @@ def update_user_data(username, data):
     if "displayName" in data:
         user._displayname = data["displayName"]
     else:
-        user._displayname = ""
+        user._displayname = None
     user.lastname = data["sn"]
     user.email = data["mail"]
     db.session.commit()
@@ -40,7 +40,7 @@ class User(db.Model):
     firstname = db.Column(db.String(80))
     lastname = db.Column(db.String(80))
     username = db.Column(db.String(80))
-    _displayname = db.Column(db.String(80), default="", nullable=False)
+    _displayname = db.Column(db.String(80))
     email = db.Column(db.String(80))
     preferred_language = db.Column(db.String(80))
 
