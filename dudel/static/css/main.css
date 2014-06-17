@@ -35,9 +35,13 @@ table.vote label {
 .poll .choice-text,
 .poll .choice-sum,
 .vote .choice-text {
-    white-space: nowrap !important;
+    white-space: nowrap;
     font-weight: bold;
     background: #EEE;
+}
+
+.poll .choice-sum {
+	white-space: nowrap !important;
 }
 
 .vote .choice-text {
