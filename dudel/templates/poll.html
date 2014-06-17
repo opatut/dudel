@@ -130,7 +130,11 @@
                             {% for group in groups %}
                                 {% for choice in group %}
                                     <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}" title="{{ choice.text or choice.date|datetime(False) }}: {% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }} x {{ choice_value.title }}{% if not loop.last %}, {% endif %}{% endfor %} (Score {{ '%.f' % scores[choice] }})">
-                                        {{ "%.02f %%" % (scores[choice]*100.0/totals[choice]) }}
+                                        {% if totals[choice] != 0 %}
+                                            {{ "%.02f %%" % (scores[choice]*100.0/totals[choice]) }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
                                         <span class="print-only">{{ '%.f' % scores[choice] }}</span>
                                     </th>
                                 {% endfor %}
