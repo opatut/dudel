@@ -131,7 +131,7 @@
                                 {% for choice in group %}
                                     <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}"
                                     title="{{ choice.text or choice.date|datetime(False) }}: {% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }} x {{ choice_value.title }}{% if not loop.last %}, {% endif %}{% endfor %} (Score {{ '%.f' % scores[choice] }})"
-                                    data-tooltip="<b>{{ choice.text or choice.date|datetime(False) }}</b><br>{% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }}&nbsp;&#10761;&nbsp;<span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>&nbsp;{{ choice_value.title }}{% if not loop.last %}, {% endif %}{% endfor %}<br>{{ _("Score:") }} {{ '%.f' % scores[choice] }}"
+                                    data-tooltip="<b>{{ choice.text or choice.date|datetime(False) }}</b><br>{% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }}&nbsp;&#10761;&nbsp;<span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>&nbsp;{{ choice_value.title }}{% if not loop.last %}<br>{% endif %}{% endfor %}<br>{{ _("Score:") }} {{ '%.f' % scores[choice] }}"
                                     data-toggle="tooltip">
                                         {% if totals[choice] != 0 %}
                                             {{ "%.f %%" % (scores[choice]*100.0/totals[choice]) }}
