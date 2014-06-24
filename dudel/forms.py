@@ -49,7 +49,7 @@ class LDAPAuthenticator(object):
         if self.username_value_or_field in form.data:
             username = form.data[self.username_value_or_field]
 
-        if app.config["LDAP_DEBUG_MODE"]:
+        if "LDAP_DEBUG_MODE" in app.config and app.config["LDAP_DEBUG_MODE"]:
             if username != app.config["LDAP_DEBUG_DATA"]["uid"] or  app.config["LDAP_DEBUG_PASSWORD"] != field.data:
                 raise ValidationError("LDAP_DEBUG_PASSWORD set but incorrect, log in as %s, password %s." %
                         (app.config["LDAP_DEBUG_DATA"]["uid"], app.config["LDAP_DEBUG_PASSWORD"]))

@@ -80,6 +80,9 @@ def poll(slug):
     poll = Poll.query.filter_by(slug=slug).first_or_404()
 
     comment_form = CommentForm()
+    if not "RECAPTCHA_PUBLIC_KEY" in app.config:
+        del comment_form.captcha
+
     if poll.allow_comments and comment_form.validate_on_submit():
         comment = Comment()
         comment.created = datetime.utcnow()
