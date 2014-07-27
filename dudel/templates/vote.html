@@ -33,9 +33,9 @@
             {% set groups = poll.get_choice_groups() %}
             {% set prev_group = None %}
             {% for subform in form.vote_choices %}
-                <tr>
-                    {% set choice = poll.get_choice_by_id(subform.choice_id.data) %}
-                    {% set group = choice.group %}
+                {% set choice = poll.get_choice_by_id(subform.choice_id.data) %}
+                {% set group = choice.group %}
+                <tr data-vote-choice="{{ choice.id }}">
 
                     {% if group != prev_group %}
                     <td class="choice-group" rowspan="{{ poll.get_choices_by_group(group)|length }}">
