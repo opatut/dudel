@@ -1,0 +1,13 @@
+blinker
+flask
+flask-babel
+flask-gravatar
+flask-login
+flask-markdown
+flask-migrate
+flask-sqlalchemy
+flask-wtf
+psycopg2
+python-dateutil
+python-ldap
+raven
