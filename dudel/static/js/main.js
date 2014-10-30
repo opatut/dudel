@@ -1,10 +1,30 @@
+function makeRandomString(length) {
+    var text = "";
+    var possible = "ABCDEFGHJKLMNPQRTUVWXYZabcdefghjkmnpqrstuvwxyz0123456789";
+
+    for(var i=0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
+}
+
+function slugField() {
+    var field = $("[data-slug-field]");
+    var val = field.val();
+    var slug = get_slug(val);
+    var slug_input = $(field.attr("data-slug-field"));
+
+    if($("#randomize-slug").is(":checked")) {
+        slug = makeRandomString(8);
+    }
+
+    slug_input.val(slug);
+}
+
 $(document).ready(function() {
-    $("[data-slug-field]").on("input", function() {
-        var val = $(this).val();
-        var slug = get_slug(val);
-        var slug_input = $($(this).attr("data-slug-field"));
-        slug_input.val(slug);
-    });
+    $("#randomize-slug").on("click", slugField);
+    $("[data-slug-field]").on("input", slugField);
 
     $(".script-only").css("display", "block");
     $("td.script-only").css("display", "table-cell");

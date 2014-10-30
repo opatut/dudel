@@ -17,6 +17,11 @@
             </div>
             <div class="form-group">
                 {{ form.slug.label }}
+
+                <div class="pull-right">
+                    <input type="checkbox" checked=CHECKED id="randomize-slug"> randomize
+                </div>
+
                 <div class="input-group">
                     <span class="input-group-addon">{{ url_for('poll', slug='', _external=True) }}</span>
                     {{ form.slug(class="form-control") }}
