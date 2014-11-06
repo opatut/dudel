@@ -7,7 +7,8 @@ from wtforms import ValidationError
 from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField
 from wtforms.ext.dateutil.fields import DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional, NoneOf
-from dudel.models import Poll, update_user_data
+from dudel.models.poll import Poll
+from dudel.models.user import update_user_data
 import ldap
 from ldap.dn import escape_dn_chars
 from datetime import datetime
