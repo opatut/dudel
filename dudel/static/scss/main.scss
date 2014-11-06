@@ -41,7 +41,7 @@ table.vote label {
 }
 
 .poll .choice-sum {
-	white-space: nowrap !important;
+    white-space: nowrap !important;
 }
 
 .vote .choice-text {
@@ -256,7 +256,6 @@ td.vote-comment {
     border-right: 1px solid #DDD;
     border-bottom: 0;
     border-top: 0;
-        {% endif %}
 }
 
 

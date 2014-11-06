@@ -1,5 +1,6 @@
 from raven.contrib.flask import Sentry
 from flask import Flask
+from flask.ext.assets import Environment, Bundle
 from flask.ext.babel import Babel
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.markdown import Markdown
@@ -22,6 +23,19 @@ supported_languages = ['en', 'de']
 migrate = Migrate(app, db)
 manager.add_command("db", MigrateCommand)
 mail = Mail(app)
+assets = Environment(app)
+
+scss = Bundle('scss/*.scss', filters='scss', output='gen/main.css')
+assets.register('scss_all', scss)
+css = Bundle(
+    'css/bootstrap.css',
+    'css/font-awesome.css', 
+    'css/jquery-ui.css', 
+    'css/jquery-ui-timepicker-addon.css', 
+    'css/jquery.colorpicker.css', 
+    scss, 
+    output='gen/all.css')
+assets.register('css_all', css)
 
 from dudel.util import load_icons
 ICONS = load_icons("dudel/icons.txt")

@@ -1,5 +1,6 @@
 blinker 
 flask 
+flask-assets
 flask-babel 
 flask-gravatar 
 flask-login 
