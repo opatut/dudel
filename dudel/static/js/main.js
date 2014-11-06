@@ -67,25 +67,44 @@ $(document).ready(function() {
 
     // Button: "all" (selecting the whole column)
     $(".vote-choice-column").click(function() {
-        $('.vote-choice.control[data-choice="' + $(this).data("choice") + '"]').each(function() {
-            highlightVoteChoice($(this), true);
+        var choice = $(this).data("choice");
+        $('.vote-choice[data-choice="' + choice + '"]').each(function() {
+            setChoiceByCell(this);
         });
     });
 
     // Fast selecting of voting cells
-    var fastselectState = {'active': false}
+    var draggingMouse = false;
+    var draggingStartCell = null;
     $("td.vote-choice").mousedown(function() {
-        fastselectState.active = true;
+        draggingMouse = true;
+        draggingStartCell = this;
         $('table.vote').disableSelect();
-        highlightVoteChoice($(this));
+
+        // set starting choice
+        if($(this).hasClass("off")) {
+            setChoiceByCell(this);
+        } else {
+            resetChoiceByCell(this);
+        }
+
         $('body').on('mouseup', function() {
-            fastselectState.active = false;
+            draggingMouse = false;
             $('table.vote').enableSelect();
         });
     }).mouseenter(function() {
-        if(fastselectState.active) {
-            highlightVoteChoice($(this), true);
+        // set starting choice
+        if(draggingMouse) {
+            if(draggingStartCell) {
+                setChoiceByCell(draggingStartCell);
+                draggingStartCell = null;
+            }
+            setChoiceByCell(this);
         }
+    });
+
+    $(".vote-choice-radio").change(function() {
+        setChoice($(this).parents("tr").data("vote-choice"), $(this).val());
     });
 
     $(".toggle").click(function() {
@@ -187,15 +206,19 @@ function showComment() {
     return false;
 }
 
-function highlightVoteChoice(elem, onlyEnable) {
-    var is_off = elem.hasClass("off");
+function setChoiceByCell(cell) {
+    setChoice($(cell).parents("tr").data("vote-choice"), $(cell).data("choice"));
+}
 
-    var tr = elem.closest("tr");
-    tr.find("td.vote-choice.control").addClass("off");
-    tr.find("input").prop("checked", false);
+function resetChoiceByCell(cell) {
+    setChoice($(cell).parents("tr").data("vote-choice"), 0);
+}
 
-    if(is_off || onlyEnable) {
-        elem.removeClass("off");
-        if(is_off) tr.find("input[value='" + elem.data("choice") + "']").prop("checked", true);
-    }
+function setChoice(voteChoice, choice) {
+    console.log(voteChoice, choice);
+    var tr = $('[data-vote-choice="' + voteChoice + '"]');
+    tr.find('input[type="radio"]').prop("checked", false);
+    tr.find('input[type="radio"][value="' + choice + '"]').prop("checked", true);
+    tr.find('td.vote-choice').addClass("off");
+    tr.find('td.vote-choice[data-choice="' + choice + '"]').removeClass("off");
 }

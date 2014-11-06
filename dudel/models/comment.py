@@ -14,4 +14,5 @@ class Comment(db.Model):
     def user_can_edit(self, user):
         if not self.user: return True
         if user.is_anonymous(): return False
+        if user.is_admin: return True
         return user == self.user or user == self.poll.author

@@ -89,7 +89,7 @@
                                             {% endif%}
                                         {% endfor %}
                                     {% endfor %}
-                                    <td class="noprint">
+                                    <td class="vote-edit-btns noprint">
                                         {% if vote.user_can_edit(current_user) %}
                                             <a href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
                                         {% endif %}
@@ -129,8 +129,15 @@
                             {% set scores, counts, totals, max_score = poll.get_stats() %}
                             {% for group in groups %}
                                 {% for choice in group %}
-                                    <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}" title="{{ choice.text or choice.date|datetime(False) }}: {% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }} x {{ choice_value.title }}{% if not loop.last %}, {% endif %}{% endfor %} (Score {{ '%.f' % scores[choice] }})">
-                                        {{ "%.02f %%" % (scores[choice]*100.0/totals[choice]) }}
+                                    <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}"
+                                    title="{{ choice.text or choice.date|datetime(False) }}: {% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }} x {{ choice_value.title }}{% if not loop.last %}, {% endif %}{% endfor %} (Score {{ '%.f' % scores[choice] }})"
+                                    data-tooltip="<b>{{ choice.text or choice.date|datetime(False) }}</b><br>{% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }}&nbsp;&#10761;&nbsp;<span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>&nbsp;{{ choice_value.title }}{% if not loop.last %}<br>{% endif %}{% endfor %}<br>{{ _("Score:") }} {{ '%.f' % scores[choice] }}"
+                                    data-toggle="tooltip">
+                                        {% if totals[choice] != 0 %}
+                                            {{ "%.f %%" % (scores[choice]*100.0/totals[choice]) }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
                                         <span class="print-only">{{ '%.f' % scores[choice] }}</span>
                                     </th>
                                 {% endfor %}
@@ -219,6 +226,15 @@
                     {{ field_error(comment_form.text) }}
                     {{ markdown_info(true) }}
                 </div>
+                {% if current_user.is_anonymous() %}
+                <div class="form-group">
+                    {{ comment_form.captcha }}
+                    {{ field_error(comment_form.captcha) }}
+                    <p class="help-block">
+                        {{ _("You can avoid this captcha if you login.") }}
+                    </p>
+                </div>
+                {% endif %}
                 <div class="form-group">
                     <input type="submit" value="{{ _('Post comment') }}" class="btn btn-primary" />
                 </div>

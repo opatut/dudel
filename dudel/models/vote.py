@@ -15,13 +15,17 @@ class Vote(db.Model):
         # allow for poll author 
         if self.poll.author and self.poll.author == user: return True
         # allow for user
-        if self.user: return self.user == user
+        if self.user and self.user == user: return True
+        # allow for admin
+        if user.is_admin: return True
         # disallow
         return False
 
     def user_can_edit(self, user):
         # allow for author
         if self.poll.author and self.poll.author == user: return True
+        # allow for admin
+        if user.is_authenticated() and user.is_admin: return True
         # allow for creator
         if self.user: return user == self.user
         # allow everyone, if no creator

@@ -1,7 +1,8 @@
 from dudel import app
 from flask import request, Markup
 from flask.ext.babel import gettext, lazy_gettext
-from flask.ext.wtf import Form
+from flask.ext.wtf import Form, RecaptchaField
+from flask.ext.wtf.recaptcha.validators import Recaptcha as RecaptchaValidator
 from flask.ext.login import current_user
 from wtforms import ValidationError
 from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField
@@ -49,7 +50,7 @@ class LDAPAuthenticator(object):
         if self.username_value_or_field in form.data:
             username = form.data[self.username_value_or_field]
 
-        if app.config["LDAP_DEBUG_MODE"]:
+        if "LDAP_DEBUG_MODE" in app.config and app.config["LDAP_DEBUG_MODE"]:
             if username != app.config["LDAP_DEBUG_DATA"]["uid"] or  app.config["LDAP_DEBUG_PASSWORD"] != field.data:
                 raise ValidationError("LDAP_DEBUG_PASSWORD set but incorrect, log in as %s, password %s." %
                         (app.config["LDAP_DEBUG_DATA"]["uid"], app.config["LDAP_DEBUG_PASSWORD"]))
@@ -94,6 +95,11 @@ class RequiredIfAnonymous(object):
     def __call__(self, form, field):
         if not field.data and current_user.is_anonymous():
             raise ValidationError(gettext("This field is required."))
+
+class RecaptchaIfAnonymous(RecaptchaValidator):
+    def __call__(self, form, field):
+        if current_user.is_anonymous():
+            super(RecaptchaIfAnonymous, self).__call__(form, field)
 
 class AtLeastNow(object):
     def __call__(self, form, field):
@@ -173,6 +179,7 @@ class PollPassword(Form):
 class CommentForm(Form):
     name = TextField(lazy_gettext("Your Name"), validators=[RequiredIfAnonymous(), Length(max=80)])
     text = TextAreaField(lazy_gettext("Comment"))
+    captcha = RecaptchaField(validators=[RecaptchaIfAnonymous()])
 
 class LanguageForm(Form):
     lang = SelectField(lazy_gettext("Language"), choices=[
