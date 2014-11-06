@@ -1,14 +1,16 @@
-from dudel import db
+from dudel import db, mail
 from dudel.models.choice import Choice
 from dudel.models.choicevalue import ChoiceValue
 from dudel.models.comment import Comment
+from dudel.models.pollwatch import PollWatch
 from dudel.models.vote import Vote
 from dudel.models.votechoice import VoteChoice
 from dudel.util import PollExpiredException, PollActionException
 from datetime import datetime
-from flask import url_for
+from flask import url_for, render_template
 from flask.ext.babel import lazy_gettext
 from flask.ext.login import current_user
+from flask.ext.mail import Message
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -139,3 +141,22 @@ class Poll(db.Model):
         max_score = max(scores.values())
 
         return scores, counts, totals, max_score
+
+    def is_watching(self, user):
+        return PollWatch.query.filter_by(poll=self, user=user).first()
+
+    def send_watchers(self, subject, template, **kwargs):
+        with mail.record_messages() as outbox:
+            with mail.connect() as conn:
+                for watcher in self.watchers:
+                    user = watcher.user
+                    msg = Message(recipients=[user.email], subject=subject,
+                                  body=render_template(template, poll=self, user=user, **kwargs))
+                    conn.send(msg)
+
+            for m in outbox:
+                print(m.subject)
+                print("===========================")
+                print(m.body)
+                print("===========================")
+

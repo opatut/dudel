@@ -1,0 +1,7 @@
+{% extends "email/base_poll.txt" %}
+
+{% block content -%}
+
+There was a new vote on "{{ poll.title }}" by {{ voter }}.
+
+{%- endblock %}

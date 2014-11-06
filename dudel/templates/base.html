@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" media="screen">
-        <link href="{{ url_for('static', filename='css/bootstrap-theme.css') }}" rel="stylesheet" media="screen">
+        <!-- <link href="{{ url_for('static', filename='css/bootstrap-theme.css') }}" rel="stylesheet" media="screen"> -->
         {% if "print" in request.args %}
         <link href="{{ url_for('static', filename='css/print.css') }}" rel="stylesheet" media="screen">
         {% else %}
@@ -67,7 +67,7 @@
                     {% else %}
                     <div class="navbar-right">
                         <span class="nav navbar-text">{{ _("Logged in as %(name)s", name=current_user.displayname) }}</span>
-                        <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}">{{ _("Logout") }}</a>
+                        <a class="btn navbar-btn btn-sm btn-default" href="{{ url_for('logout', next=request.url) }}"><i class="fa fa-sign-out"></i></a>
                     </div>
                     {% endif %}
                 </div>

@@ -3,3 +3,4 @@ messages.mo
 messages.pot
 *.pyc
 *.db
+.webassets-cache

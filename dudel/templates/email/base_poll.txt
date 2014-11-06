@@ -1,0 +1,12 @@
+Dear {{ user.displayname }},
+
+{% block content -%}
+
+{%- endblock %}
+
+Sincerely,
+The Dudel.
+
+------------------------------------------
+
+You receive this mail because you are watching the poll "{{ poll.title }}". Visit the following link to unsubscribe from these notifications: {{ url_for('poll_watch', slug=poll.slug, watch='no', _external=True) }}

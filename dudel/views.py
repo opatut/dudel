@@ -1,5 +1,5 @@
 from dudel import app, db, babel, supported_languages
-from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment
+from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch
 from dudel.models.user import get_user
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm
 from dudel.util import PollExpiredException, PollActionException
@@ -143,6 +143,22 @@ def poll_claim(slug):
     db.session.commit()
     flash(gettext("You claimed this poll. Only you may edit it now."), "success")
     return redirect(url_for("poll_edit", slug=poll.slug))
+
+@app.route("/<slug>/watch/<watch>", methods=("POST", "GET"))
+@login_required
+def poll_watch(slug, watch):
+    poll = Poll.query.filter_by(slug=slug).first_or_404()
+
+    if not watch in ("yes", "no"): abort(404)
+    watch = (watch == "yes")
+
+    PollWatch.query.filter_by(poll=poll, user=current_user).delete()
+    if watch:
+        db.session.add(PollWatch(poll, current_user))
+    db.session.commit()
+
+    flash(gettext("You are now watching this poll.") if watch else gettext("You are not watching this poll anymore."), "success")
+    return redirect(poll.get_url())
 
 @app.route("/<slug>/unclaim/", methods=("POST", "GET"))
 @login_required
@@ -362,6 +378,10 @@ def poll_vote(slug):
                 db.session.add(vote_choice)
 
             flash(gettext("You have voted."), "success")
+
+            poll.send_watchers("[Dudel] New vote: " + poll.title, 
+                "email/poll_voted.txt", voter=vote.displayname)
+
             db.session.commit()
             return redirect(poll.get_url())
 

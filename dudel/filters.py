@@ -19,10 +19,6 @@ def time(s, rebase=True):
 def datetime(s, rebase=True):
     return date(s, rebase) + ', ' + time(s, rebase)
 
-@app.template_filter()
-def voter(vote):
-    return "anonymous" if vote.anonymous else (vote.name or vote.user.displayname)
-
 @app.context_processor
 def inject():
     return dict(

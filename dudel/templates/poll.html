@@ -4,29 +4,66 @@
 
 {% macro pollDetail(title, content, icon) %}
     <li>
-        <span class="title">{{ title }}</span> 
+        <!-- <span class="title">{{ title }}</span>  -->
         <i class="fa fa-{{ icon }}"></i> 
         <span class="content">{{ content }}</span>
     </li>
 {% endmacro %}
 
 {% block poll_content %}
-    <ul class="poll-details well row">
-        <div class="col-md-4">
+    <ul class="poll-details">
         {{ pollDetail(_("Created on"), poll.created|date, "calendar") }}
 
-        {{ pollDetail(_("Expires"), poll.due_date|date if poll.due_date else _("never"), "clock-o") }} 
-        </div>
-        <div class="col-md-4">
+        {% if poll.due_date %}
+            {{ pollDetail(_("Expires"), poll.due_date|date, "clock-o") }} 
+        {% endif %}
 
-        {{ pollDetail(_("Ownership"), (_("you") if poll.author == current_user else poll.author.displayname) if poll.author else _("unclaimed"), "briefcase") }}
-        {{ pollDetail(_("Anonymous voting"), _("allowed") if poll.anonymous_allowed else _("disabled"), "exclamation") }}
-        </div>
-        <div class="col-md-4">
-        {{ pollDetail(_("Public listing"), _("visible") if poll.public_listing else _("hidden"), "list") }}
-        {{ pollDetail(_("Login required"), _("yes") if poll.require_login else _("no"), "user") }}
-        </div>
+        {% if poll.author %}
+            {{ pollDetail(_("Ownership"), _("you") if poll.author == current_user else poll.author.displayname, "briefcase") }}
+        {% endif %}
+
+        {% if poll.anonymous_allowed %}
+            {{ pollDetail(_("Anonymous voting"), _("anonymous voting allowed"), "question-circle") }}
+        {% endif %}
+
+        {% if poll.public_listing %}
+            {{ pollDetail(_("Public listing"), _("public"), "list") }}
+        {% endif %}
+
+        {% if poll.require_login %}
+            {{ pollDetail(_("Login required"), _("login required"), "user") }}
+        {% endif %}
+
+        {% if current_user.is_authenticated() %}
+            {{ pollDetail(_("Watching"), 
+                _("watching") if poll.is_watching(current_user) else _("not watching"),  
+                "eye" if poll.is_watching(current_user) else "eye-slash") }}
+        {% endif %}
     </ul>
+    <hr />
+
+    {% if not poll.is_expired and poll.has_choices %}
+    <div class="noprint">
+        {% set user_votes = [] if current_user.is_anonymous() else poll.get_user_votes(current_user) %}
+        {% if poll.one_vote_per_user and user_votes %}
+            <a class="btn btn-primary" href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=user_votes[0].id) }}">{{ _("Edit vote") }}</a>
+        {% elif poll.require_login and current_user.is_anonymous() %}
+            <a class="btn btn-primary" href="{{ url_for('login', next=url_for('poll_vote', slug=poll.slug)) }}">{{ _("Log in to vote") }}</a>
+        {% else %}
+            <a class="btn btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}">{{ _("Vote now") }}</a>
+        {% endif %}
+
+        {% if current_user.is_authenticated() %}
+            {% if poll.is_watching(current_user) %}
+                <a class="btn btn-default" href="{{ url_for('poll_watch', slug=poll.slug, watch='no') }}"><i class="fa fa-eye-slash"></i> {{ _("Unwatch poll") }}</a>
+            {% else %}
+                <a class="btn btn-default" href="{{ url_for('poll_watch', slug=poll.slug, watch='yes') }}"><i class="fa fa-eye"></i> {{ _("Watch poll") }}</a>
+            {% endif %}
+        {% endif %}
+    </div center>
+    {% endif %}
+
+    <hr />
 
     {% if poll.description %}
         <h3>{{ _("Poll Description") }}</h3>
@@ -68,17 +105,13 @@
                             {% if poll.show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
                                 <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
                                     <td class="author">
-                                        {{ vote|voter }}
+                                        {{ vote.displayname }}
                                     </td>
                                     {% for group in groups %}
                                         {% for choice in group %}
                                             {% set vote_choice = poll.get_vote_choice(vote, choice) %}
                                             {% if vote_choice and not vote_choice.value.deleted %}
-                                            <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}"
-                                                style="background-color: #{{ vote_choice.value.color }}"
-                                                title="{{ vote|voter }}, {{choice.text or choice.date|datetime }}{% if vote_choice.comment %}: {{ vote_choice.comment }}{% endif %}"
-                                                data-tooltip="<b>{{ vote|voter }}</b><br>{{ choice.text or choice.date|datetime(False) }}{% if vote_choice.comment %}<br>{{ vote_choice.comment }}{% endif %}"
-                                                data-toggle="tooltip">
+                                            <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}" title="{{ vote.displayname }}, {{choice.text or choice.date|datetime }}{% if vote_choice.comment %}: {{ vote_choice.comment }}{% endif %}" data-tooltip="<b>{{ vote.displayname }}</b><br>{{ choice.text or choice.date|datetime(False) }}{% if vote_choice.comment %}<br>{{ vote_choice.comment }}{% endif %}" data-toggle="tooltip">
                                                 <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
                                                 {#{% if vote_choice.comment %}<span class="comment-icon fa fa-exclamation"></span>{% endif %}#}
                                             </td>
@@ -89,9 +122,9 @@
                                             {% endif%}
                                         {% endfor %}
                                     {% endfor %}
-                                    <td class="vote-edit-btns noprint">
+                                    <td class="noprint vote-actions">
                                         {% if vote.user_can_edit(current_user) %}
-                                            <a href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-edit"></i></a>
+                                            <a href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
                                         {% endif %}
                                         {% if vote.user_can_delete(current_user) %}
                                             <a href="{{ url_for('poll_vote_delete', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-trash-o"></i></a>
@@ -163,19 +196,6 @@
     {% endif %}
 
     <div style="clear: right;"></div>
-
-    {% if not poll.is_expired and poll.has_choices %}
-    <center style="margin-bottom: 3em; margin-top: 2em;" class="noprint">
-        {% set user_votes = [] if current_user.is_anonymous() else poll.get_user_votes(current_user) %}
-        {% if poll.one_vote_per_user and user_votes %}
-            <p><a class="btn btn-lg btn-primary" href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=user_votes[0].id) }}" style="min-width: 30%;">{{ _("Edit vote") }}</a></p>
-        {% elif poll.require_login and current_user.is_anonymous() %}
-            <p><a class="btn btn-lg btn-primary" href="{{ url_for('login', next=url_for('poll_vote', slug=poll.slug)) }}" style="min-width: 30%;">{{ _("Log in to vote") }}</a></p>
-        {% else %}
-            <p><a class="btn btn-lg btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}" style="min-width: 30%;">{{ _("Vote now") }}</a></p>
-        {% endif %}
-    </center>
-    {% endif %}
 
     {% set comments = poll.get_comments() %}
 

@@ -31,3 +31,6 @@ class Vote(db.Model):
         # allow everyone, if no creator
         return True
 
+    @property
+    def displayname(self):
+        return ("anonymous" if self.anonymous else (self.user.displayname if self.user else (self.name or "unknown")))
