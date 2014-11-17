@@ -64,6 +64,6 @@ class User(db.Model):
         return "ADMINS" in app.config and self.username in app.config["ADMINS"]
 
     def require_admin(self):
-        if not current_user.is_authenticated() or not current_user.is_admin:
+        if not self.is_authenticated() or not self.is_admin:
             abort(403)
 

@@ -8,7 +8,7 @@
 
 {% block poll_content %}
     {% if poll.type == "normal" %}
-        {% if poll.get_choices()|length != poll.choices|length %}
+        {% if poll.get_choices()|length != poll.choices.count() %}
             {{ alert("info", _("Deleted choices will stay in this list, so votes that have already been made are not lost.")) }}
         {% endif %}
 
@@ -18,7 +18,7 @@
                     <th>{{ _("Votes cast") }}</th>
                     <th>{{ _("Actions") }}</th>
                 </tr>
-                {% set total_votes = poll.votes|length %}
+                {% set total_votes = poll.votes.count() %}
                 {% for choice in poll.choices|sort() %}
                     <tr class="choice {% if choice.deleted %}deleted{% endif %} {% if edit_id == choice.id %}editing{% endif %}">
                         <td class="choice">
@@ -37,7 +37,7 @@
                                 {{ choice.text }}
                             {% endif %}
                         </td>
-                        {% set vote_count = choice.vote_choices|length %}
+                        {% set vote_count = choice.vote_choices.count() %}
                         <td class="color {{ 'green' if vote_count >= total_votes else ('red' if vote_count == 0 else 'orange') }}">
                             <strong>{{ vote_count }}</strong> / {{ total_votes }}
                         </td>

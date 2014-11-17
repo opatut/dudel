@@ -31,7 +31,7 @@
                     <th>{{ _("Votes cast") }}</th>
                     <th>{{ _("Actions") }}</th>
                 </tr>
-                {% set total_votes = poll.votes|length %}
+                {% set total_votes = poll.votes.count() %}
                 {% for value in poll.choice_values %}
                     <tr class="choice {% if value.deleted %}deleted{% endif %} {% if value == edit_value %}editing mine{% endif %}">
                         <td class="author choice">
@@ -43,7 +43,7 @@
                         <td class="author">
                             {{ value.weight }}
                         </td>
-                        {% set vote_count = value.vote_choices|length %}
+                        {% set vote_count = value.vote_choices.count() %}
                         <td class="author">
                             <strong>{{ vote_count }}</strong> / {{ total_votes }}
                         </td>

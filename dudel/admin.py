@@ -9,6 +9,7 @@ from datetime import datetime
 @app.route("/admin/")
 @login_required
 def admin_index():
+    if not current_user.is_authenticated(): abort(403)
     current_user.require_admin()
     polls = Poll.query.order_by(db.desc(Poll.created)).limit(5)
     users = User.query.order_by(db.desc(User.id)).limit(5)
@@ -17,6 +18,7 @@ def admin_index():
 @app.route("/admin/polls/")
 @login_required
 def admin_polls():
+    if not current_user.is_authenticated(): abort(403)
     current_user.require_admin()
     polls = Poll.query.order_by(db.desc(Poll.created)).all()
     return render_template("admin/polls.html", polls=polls)
@@ -24,6 +26,7 @@ def admin_polls():
 @app.route("/admin/poll/<int:id>/")
 @login_required
 def admin_poll(id):
+    if not current_user.is_authenticated(): abort(403)
     current_user.require_admin()
     poll = Poll.query.filter_by(id=id).first_or_404()
     return render_template("admin/poll.html", poll=poll)
@@ -31,6 +34,7 @@ def admin_poll(id):
 @app.route("/admin/users/")
 @login_required
 def admin_users():
+    if not current_user.is_authenticated(): abort(403)
     current_user.require_admin()
     users = User.query.order_by(db.asc(User.username)).all()
     return render_template("admin/users.html", users=users)
@@ -38,6 +42,7 @@ def admin_users():
 @app.route("/admin/user/<int:id>/")
 @login_required
 def admin_user(id):
+    if not current_user.is_authenticated(): abort(403)
     current_user.require_admin()
     user = User.query.filter_by(id=id).first_or_404()
     return render_template("admin/user.html", user=user)

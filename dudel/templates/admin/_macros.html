@@ -29,7 +29,7 @@
                 <td>{{ poll.created | datetime }}</td>
                 <td>{{ user_link(poll.author) if poll.author else "unclaimed" }}</td>
                 <td>{{ (poll.due_date|datetime) if poll.due_date else "never" }}</td>
-                <td>{{ poll.votes|length }}</td>
+                <td>{{ poll.votes.count() }}</td>
             </tr>
             {% endfor %}
         </table>
