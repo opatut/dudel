@@ -40,6 +40,8 @@ class Poll(db.Model):
     comments = db.relationship("Comment", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
     votes = db.relationship("Vote", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
 
+    _vote_choice_map = None
+
     def __init__(self):
         self.created = datetime.utcnow()
         # create yes/no/maybe default choice values
@@ -67,7 +69,10 @@ class Poll(db.Model):
         return url_for("poll", slug=self.slug)
 
     def get_vote_choice(self, vote, choice):
-        return VoteChoice.query.filter_by(vote=vote, choice=choice).first()
+        if not self._vote_choice_map:
+            self._vote_choice_map = {vote: {vote_choice.choice: vote_choice for vote_choice in vote.vote_choices} for vote in self.votes}
+        return self._vote_choice_map[vote][choice]
+        # return VoteChoice.query.filter_by(vote=vote, choice=choice).first()
 
     def get_choices(self):
         return Choice.query.filter_by(poll_id=self.id, deleted=False).all()
@@ -166,3 +171,11 @@ class Poll(db.Model):
                 print(m.body)
                 print("===========================")
 
+    def to_dict(self):
+        dictify = lambda l, f=(lambda x: True): {i.id: i.to_dict() for i in l if f(i)}
+
+        return dict(choices=dictify(self.choices, lambda c: not c.deleted),
+            choice_values=dictify(self.choice_values, lambda c: not c.deleted),
+            votes=dictify(self.votes),
+            comments=dictify(self.comments, lambda c: not c.deleted),
+            choice_groups=[[choice.id for choice in group] for group in self.get_choice_groups()])

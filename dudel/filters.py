@@ -2,6 +2,7 @@ from dudel import app, ICONS
 from dudel.forms import LoginForm, LanguageForm
 from flask import g
 from flask.ext.babel import format_date, format_time, get_locale
+from json import dumps
 
 date_formats = {'de': 'EEE, dd. MMM'}
 
@@ -18,6 +19,10 @@ def time(s, rebase=True):
 @app.template_filter()
 def datetime(s, rebase=True):
     return date(s, rebase) + ', ' + time(s, rebase)
+
+@app.template_filter()
+def json(s):
+    return dumps(s)
 
 @app.context_processor
 def inject():

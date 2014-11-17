@@ -8,6 +8,7 @@ from flask.ext.babel import gettext
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from dateutil import parser
 from datetime import datetime
+import json
 
 @babel.localeselector
 def get_locale():
@@ -101,6 +102,11 @@ def poll(slug):
         return redirect(poll.get_url() + "#comment-" + str(comment.id))
 
     return render_template("poll.html", poll=poll, comment_form=comment_form)
+
+# @app.route("/api/<slug>/", methods=("GET", ))
+# def api_poll(slug):
+#     poll = Poll.query.filter_by(slug=slug).first_or_404()
+#     return json.dumps(poll.to_dict(), indent=None)
 
 @app.route("/<slug>/comment/delete/<int:id>", methods=("POST", "GET"))
 def poll_delete_comment(slug, id):

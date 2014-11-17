@@ -18,3 +18,11 @@ class ChoiceValue(db.Model):
         self.color = color
         self.weight = weight
 
+    def to_dict(self):
+        return dict(id=self.id,
+            title=self.title,
+            icon=self.title,
+            color=self.color,
+            deleted=self.deleted,
+            weight=self.weight)
+

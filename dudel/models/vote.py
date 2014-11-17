@@ -35,3 +35,11 @@ class Vote(db.Model):
     @property
     def displayname(self):
         return ("anonymous" if self.anonymous else (self.user.displayname if self.user else (self.name or "unknown")))
+
+    def to_dict(self):
+        return dict(id=self.id,
+            displayname=self.displayname,
+            name=self.name if not self.anonymous else None,
+            user_id=self.user_id if not self.anonymous else 0,
+            vote_choices={vc.id: vc.to_dict() for vc in self.vote_choices},
+            anonymous=self.anonymous)

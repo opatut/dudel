@@ -26,3 +26,9 @@ class Choice(db.Model):
             return self.date.date()
         else:
             return "default" # normal polls only have one default group
+
+    def to_dict(self):
+        return dict(id=self.id, 
+            text=self.text, 
+            date=str(self.date),
+            deleted=self.deleted)
