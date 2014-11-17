@@ -145,7 +145,7 @@
                                     <td></td>
                                     <td colspan="{{ poll.get_choices()|length }}" class="info">
                                         {% if poll.show_summary %}
-                                            {{ poll.votes|length - poll.get_user_votes(current_user)|length }} votes are hidden from you.
+                                            {{ poll.votes.count() - poll.get_user_votes(current_user)|length }} votes are hidden from you.
                                         {% else %}
                                             Some votes may be hidden from you.
                                         {% endif %}
