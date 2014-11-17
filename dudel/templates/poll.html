@@ -74,112 +74,137 @@
     {% if (poll.votes and poll.has_choices) and (poll.show_votes or poll.show_summary or poll.get_user_votes(current_user)) %}
         <div class="table-padding">
             {% set groups = poll.get_choice_groups() %}
-            <div class="table-responsive table-scroll">
-                <table class="table poll auto-width">
-                    <thead>
-                        {% if groups|length>1 or poll.type == "date" %}
-                        <tr>
-                            <th></th>
-                            {% for group in groups %}
-                                <th colspan="{{ group|length }}" class="choice-group">
-                                    {{ group[0].group|date(False) if poll.type=="date" else group[0].group }}
-                                </th>
-                            {% endfor %}
-                            <th class="noprint"></th>
-                        </tr>
-                        {% endif %}
-                        <tr>
-                            <th></th>
-                            {% for group in groups %}
-                                {% for choice in group %}
-                                    <th class="choice-text">
-                                        {{ choice.text or choice.date|time(False) }}
+            <div class="table-noscroll-y">
+                <div class="table-scroll-x" style="padding-bottom: 100px;">
+                    <table class="table poll auto-width">
+                        <thead>
+                            {% if groups|length>1 or poll.type == "date" %}
+                            <tr>
+                                <th></th>
+                                {% for group in groups %}
+                                    <th colspan="{{ group|length }}" class="choice-group">
+                                        {{ group[0].group|date(False) if poll.type=="date" else group[0].group }}
                                     </th>
                                 {% endfor %}
-                            {% endfor %}
-                            <th class="noprint"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for vote in poll.votes %}
-                            {% if poll.show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
-                                <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
-                                    <td class="author">
-                                        {{ vote.displayname }}
-                                    </td>
-                                    {% for group in groups %}
-                                        {% for choice in group %}
-                                            {% set vote_choice = poll.get_vote_choice(vote, choice) %}
-                                            {% if vote_choice and not vote_choice.value.deleted %}
-                                            <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}" title="{{ vote.displayname }}, {{choice.text or choice.date|datetime }}{% if vote_choice.comment %}: {{ vote_choice.comment }}{% endif %}" data-tooltip="<b>{{ vote.displayname }}</b><br>{{ choice.text or choice.date|datetime(False) }}{% if vote_choice.comment %}<br>{{ vote_choice.comment }}{% endif %}" data-toggle="tooltip">
-                                                <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
-                                                {#{% if vote_choice.comment %}<span class="comment-icon fa fa-exclamation"></span>{% endif %}#}
-                                            </td>
-                                            {% else %}
-                                            <td class="vote-choice text-center none">
-                                                <span class="fa fa-question"></span>
-                                            </td>
-                                            {% endif%}
-                                        {% endfor %}
+                                <th class="noprint"></th>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <th></th>
+                                {% for group in groups %}
+                                    {% for choice in group %}
+                                        <th class="choice-text">
+                                            {{ choice.text or choice.date|time(False) }}
+                                        </th>
                                     {% endfor %}
-                                    <td class="noprint vote-actions">
-                                        {% if vote.user_can_edit(current_user) %}
-                                            <a href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                {% endfor %}
+                                <th class="noprint"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vote in poll.votes %}
+                                {% if poll.show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
+                                    <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
+                                        <td class="author">
+                                            {{ vote.displayname }}
+                                        </td>
+                                        {% for group in groups %}
+                                            {% for choice in group %}
+                                                {% set vote_choice = poll.get_vote_choice(vote, choice) %}
+                                                {% if vote_choice and not vote_choice.value.deleted %}
+                                                <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" 
+                                                    style="background-color: #{{ vote_choice.value.color }}" 
+                                                    {#title="{{ vote.displayname }}, {{choice.text or choice.date|datetime }}{% if vote_choice.comment %}: {{ vote_choice.comment }}{% endif %}"  #}
+                                                    data-name="{{ vote.displayname }}"
+                                                    data-value="{{ vote.text or choice.date|datetime(False) }}"
+                                                    data-comment="{{ vote_choice.comment }}">
+                                                    <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
+                                                    {#{% if vote_choice.comment %}<span class="comment-icon fa fa-exclamation"></span>{% endif %}#}
+                                                    <div class="custom-tooltip below">
+                                                        <div class="name">{{ vote.displayname }}</div>
+                                                        <div class="value">{{ vote.text or choice.date|datetime(False) }}</div>
+                                                        {% if vote_choice.comment %}
+                                                            <div class="comment">{{ vote_choice.comment }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                                {% else %}
+                                                <td class="vote-choice text-center none">
+                                                    <span class="fa fa-question"></span>
+                                                </td>
+                                                {% endif%}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        <td class="noprint vote-actions">
+                                            {% if vote.user_can_edit(current_user) %}
+                                                <a href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                            {% endif %}
+                                            {% if vote.user_can_delete(current_user) %}
+                                                <a href="{{ url_for('poll_vote_delete', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-trash-o"></i></a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not poll.show_votes %}
+                                <tr>
+                                    <td></td>
+                                    <td colspan="{{ poll.get_choices()|length }}" class="info">
+                                        {% if poll.show_summary %}
+                                            {{ poll.votes|length - poll.get_user_votes(current_user)|length }} votes are hidden from you.
+                                        {% else %}
+                                            Some votes may be hidden from you.
                                         {% endif %}
-                                        {% if vote.user_can_delete(current_user) %}
-                                            <a href="{{ url_for('poll_vote_delete', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-xs btn-default"><i class="fa fa-trash-o"></i></a>
+                                        {% if current_user.is_anonymous() %}
+                                            <a href="{{ url_for('login', next=request.url) }}">Log in</a> to display your own vote.
                                         {% endif %}
                                     </td>
+                                    <td class="noprint"></td>
                                 </tr>
                             {% endif %}
-                        {% endfor %}
-                        {% if not poll.show_votes %}
+                        </tbody>
+                        {% if poll.show_summary %}
+                        <tfoot>
                             <tr>
-                                <td></td>
-                                <td colspan="{{ poll.get_choices()|length }}" class="info">
-                                    {% if poll.show_summary %}
-                                        {{ poll.votes|length - poll.get_user_votes(current_user)|length }} votes are hidden from you.
-                                    {% else %}
-                                        Some votes may be hidden from you.
-                                    {% endif %}
-                                    {% if current_user.is_anonymous() %}
-                                        <a href="{{ url_for('login', next=request.url) }}">Log in</a> to display your own vote.
-                                    {% endif %}
-                                </td>
-                                <td class="noprint"></td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                    {% if poll.show_summary %}
-                    <tfoot>
-                        <tr>
-                            {% set total = poll.votes.count() %}
-                            <th>
-                                <span class="print-only">
-                                    <b>Percent<br/>Score</b>
-                                </span>
-                            </th>
-                            {% set scores, counts, totals, max_score = poll.get_stats() %}
-                            {% for group in groups %}
-                                {% for choice in group %}
-                                    <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}"
-                                    title="{{ choice.text or choice.date|datetime(False) }}: {% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }} x {{ choice_value.title }}{% if not loop.last %}, {% endif %}{% endfor %} (Score {{ '%.f' % scores[choice] }})"
-                                    data-tooltip="<b>{{ choice.text or choice.date|datetime(False) }}</b><br>{% for choice_value in poll.get_choice_values() %}{{ counts[choice][choice_value]  }}&nbsp;&#10761;&nbsp;<span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>&nbsp;{{ choice_value.title }}{% if not loop.last %}<br>{% endif %}{% endfor %}<br>{{ _("Score:") }} {{ '%.f' % scores[choice] }}"
-                                    data-toggle="tooltip">
-                                        {% if totals[choice] != 0 %}
-                                            {{ "%.f %%" % (scores[choice]*100.0/totals[choice]) }}
-                                        {% else %}
-                                            N/A
-                                        {% endif %}
-                                        <span class="print-only">{{ '%.f' % scores[choice] }}</span>
-                                    </th>
+                                {% set total = poll.votes.count() %}
+                                <th>
+                                    <span class="print-only">
+                                        <b>Percent<br/>Score</b>
+                                    </span>
+                                </th>
+                                {% set scores, counts, totals, max_score = poll.get_stats() %}
+                                {% for group in groups %}
+                                    {% for choice in group %}
+                                        <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}">
+                                            {% if totals[choice] != 0 %}
+                                                {{ "%.f %%" % (scores[choice]*100.0/totals[choice]) }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                            <span class="print-only">{{ '%.f' % scores[choice] }}</span>
+
+                                            <div class="custom-tooltip above">
+                                                <div class="name">{{ choice.text or choice.date|datetime(False) }}</div>
+                                                {% for choice_value in poll.get_choice_values() %}
+                                                <div class="value">
+                                                    {{ counts[choice][choice_value]  }} <i class="fa fa-times"></i>
+                                                    <span class="label choice-sum-value-label" style="background-color: #{{ choice_value.color }};">
+                                                        <span class="fa fa-{{ choice_value.icon }}"></span>
+                                                    </span>
+                                                    {{ choice_value.title }}
+                                                </div>
+                                                {% endfor %}
+                                                <div class="score">{{ _("Score:") }} {{ '%.f' % scores[choice] }}</div>
+                                            </div>
+                                        </th>
+                                    {% endfor %}
                                 {% endfor %}
-                            {% endfor %}
-                            <th class="noprint"></th>
-                        </tr>
-                    </tfoot>
-                    {% endif %}
-                </table>
+                                <th class="noprint"></th>
+                            </tr>
+                        </tfoot>
+                        {% endif %}
+                    </table>
+                </div>
             </div>
         </div>
     {% else %}
