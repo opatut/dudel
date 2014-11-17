@@ -4,9 +4,11 @@ class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(80))
     date = db.Column(db.DateTime)
-    poll = db.relationship("Poll", backref="choices")
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
     deleted = db.Column(db.Boolean, default=False)
+
+    # relationships
+    vote_choices = db.relationship("VoteChoice", backref="choice", lazy="dynamic")
 
     def __cmp__(self,other):
         return cmp(self.date, other.date) or cmp(self.deleted, other.deleted) or cmp(self.text, other.text)

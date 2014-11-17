@@ -5,10 +5,12 @@ class ChoiceValue(db.Model):
     title = db.Column(db.String(80))
     icon = db.Column(db.String(64))
     color = db.Column(db.String(6))
-    poll = db.relationship("Poll", backref="choice_values")
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
     deleted = db.Column(db.Boolean, default=False)
     weight = db.Column(db.Float, default=0.0)
+
+    # relationships
+    vote_choices = db.relationship("VoteChoice", backref="value", lazy="dynamic")
 
     def __init__(self, title="", icon="question", color="EEEEEE", weight = 0.0):
         self.title = title

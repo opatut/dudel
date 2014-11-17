@@ -153,7 +153,7 @@
                     {% if poll.show_summary %}
                     <tfoot>
                         <tr>
-                            {% set total = poll.votes|length %}
+                            {% set total = poll.votes.count() %}
                             <th>
                                 <span class="print-only">
                                     <b>Percent<br/>Score</b>

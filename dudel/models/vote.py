@@ -3,11 +3,12 @@ from dudel import db
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    poll = db.relationship("Poll", backref="votes")
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
-    user = db.relationship("User", backref="votes")
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     anonymous = db.Column(db.Boolean, default=False)
+
+    # relationship
+    vote_choices = db.relationship("VoteChoice", backref="vote", cascade="all, delete-orphan", lazy="dynamic")
 
     def user_can_delete(self, user):
         # only if logged in

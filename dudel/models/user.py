@@ -32,6 +32,12 @@ class User(db.Model):
     email = db.Column(db.String(80))
     preferred_language = db.Column(db.String(80))
 
+    # relationships
+    polls = db.relationship("Poll", backref="author", lazy="dynamic")
+    watches = db.relationship("PollWatch", backref="user", cascade="all, delete-orphan", lazy="dynamic")
+    comments = db.relationship("Comment", backref="user", lazy="dynamic")
+    votes = db.relationship("Vote", backref="user", lazy="dynamic")
+
     @property
     def displayname(self):
         return self._displayname or ((app.config["NAME_FORMAT"] if "NAME_FORMAT" in app.config else "%(firstname)s (%(username)s)") % {

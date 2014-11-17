@@ -19,7 +19,6 @@ class Poll(db.Model):
     slug = db.Column(db.String(80))
     type = db.Column(db.Enum("date", "normal", name="poll_type"), default="normal")
     created = db.Column(db.DateTime)
-    author = db.relationship("User", backref="polls")
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     # === Extra settings ===
@@ -33,6 +32,13 @@ class Poll(db.Model):
     allow_comments = db.Column(db.Boolean, default=True)
 
     RESERVED_NAMES = ["login", "logout", "index", "user", "admin"]
+
+    # relationships
+    choices = db.relationship("Choice", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
+    choice_values = db.relationship("ChoiceValue", backref="poll", lazy="dynamic")
+    watchers = db.relationship("PollWatch", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
+    comments = db.relationship("Comment", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
+    votes = db.relationship("Vote", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
 
     def __init__(self):
         self.created = datetime.utcnow()
@@ -133,7 +139,7 @@ class Poll(db.Model):
         scores = {}
         totals = {}
         for choice, choice_counts in counts.items():
-            totals[choice] = len(choice.vote_choices)
+            totals[choice] = choice.vote_choices.count()
             scores[choice] = 0
             for value, count in choice_counts.items():
                 scores[choice] += count * value.weight 
