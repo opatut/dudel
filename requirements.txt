@@ -4,6 +4,7 @@ flask-assets
 flask-babel 
 flask-gravatar 
 flask-login 
+flask-mail
 flask-markdown 
 flask-migrate
 flask-sqlalchemy 
