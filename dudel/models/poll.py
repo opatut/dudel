@@ -71,7 +71,11 @@ class Poll(db.Model):
     def get_vote_choice(self, vote, choice):
         if not self._vote_choice_map:
             self._vote_choice_map = {vote: {vote_choice.choice: vote_choice for vote_choice in vote.vote_choices} for vote in self.votes}
-        return self._vote_choice_map[vote][choice]
+
+        try:
+            return self._vote_choice_map[vote][choice]
+        except KeyError:
+            return None
         # return VoteChoice.query.filter_by(vote=vote, choice=choice).first()
 
     def get_choices(self):
