@@ -4,3 +4,4 @@ messages.pot
 *.pyc
 *.db
 .webassets-cache
+gen

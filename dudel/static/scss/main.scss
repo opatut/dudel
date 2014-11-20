@@ -117,7 +117,7 @@ table.vote label {
         font-size: 10pt;
         text-align: left;
         display: none;
-        width: $tooltipWidth;
+        min-width: $tooltipWidth;
         left: 50%;
         margin-left: - $tooltipWidth / 2;
         pointer-events:none;
@@ -139,7 +139,7 @@ table.vote label {
             content: " ";
             border: 10px solid transparent;
             position: absolute;
-            left: 50%;
+            left: $tooltipWidth / 2;
             margin-left: -10px;
         }
 
