@@ -1,8 +1,8 @@
 Dear {{ user.displayname }},
 
-{% block content -%}
+There was a change made on the poll "{{ poll.title }}": {% block content -%}{%- endblock %}
 
-{%- endblock %}
+Visit this link to see the poll page: {{ url_for('poll', slug=poll.slug, _external=True) }}
 
 Sincerely,
 The Dudel.
