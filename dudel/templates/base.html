@@ -29,20 +29,20 @@
                     <a href="/" class="navbar-brand">Dudel</a>
 
                     <div class="navbar-left visible-sm visible-xs">
-                        <a class="btn navbar-btn btn-sm btn-default" href="https://mafiasi.de" style="margin-top: 10px;">
+                        <a class="btn navbar-btn btn-default" href="https://mafiasi.de" style="margin-top: 10px;">
                             <i class="fa fa-home"></i> Mafiasi Hub
                         </a>
-                    <a class="btn navbar-btn btn-sm btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
+                    <a class="btn navbar-btn btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
                         <i class="fa fa-plus"></i>
                     </a>
                     </div>
                 </div>
 
                 <div class="navbar-left hidden-sm hidden-xs">
-                    <a class="btn navbar-btn btn-sm btn-default" href="https://mafiasi.de" style="margin-top: 10px;">
+                    <a class="btn navbar-btn btn-default" href="https://mafiasi.de" style="margin-top: 10px;">
                         <i class="fa fa-home"></i> Mafiasi Hub
                     </a>
-                    <a class="btn navbar-btn btn-sm btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
+                    <a class="btn navbar-btn btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
                         <i class="fa fa-plus"></i> {{ _("Create poll") }}
                     </a>
                 </div>
@@ -61,8 +61,12 @@
                     </form>
                     {% else %}
                     <div class="navbar-right">
-                        <span class="nav navbar-text">{{ _("Logged in as %(name)s", name=current_user.displayname) }}</span>
-                        <a class="btn navbar-btn btn-sm btn-default" href="{{ url_for('logout', next=request.url) }}"><i class="fa fa-sign-out"></i></a>
+                        <a class="btn navbar-btn btn-default current-user" href="{{ url_for('user_settings') }}">
+                            <img src="{{ current_user.get_avatar(40) }}">
+                            {{ current_user.displayname }}
+                        </a>
+                        <a class="btn navbar-btn btn-default" href="{{ url_for('user_settings') }}"><i class="fa fa-cog"></i></a>
+                        <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}"><i class="fa fa-sign-out"></i></a>
                     </div>
                     {% endif %}
                 </div>
@@ -79,8 +83,8 @@
                 Powered by <a href="http://github.com/opatut/dudel">Dudel</a>
                 <form class="form-inline" action="{{ url_for('user_change_language', next=request.url) }}" method="POST">
                     {{ lang_form.hidden_tag() }}
-                    {% for lang in lang_form.lang %}
-                        &middot; {{ lang() }}
+                    {% for language in lang_form.language %}
+                        &middot; {{ language() }}
                     {% endfor %}
                 </form>
             </div>

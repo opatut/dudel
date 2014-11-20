@@ -181,8 +181,10 @@ class CommentForm(Form):
     text = TextAreaField(lazy_gettext("Comment"))
     captcha = RecaptchaField(validators=[RecaptchaIfAnonymous()])
 
+LANGUAGES = [('en', 'English'), ('de', 'Deutsch')]
+
 class LanguageForm(Form):
-    lang = SelectField(lazy_gettext("Language"), choices=[
-        ('en', 'English'),
-        ('de', 'Deutsch')],
-    option_widget=SelectButtonInput())
+    language = SelectField(lazy_gettext("Language"), choices=LANGUAGES, option_widget=SelectButtonInput())
+
+class SettingsForm(Form):
+    language = SelectField(lazy_gettext("Language"), choices=LANGUAGES)

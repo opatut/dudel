@@ -1,7 +1,7 @@
 from dudel import app, db, babel, supported_languages
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch
 from dudel.models.user import get_user
-from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm
+from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsForm
 from dudel.util import PollExpiredException, PollActionException
 from flask import redirect, abort, request, render_template, flash, url_for, g
 from flask.ext.babel import gettext
@@ -69,7 +69,7 @@ def user_change_language():
 
     form = LanguageForm()
     if form.validate_on_submit():
-        lang = form.lang.data
+        lang = form.language.data
         if lang in supported_languages:
             if current_user.is_authenticated():
                 current_user.preferred_language = lang
@@ -77,6 +77,17 @@ def user_change_language():
             else:
                 response.set_cookie("lang", lang)
     return response
+
+@app.route("/user/settings", methods=("GET", "POST"))
+def user_settings():
+    form = SettingsForm()
+    if form.validate_on_submit():
+        current_user.preferred_language = form.language.data
+        db.session.commit()
+        flash(gettext("Your user settings were updated."), "success")
+        return redirect(url_for('user_settings'))
+
+    return render_template("user_settings.html", form=form)
 
 @app.route("/<slug>/", methods=("GET", "POST"))
 def poll(slug):
@@ -164,7 +175,7 @@ def poll_watch(slug, watch):
     db.session.commit()
 
     flash(gettext("You are now watching this poll.") if watch else gettext("You are not watching this poll anymore."), "success")
-    return redirect(poll.get_url())
+    return redirect(request.args.get("next", None) or poll.get_url())
 
 @app.route("/<slug>/unclaim/", methods=("POST", "GET"))
 @login_required

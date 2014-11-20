@@ -226,7 +226,7 @@
             <div class="comment">
                 <a name="comment-{{ comment.id }}"></a>
                 <div class="avatar">
-                    <img src="{{ (comment.name or comment.user.email) | gravatar }}" />
+                    <img src="{{ comment.user.get_avatar(48) if comment.user_id else comment.name|gravatar(48) }}" />
                 </div>
                 <div class="meta">
                     <div class="author">{{ comment.name or comment.user.displayname }}</div>

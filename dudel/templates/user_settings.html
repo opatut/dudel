@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _("Settings") }}{% endblock %}
+
+{% block content %}
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h1>{{ _("Settings") }}</h1> <form method="POST"> {{ form.hidden_tag() }}
+                {{ field_error(form.hidden_tag) }}
+
+                <div class="form-group">
+                    {{ form.language.label }}
+                    {{ form.language(class="form-control", **{'data-slug-field':"#slug"}) }}
+                    {{ field_error(form.language) }}
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="{{ _('Save') }}" class="btn btn-primary"/>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h1>{{ _("Watched Polls") }}</h1>
+
+            {% set watches = current_user.watches.all() %}
+            {% if watches %}
+                <table class="table table-condensed table-striped">
+                {% for watch in watches %}
+                    <tr>
+                        <td><a href="{{ watch.poll.get_url() }}">{{ watch.poll.title }}</a></td>
+                        <td width="10">
+                            <a href="{{ url_for('poll_watch', slug=watch.poll.slug, watch='no', next=request.url) }}" class="btn btn-xs btn-default"><i class="fa fa-eye-slash"></i> {{ _("Unwatch poll") }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            {% else %}
+                {{ alert("info", "You are not watching any polls.") }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

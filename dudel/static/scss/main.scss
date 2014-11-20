@@ -720,3 +720,36 @@ tr.choice td {
 .print-only {
     display: none;
 }
+
+.current-user {
+    // background: #AAA;
+    // display: inline-block;
+    // padding: 0;
+    vertical-align: top;
+    color: white;
+    // line-height: 50px;
+    position: relative;
+    padding-left: 40px !important;
+
+    img {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        height: 100%;
+    }
+}
+
+.navbar .btn {
+    border: none !important;
+
+    &.btn-default {
+        background: rgba(255, 255, 255, 0.2);
+        color: #FFF;
+        transition: background 0.3s;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    }
+}

@@ -10408,3 +10408,34 @@ tr.choice td {
 .print-only {
   display: none;
 }
+
+/* line 724 */
+.current-user {
+  vertical-align: top;
+  color: white;
+  position: relative;
+  padding-left: 40px !important;
+}
+/* line 734 */
+.current-user img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+}
+
+/* line 743 */
+.navbar .btn {
+  border: none !important;
+}
+/* line 746 */
+.navbar .btn.btn-default {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFF;
+  transition: background 0.3s;
+}
+/* line 751 */
+.navbar .btn.btn-default:hover {
+  background: rgba(255, 255, 255, 0.5);
+}

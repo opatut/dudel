@@ -1,4 +1,4 @@
-from dudel import app, db, login_manager
+from dudel import app, db, login_manager, gravatar
 from flask import abort
 
 def update_user_data(username, data):
@@ -67,3 +67,5 @@ class User(db.Model):
         if not self.is_authenticated() or not self.is_admin:
             abort(403)
 
+    def get_avatar(self, size):
+        return gravatar(self.email, size)
