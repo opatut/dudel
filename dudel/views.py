@@ -79,6 +79,7 @@ def user_change_language():
     return response
 
 @app.route("/user/settings", methods=("GET", "POST"))
+@login_required
 def user_settings():
     form = SettingsForm()
     if form.validate_on_submit():
@@ -396,7 +397,7 @@ def poll_vote(slug):
 
             flash(gettext("You have voted."), "success")
 
-            poll.send_watchers("[Dudel] New vote: " + poll.title, 
+            poll.send_watchers("[Dudel] New vote: " + poll.title,
                 "email/poll_voted.txt", voter=vote.displayname)
 
             db.session.commit()
@@ -496,4 +497,4 @@ def poll_expired(e):
     else:
         flash(gettext("You do not have permission to %(action)s this poll.", action=e.action), "error")
         return redirect(e.poll.get_url())
-  
+
