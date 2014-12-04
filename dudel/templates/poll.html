@@ -5,7 +5,7 @@
 {% macro pollDetail(title, content, icon) %}
     <li>
         <!-- <span class="title">{{ title }}</span>  -->
-        <i class="fa fa-{{ icon }}"></i> 
+        <i class="fa fa-{{ icon }}"></i>
         <span class="content">{{ content }}</span>
     </li>
 {% endmacro %}
@@ -15,7 +15,7 @@
         {{ pollDetail(_("Created on"), poll.created|date, "calendar") }}
 
         {% if poll.due_date %}
-            {{ pollDetail(_("Expires"), poll.due_date|date, "clock-o") }} 
+            {{ pollDetail(_("Expires"), poll.due_date|date, "clock-o") }}
         {% endif %}
 
         {% if poll.author %}
@@ -35,8 +35,8 @@
         {% endif %}
 
         {% if current_user.is_authenticated() %}
-            {{ pollDetail(_("Watching"), 
-                _("watching") if poll.is_watching(current_user) else _("not watching"),  
+            {{ pollDetail(_("Watching"),
+                _("watching") if poll.is_watching(current_user) else _("not watching"),
                 "eye" if poll.is_watching(current_user) else "eye-slash") }}
         {% endif %}
     </ul>
@@ -70,8 +70,13 @@
         {{ poll.description | markdown }}
         <hr />
     {% endif %}
-    
-    {% if (poll.votes and poll.has_choices) and (poll.show_votes or poll.show_summary or poll.get_user_votes(current_user)) %}
+
+    {% set show_votes = poll.show_votes(current_user) %}
+    {% set show_summary = poll.show_summary(current_user) %}
+    {% if poll.show_results != "complete" and poll.user_can_administrate(current_user) %}
+        {{ alert("info", _("You as an admin of this poll will always see full results, no matter what you select under 'Results display'. Log out to see the poll as a normal visitor.")) }}
+    {% endif %}
+    {% if (poll.votes and poll.has_choices) and (show_votes or show_summary or poll.get_user_votes(current_user)) %}
         <div class="table-padding">
             {% set groups = poll.get_choice_groups() %}
             <div class="table-noscroll-y">
@@ -103,7 +108,7 @@
                         </thead>
                         <tbody>
                             {% for vote in poll.votes %}
-                                {% if poll.show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
+                                {% if show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
                                     <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
                                         <td class="author">
                                             {{ vote.displayname }}
@@ -140,11 +145,11 @@
                                     </tr>
                                 {% endif %}
                             {% endfor %}
-                            {% if not poll.show_votes %}
+                            {% if not show_votes %}
                                 <tr>
                                     <td></td>
                                     <td colspan="{{ poll.get_choices()|length }}" class="info">
-                                        {% if poll.show_summary %}
+                                        {% if show_summary %}
                                             {{ poll.votes.count() - poll.get_user_votes(current_user)|length }} votes are hidden from you.
                                         {% else %}
                                             Some votes may be hidden from you.
@@ -157,7 +162,7 @@
                                 </tr>
                             {% endif %}
                         </tbody>
-                        {% if poll.show_summary %}
+                        {% if show_summary %}
                         <tfoot>
                             <tr>
                                 {% set total = poll.votes.count() %}

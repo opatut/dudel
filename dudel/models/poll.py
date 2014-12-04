@@ -49,17 +49,20 @@ class Poll(db.Model):
         self.choice_values.append(ChoiceValue("no", "ban", "F96", 0.0))
         self.choice_values.append(ChoiceValue("maybe", "question", "FF6", 0.5))
 
-    @property 
+    @property
     def is_expired(self):
         return self.due_date and self.due_date < datetime.utcnow()
 
-    @property
-    def show_votes(self):
-        return self.show_results == "complete" or (self.show_results == "complete_after_vote" and self.is_expired)
+    def show_votes(self, user):
+        return self.user_can_administrate(user) \
+            or self.show_results == "complete" \
+            or (self.show_results == "complete_after_vote" and self.is_expired)
 
-    @property
-    def show_summary(self):
-        return self.show_votes or self.show_results == "summary" or (self.show_results == "summary_after_vote" and self.is_expired)
+    def show_summary(self, user):
+        return self.user_can_administrate(user) \
+            or self.show_votes \
+            or self.show_results == "summary" \
+            or (self.show_results == "summary_after_vote" and self.is_expired)
 
     @property
     def has_choices(self):
@@ -96,6 +99,9 @@ class Poll(db.Model):
     def has_choice_date_time(self, date, time):
         dt = datetime.combine(date, time)
         return [choice for choice in self.get_choices() if choice.date == dt and not choice.deleted]
+
+    def user_can_administrate(self, user):
+        return (user and user.is_authenticated() and (self.author == user or user.is_admin))
 
     def user_can_edit(self, user):
         return not self.author or self.author == user or (user.is_authenticated() and user.is_admin)
@@ -151,7 +157,7 @@ class Poll(db.Model):
             totals[choice] = choice.vote_choices.count()
             scores[choice] = 0
             for value, count in choice_counts.items():
-                scores[choice] += count * value.weight 
+                scores[choice] += count * value.weight
 
         max_score = max(scores.values())
 
