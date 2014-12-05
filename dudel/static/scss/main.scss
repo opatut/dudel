@@ -227,6 +227,10 @@ table.poll tr td:nth-of-type(1) {
     padding: 0 10px;
 }
 
+.table {
+    overflow: visible;
+}
+
 .no { background: #F96; }
 .yes { background: #9C6; }
 .maybe { background: #FF6; }
@@ -605,13 +609,22 @@ tr.choice td {
     width: 20px;
 }
 
-.table-scroll-x {
-    overflow-x: auto;
+// .table-scroll-x {
+//     overflow-x: auto;
+// }
+
+// .table-noscroll-y {
+//     overflow-y: auto;
+// }
+
+.table-padding, .table-scroll-x, .table-noscroll-y {
+    overflow: visible !important;
 }
 
-.table-noscroll-y {
-    overflow-y: hidden;
+.table-padding, .table-scroll-x, .table-noscroll-y {
+    overflow-x: auto !important;
 }
+
 
 .steps {
     width: 100%;
@@ -752,4 +765,11 @@ tr.choice td {
             background: rgba(255, 255, 255, 0.5);
         }
     }
+}
+
+.create-poll {
+    background: #F6F6F6;
+    padding: 0 16px;
+    box-sizing: border-box;
+    border: 1px solid #DDD;
 }

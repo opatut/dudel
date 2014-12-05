@@ -3,9 +3,52 @@
 {% block title %}{{ _("Settings") }}{% endblock %}
 
 {% block content %}
-    
+
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
+            <h1>{{ _("Poll overview") }}</h1>
+
+            <p>
+                This list shows all the polls you have participated in, either by owning them, voting on them,
+                or watching them.
+            </p>
+
+            {% set watches = current_user.watches.all() %}
+            {% set polls = current_user.poll_list %}
+
+            <table class="table table-condensed table-striped">
+                <tr>
+                    <th>Poll title</th>
+                    <th width="10">Votes</th>
+                    <th width="10">Owner</th>
+                    <th width="10">Voted</th>
+                    <th width="10">Watching</th>
+                </tr>
+                {% for poll in polls %}
+                    <tr>
+                        <td><a href="{{ poll.get_url() }}">{{ poll.title }}</a></td>
+                        <td>{{ poll.votes.count() }}</td>
+                        <td>
+                            {% if poll.author == current_user %}
+                                <span class="label label-danger"><i class="fa fa-pencil"></i> Owner</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if poll.get_user_votes(current_user) %}
+                                <span class="label label-success"><i class="fa fa-check"></i> Voted</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if poll.is_watching(current_user) %}
+                                <span class="label label-warning"><i class="fa fa-eye"></i> {{ _("Watching") }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="col-md-4">
             <h1>{{ _("Settings") }}</h1> <form method="POST"> {{ form.hidden_tag() }}
                 {{ field_error(form.hidden_tag) }}
 
@@ -18,25 +61,6 @@
                     <input type="submit" value="{{ _('Save') }}" class="btn btn-primary"/>
                 </div>
             </form>
-        </div>
-        <div class="col-md-6">
-            <h1>{{ _("Watched Polls") }}</h1>
-
-            {% set watches = current_user.watches.all() %}
-            {% if watches %}
-                <table class="table table-condensed table-striped">
-                {% for watch in watches %}
-                    <tr>
-                        <td><a href="{{ watch.poll.get_url() }}">{{ watch.poll.title }}</a></td>
-                        <td width="10">
-                            <a href="{{ url_for('poll_watch', slug=watch.poll.slug, watch='no', next=request.url) }}" class="btn btn-xs btn-default"><i class="fa fa-eye-slash"></i> {{ _("Unwatch poll") }}</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </table>
-            {% else %}
-                {{ alert("info", "You are not watching any polls.") }}
-            {% endif %}
         </div>
     </div>
 {% endblock %}

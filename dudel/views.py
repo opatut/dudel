@@ -30,18 +30,13 @@ def index():
         flash(gettext("Poll created"))
         return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
-    polls = Poll.query.filter_by(public_listing=True).filter(not Poll.due_date or Poll.due_date >= datetime.utcnow()).order_by(db.desc(Poll.created)).limit(5).all()
-    # polls = Poll.query.filter_by(public_listing=True).order_by(db.desc(Poll.created)).limit(5).all()
-    if current_user.is_authenticated():
-        user_polls = Poll.query.filter_by(author=current_user).order_by(db.desc(Poll.created)).all()
-    else:
-        user_polls = None
+    polls = Poll.query.filter_by(public_listing=True).filter(not Poll.due_date or Poll.due_date >= datetime.utcnow()).order_by(db.desc(Poll.created)).all()
 
     poll_count = Poll.query.count()
     vote_count = Vote.query.count()
     user_count = User.query.count()
 
-    return render_template("index.html", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count, user_count=user_count, user_polls=user_polls)
+    return render_template("index.html", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count, user_count=user_count)
 
 @app.route("/login", methods=("GET", "POST"))
 def login():

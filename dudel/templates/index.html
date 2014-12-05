@@ -1,55 +1,72 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <div class="row">
     <div class="col-md-6">
-        <div class="page-header">
-            <h1>{{ _("Create a poll") }}</h1>
+        <div class="create-poll">
+            <div class="page-header">
+                <h1>{{ _("Create a poll") }}</h1>
+            </div>
+
+            <form class="form" method="POST">
+                {{ form.hidden_tag() }}
+                {{ field_error(form.hidden_tag) }}
+
+                <div class="form-group">
+                    {{ form.title.label }}
+                    {{ form.title(class="form-control", **{'data-slug-field':"#slug"}) }}
+                    {{ field_error(form.title) }}
+                </div>
+                <div class="form-group">
+                    {{ form.slug.label }}
+
+                    <div class="pull-right">
+                        <input type="checkbox" checked=CHECKED id="randomize-slug"> randomize
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-addon">{{ url_for('poll', slug='', _external=True) }}</span>
+                        {{ form.slug(class="form-control") }}
+                    </div>
+                    {{ field_error(form.slug) }}
+                    <noscript><span class="help-block">This would be automatically
+                        generated for you if you moron had not blocked javascript.</span></noscript>
+                </div>
+                <div class="form-group">
+                    {{ form.type.label }}
+                    {{ form.type(class="form-control make-button-group") }}
+                    {{ field_error(form.type) }}
+                </div>
+                <div class="form-group">
+                    {{ form.due_date.label }} <span class="help-inline">optional</span>
+                    {{ form.due_date(class="form-control") }}
+                    {{ field_error(form.due_date) }}
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="{{ _('Create') }}" class="btn btn-primary"/>
+                </div>
+            </form>
         </div>
-        <form class="form" method="POST">
-            {{ form.hidden_tag() }}
-            {{ field_error(form.hidden_tag) }}
-
-            <div class="form-group">
-                {{ form.title.label }}
-                {{ form.title(class="form-control", **{'data-slug-field':"#slug"}) }}
-                {{ field_error(form.title) }}
-            </div>
-            <div class="form-group">
-                {{ form.slug.label }}
-
-                <div class="pull-right">
-                    <input type="checkbox" checked=CHECKED id="randomize-slug"> randomize
-                </div>
-
-                <div class="input-group">
-                    <span class="input-group-addon">{{ url_for('poll', slug='', _external=True) }}</span>
-                    {{ form.slug(class="form-control") }}
-                </div>
-                {{ field_error(form.slug) }}
-                <noscript><span class="help-block">This would be automatically
-                    generated for you if you moron had not blocked javascript.</span></noscript>
-            </div>
-            <div class="form-group">
-                {{ form.type.label }}
-                {{ form.type(class="form-control make-button-group") }}
-                {{ field_error(form.type) }}
-            </div>
-            <div class="form-group">
-                {{ form.due_date.label }} <span class="help-inline">optional</span>
-                {{ form.due_date(class="form-control") }}
-                {{ field_error(form.due_date) }}
-            </div>
-            <div class="form-group">
-                <input type="submit" value="{{ _('Create') }}" class="btn btn-primary"/>
-            </div>
-        </form>
     </div>
-
     <div class="col-md-6">
-        <div class="page-header">
-            <h1>{{ _("Recent polls") }}</h1>
-        </div>
+        {% if current_user.is_authenticated() %}
+            <div class="page-header">
+                <h1>{{ _("My polls") }}</h1>
+            </div>
+
+            <p>
+                You can find a list of all the polls in which you have participated on your profile page.
+            </p>
+
+            <a href="{{ url_for('user_settings') }}" class="btn btn-primary">Show my polls</a>
+
+            <div class="page-header secondary">
+        {% else %}
+            <div class="page-header">
+        {% endif %}
+                <h1>{{ _("Public polls") }}</h1>
+            </div>
 
         {% if polls %}
             <ul>
@@ -62,24 +79,6 @@
         {% else %}
             {{ alert("info", _("There are currently no public polls.")) }}
         {% endif %}
-
-        {% if current_user.is_authenticated() %}
-            <div class="page-header secondary">
-                <h1>{{ _("My polls") }}</h1>
-            </div>
-            {% if user_polls %}
-            <ul>
-                {% for poll in user_polls %}
-                <li>
-                    <a href="{{ poll.get_url() }}">{{ poll.title }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-            {% else %}
-                {{ alert("info", _("You do not own any polls.")) }}
-            {% endif %}
-        {% endif %}
-
         <div class="page-header secondary">
             <h1>{{ _("Dudel statistics") }}</h1>
         </div>

@@ -69,3 +69,13 @@ class User(db.Model):
 
     def get_avatar(self, size):
         return gravatar(self.email, size)
+
+    @property
+    def poll_list(self):
+        watched = [watch.poll for watch in self.watches]
+        owned = self.polls.all()
+        voted = [vote.poll for vote in self.votes]
+        all = watched + owned + voted
+        all = list(set(all))
+        all.sort(key=lambda x: x.created, reverse=True)
+        return all
