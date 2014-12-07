@@ -6,7 +6,7 @@ from dudel.models.pollwatch import PollWatch
 from dudel.models.vote import Vote
 from dudel.models.votechoice import VoteChoice
 from dudel.util import PollExpiredException, PollActionException
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import url_for, render_template
 from flask.ext.babel import lazy_gettext
 from flask.ext.login import current_user
@@ -30,6 +30,7 @@ class Poll(db.Model):
     send_mail = db.Column(db.Boolean, default=False)
     one_vote_per_user = db.Column(db.Boolean, default=True)
     allow_comments = db.Column(db.Boolean, default=True)
+    deleted = db.Column(db.Boolean, default=False)
 
     RESERVED_NAMES = ["login", "logout", "index", "user", "admin"]
 
@@ -189,3 +190,35 @@ class Poll(db.Model):
             votes=dictify(self.votes),
             comments=dictify(self.comments, lambda c: not c.deleted),
             choice_groups=[[choice.id for choice in group] for group in self.get_choice_groups()])
+
+    def should_auto_delete(self):
+        now = datetime.utcnow() + timedelta(days=100)
+
+        # should live at least 30 days
+        threshold_created = 30
+        if now < self.created + timedelta(days=threshold_created):
+            return False
+
+        # should live at least 30 days after deadline
+        threshold_deadline = 30
+        if self.due_date and now < self.due_date + timedelta(days=threshold_created):
+            return False
+
+        # should live at least 60 days after last vote
+        threshold_lastvote = 60
+        votedates = [vote.created for vote in self.votes]
+        if votedates:
+            votedate = max(votedates)
+            if votedate and now < votedate + timedelta(days=threshold_lastvote):
+                return False
+
+        # should live at least 30 days after last comment
+        threshold_lastcomment = 30
+        commentdates = [comment.created for comment in self.comments]
+        if commentdates:
+            commentdate = max(commentdate)
+            if commentdate and now < commentdate + timedelta(days=threshold_lastvote):
+                return False
+
+        return True
+

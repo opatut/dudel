@@ -105,10 +105,12 @@ table.vote label {
 
 
 .choice-sum,
-.vote-choice {
+.vote-choice,
+.author,
+.has-custom-tooltip {
     position: relative;
 
-    .custom-tooltip {
+    & > .custom-tooltip {
         $tooltipColor: rgba(0, 0, 0, 0.7);
         $tooltipWidth: 140px;
 
@@ -166,7 +168,8 @@ table.vote label {
         }
     }
 
-    &:hover .custom-tooltip {
+
+    &:hover > .custom-tooltip {
         display: block;
     }
 }
@@ -775,4 +778,24 @@ tr.choice td {
     padding: 0 16px;
     box-sizing: border-box;
     border: 1px solid #DDD;
+}
+
+.red {
+    color: red;
+}
+
+.danger-zone {
+    background: #FCB;
+    border: 1px solid #F64;
+    padding: 32px;
+    max-width: 500px;
+    margin: 16px auto;
+
+    & > :first-child {
+        margin-top: 0;
+    }
+
+    & > :last-child {
+        margin-bottom: 0;
+    }
 }

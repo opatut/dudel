@@ -1,0 +1,14 @@
+{% extends "base_poll.html" %}
+
+{% block polltitle %}{{ _("Delete poll") }}{% endblock %}
+
+{% block poll_content %}
+    <div class="danger-zone">
+        <h2>Warning!</h2>
+        <p>You are about to permanently delete the poll <b>{{ poll.title }}</b>. Are you sure you want to continue?</p>
+        <p>
+            <a href="{{ url_for('poll_edit', slug=poll.slug) }}" class="btn btn-success"><i class="fa fa-chevron-left"></i> Back to safety</a>
+            <a href="{{ url_for('poll_delete', slug=poll.slug) }}?confirm" class="btn btn-danger"><i class="fa fa-exclamation-triangle"></i> Yes, delete it</a>
+        </p>
+    </div>
+{% endblock %}

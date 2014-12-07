@@ -72,9 +72,10 @@ class User(db.Model):
 
     @property
     def poll_list(self):
-        watched = [watch.poll for watch in self.watches]
-        owned = self.polls.all()
-        voted = [vote.poll for vote in self.votes]
+        # TODO: try to do it in SQL
+        watched = [watch.poll for watch in self.watches if not watch.poll.deleted]
+        owned = self.polls.filter_by(deleted=False).all()
+        voted = [vote.poll for vote in self.votes if not vote.poll.deleted]
         all = watched + owned + voted
         all = list(set(all))
         all.sort(key=lambda x: x.created, reverse=True)

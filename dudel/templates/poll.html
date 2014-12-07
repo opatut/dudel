@@ -110,7 +110,7 @@
                             {% for vote in poll.votes %}
                                 {% if show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
                                     <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
-                                        <td class="author">
+                                        <td class="author" title="voted on {{ vote.created|datetime }}">
                                             {{ vote.displayname }}
                                         </td>
                                         {% for group in groups %}

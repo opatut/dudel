@@ -10,6 +10,9 @@ from dateutil import parser
 from datetime import datetime
 import json
 
+def get_poll(slug):
+    return Poll.query.filter_by(slug=slug, deleted=False).first_or_404()
+
 @babel.localeselector
 def get_locale():
     if current_user.is_authenticated() and current_user.preferred_language:
@@ -30,7 +33,7 @@ def index():
         flash(gettext("Poll created"))
         return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
-    polls = Poll.query.filter_by(public_listing=True).filter(not Poll.due_date or Poll.due_date >= datetime.utcnow()).order_by(db.desc(Poll.created)).all()
+    polls = Poll.query.filter_by(deleted=False, public_listing=True).filter(not Poll.due_date or Poll.due_date >= datetime.utcnow()).order_by(db.desc(Poll.created)).all()
 
     poll_count = Poll.query.count()
     vote_count = Vote.query.count()
@@ -87,7 +90,7 @@ def user_settings():
 
 @app.route("/<slug>/", methods=("GET", "POST"))
 def poll(slug):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
 
     comment_form = CommentForm()
     if not "RECAPTCHA_PUBLIC_KEY" in app.config:
@@ -110,14 +113,9 @@ def poll(slug):
 
     return render_template("poll.html", poll=poll, comment_form=comment_form)
 
-# @app.route("/api/<slug>/", methods=("GET", ))
-# def api_poll(slug):
-#     poll = Poll.query.filter_by(slug=slug).first_or_404()
-#     return json.dumps(poll.to_dict(), indent=None)
-
 @app.route("/<slug>/comment/delete/<int:id>", methods=("POST", "GET"))
 def poll_delete_comment(slug, id):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
     comment = Comment.query.filter_by(id=id,poll=poll).first_or_404()
     if not comment.user_can_edit(current_user):
         abort(403)
@@ -129,7 +127,7 @@ def poll_delete_comment(slug, id):
 
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
 def poll_edit(slug):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
     poll.check_edit_permission()
     form = EditPollForm(obj=poll)
 
@@ -146,7 +144,7 @@ def poll_edit(slug):
 @app.route("/<slug>/claim/", methods=("POST", "GET"))
 @login_required
 def poll_claim(slug):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
     poll.check_expiry()
     poll.check_edit_permission()
     if poll.author:
@@ -160,7 +158,7 @@ def poll_claim(slug):
 @app.route("/<slug>/watch/<watch>", methods=("POST", "GET"))
 @login_required
 def poll_watch(slug, watch):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
 
     if not watch in ("yes", "no"): abort(404)
     watch = (watch == "yes")
@@ -176,7 +174,7 @@ def poll_watch(slug, watch):
 @app.route("/<slug>/unclaim/", methods=("POST", "GET"))
 @login_required
 def poll_unclaim(slug):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
     poll.check_expiry()
     poll.check_edit_permission()
     if not poll.user_can_edit(current_user):
@@ -191,7 +189,7 @@ def poll_unclaim(slug):
 @app.route("/<slug>/choices/", methods=("POST", "GET"))
 @app.route("/<slug>/choices/<int:step>", methods=("POST", "GET"))
 def poll_edit_choices(slug, step=1):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
     poll.check_expiry()
     poll.check_edit_permission()
     args = {}
@@ -289,7 +287,7 @@ def poll_edit_choices(slug, step=1):
 
 @app.route("/<slug>/values/", methods=("POST", "GET"))
 def poll_edit_values(slug):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
     poll.check_expiry()
     poll.check_edit_permission()
 
@@ -339,9 +337,21 @@ def poll_edit_values(slug):
 
     return render_template("poll_edit_values.html", poll=poll, **args)
 
+@app.route("/<slug>/delete", methods=("POST", "GET"))
+def poll_delete(slug):
+    poll = get_poll(slug)
+
+    if "confirm" in request.args:
+        poll.deleted = True
+        db.session.commit()
+        flash(gettext("The poll was deleted."), "success")
+        return redirect(url_for("index"))
+
+    return render_template("poll_delete.html", poll=poll)
+
 @app.route("/<slug>/vote", methods=("POST", "GET"))
 def poll_vote(slug):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
     poll.check_expiry()
 
     if poll.require_login and current_user.is_anonymous():
@@ -405,7 +415,7 @@ def poll_vote(slug):
 
 @app.route("/<slug>/vote/<int:vote_id>/edit", methods=("POST", "GET"))
 def poll_vote_edit(slug, vote_id):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
     poll.check_expiry()
 
     vote = Vote.query.filter_by(id=vote_id).first_or_404()
@@ -465,7 +475,7 @@ def poll_vote_edit(slug, vote_id):
 
 @app.route("/<slug>/vote/<int:vote_id>/delete", methods=("POST", "GET"))
 def poll_vote_delete(slug, vote_id):
-    poll = Poll.query.filter_by(slug=slug).first_or_404()
+    poll = get_poll(slug)
     poll.check_expiry()
 
     vote = Vote.query.filter_by(id=vote_id).first_or_404()
@@ -485,7 +495,7 @@ def poll_expired(e):
     return redirect(e.poll.get_url())
 
 @app.errorhandler(PollActionException)
-def poll_expired(e):
+def poll_action(e):
     if current_user.is_anonymous():
         flash(gettext("You do not have permission to %(action)s this poll. Please log in and try again.", action=e.action), "error")
         return redirect(url_for("login", next=request.url))

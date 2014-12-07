@@ -115,7 +115,12 @@
                 <hr />
 
                 <label>{{ _("Very advanced stuff") }}</label>
-                <p><a href="{{ url_for('poll_edit_values', slug=poll.slug) }}">{{ _("Edit possible answer values") }}</a></p>
+                <ul class="list-unstyled">
+                    <li><a href="{{ url_for('poll_edit_values', slug=poll.slug) }}">{{ _("Edit possible answer values") }}</a></li>
+                    {% if poll.user_can_administrate(current_user) %}
+                    <li><a href="{{ url_for('poll_delete', slug=poll.slug) }}" class="red">{{ _("Delete this poll") }}</a></li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
 

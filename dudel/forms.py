@@ -30,14 +30,18 @@ class MultiForm(Form):
         return Form.hidden_tag(self, *args, **kwargs)
 
 class UniqueObject(object):
-    def __init__(self, type, column, message = lazy_gettext("This entry already exists.")):
+    def __init__(self, type, column, constraint, message = lazy_gettext("This entry already exists.")):
         self.type = type
         self.column = column
         self.message = message
+        self.constraint = constraint
         self.allowed_objects = []
 
     def __call__(self, form, field):
-        if len([x for x in self.type.query.filter_by(**{self.column:field.data.strip()}).all() if not x in self.allowed_objects]):
+        c = self.constraint
+        c[self.column] = field.data.strip()
+
+        if len([x for x in self.type.query.filter_by(**c).all() if not x in self.allowed_objects]):
             raise ValidationError(self.message)
 
 class LDAPAuthenticator(object):
@@ -114,7 +118,7 @@ class CreatePollForm(Form):
     slug = TextField(lazy_gettext("URL name"), validators=[Required(),
         Length(min=3, max=80),
         Regexp(r"^[a-zA-Z0-9_-]*$", message=lazy_gettext("Invalid character.")),
-        UniqueObject(Poll, "slug", message=lazy_gettext("A poll with this URL name already exists.")),
+        UniqueObject(Poll, "slug", dict(deleted=False), message=lazy_gettext("A poll with this URL name already exists.")),
         NoneOf(Poll.RESERVED_NAMES, message=lazy_gettext("This is a reserved name."))
         ])
     due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional()])

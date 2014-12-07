@@ -1,4 +1,5 @@
 from dudel import db
+from datetime import datetime
 
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -6,14 +7,20 @@ class Vote(db.Model):
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     anonymous = db.Column(db.Boolean, default=False)
+    created = db.Column(db.DateTime)
+
+    def __init__(self):
+        self.created = datetime.utcnow()
 
     # relationship
     vote_choices = db.relationship("VoteChoice", backref="vote", cascade="all, delete-orphan", lazy="dynamic")
 
     def user_can_delete(self, user):
+        # disallow on deleted/expired polls
+        if self.poll.deleted or self.poll.is_expired: return False
         # only if logged in
         if not user.is_authenticated(): return False
-        # allow for poll author 
+        # allow for poll author
         if self.poll.author and self.poll.author == user: return True
         # allow for user
         if self.user and self.user == user: return True
@@ -23,6 +30,8 @@ class Vote(db.Model):
         return False
 
     def user_can_edit(self, user):
+        # disallow on deleted/expired polls
+        if self.poll.deleted or self.poll.is_expired: return False
         # allow for author
         if self.poll.author and self.poll.author == user: return True
         # allow for admin
