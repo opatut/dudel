@@ -121,7 +121,7 @@
                                                     <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
                                                     <div class="custom-tooltip below">
                                                         <div class="name">{{ vote.displayname }}</div>
-                                                        <div class="value">{{ vote.text or choice.date|datetime(False) }}</div>
+                                                        <div class="value">{{ choice.text or choice.date|datetime(False) }}</div>
                                                         {% if vote_choice.comment %}
                                                             <div class="comment">{{ vote_choice.comment }}</div>
                                                         {% endif %}
