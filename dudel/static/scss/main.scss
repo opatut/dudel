@@ -120,9 +120,8 @@ table.vote label {
         text-align: left;
         display: none;
         min-width: $tooltipWidth;
-        left: 50%;
-        margin-left: - $tooltipWidth / 2;
         pointer-events:none;
+        font-weight: normal;
 
         background: $tooltipColor;
         padding: 8px;
@@ -131,10 +130,27 @@ table.vote label {
 
         &.below {
             top: 40px;
+            left: 50%;
+            margin-left: - $tooltipWidth / 2;
         }
 
         &.above {
             bottom: 40px;
+            left: 50%;
+            margin-left: - $tooltipWidth / 2;
+        }
+
+        &.right {
+            left: 100%;
+        }
+
+        &.left {
+            right: 100%;
+        }
+
+        &.left, &.right {
+            top: 0;
+            min-height: 40px;
         }
 
         &:before {
@@ -142,10 +158,10 @@ table.vote label {
             border: 10px solid transparent;
             position: absolute;
             left: $tooltipWidth / 2;
-            margin-left: -10px;
         }
 
         &.below:before {
+            margin-left: -10px;
             top: -20px;
             border-bottom-color: $tooltipColor;
         }
@@ -153,6 +169,16 @@ table.vote label {
         &.above:before {
             bottom: -20px;
             border-top-color: $tooltipColor;
+        }
+
+        &.left:before {
+            right: -20px;
+            border-left-color: $tooltipColor;
+        }
+
+        &.right:before {
+            left: -20px;
+            border-right-color: $tooltipColor;
         }
 
         .name {

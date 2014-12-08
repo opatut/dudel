@@ -176,6 +176,7 @@ class CreateVoteForm(Form):
     name = TextField(lazy_gettext("Your Name"), validators=[YourNameRequired(), Length(max=80)])
     anonymous = BooleanField(lazy_gettext("Post anonymous vote"))
     vote_choices = FieldList(FormField(CreateVoteChoiceForm))
+    comment = TextAreaField(lazy_gettext("Comment"), validators=[Optional()])
 
 class PollPassword(Form):
     password = PasswordField(lazy_gettext("Poll password"), validators=[Required()])

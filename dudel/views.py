@@ -385,6 +385,8 @@ def poll_vote(slug):
             if vote.anonymous and not vote.user:
                 vote.name = "anonymous"
 
+            vote.comment = form.comment.data
+
             poll.votes.append(vote)
 
             for subform in form.vote_choices:
@@ -445,6 +447,8 @@ def poll_vote_edit(slug, vote_id):
 
             if vote.anonymous and not vote.user:
                 vote.name = "anonymous"
+
+            vote.comment = form.comment.data
 
             for subform in form.vote_choices:
                 choice = Choice.query.filter_by(id=subform.choice_id.data).first()

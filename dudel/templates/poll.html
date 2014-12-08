@@ -110,8 +110,20 @@
                             {% for vote in poll.votes %}
                                 {% if show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
                                     <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
-                                        <td class="author" title="voted on {{ vote.created|datetime }}">
+                                        <td class="author">
+                                            {% if vote.comment %}
+                                                <div class="pull-left" style="margin-right: 0.4em;">
+                                                    <i class="fa fa-comment-o"></i>
+                                                </div>
+                                            {% endif %}
                                             {{ vote.displayname }}
+
+                                            <div class="custom-tooltip right">
+                                                <div class="date">voted on {{ vote.created|datetime }}</div>
+                                                {% if vote.comment %}
+                                                    <div class="comment">{{ vote.comment }}</div>
+                                                {% endif %}
+                                            </div>
                                         </td>
                                         {% for group in groups %}
                                             {% for choice in group %}

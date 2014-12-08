@@ -8,6 +8,7 @@ class Vote(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     anonymous = db.Column(db.Boolean, default=False)
     created = db.Column(db.DateTime)
+    comment = db.Column(db.Text)
 
     def __init__(self):
         self.created = datetime.utcnow()
