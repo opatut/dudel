@@ -525,7 +525,10 @@ tr.choice td {
 }
 
 .calendar-list {
+    display: inline-block;
     padding: 1em 0;
+    vertical-align: top;
+    white-space: normal;
 }
 
 .calendar-list ul {
