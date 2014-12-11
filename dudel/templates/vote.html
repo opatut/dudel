@@ -71,7 +71,7 @@
 			<tr><td colspan="6"><hr /></td></tr>
 
             <tr>
-                <td colspan="2">{{ form.name.label }}</td>
+                <td colspan="{{ (matrix[0]|length if matrix else 1) }}">{{ form.name.label }}</td>
                 <td colspan="3">
                     {% if (not vote and current_user.is_anonymous()) or (vote and not vote.user) %}
                         {{ form.name(class="form-control", id="nameInput") }}
@@ -91,7 +91,7 @@
             </tr>
 
             <tr>
-                <td colspan="2">
+                <td colspan="{{ (matrix[0]|length if matrix else 1) }}">
                     {{ form.comment.label }}
                     <span class="help-inline">(optional)</span>
                 </td>

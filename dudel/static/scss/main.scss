@@ -81,6 +81,10 @@ table.vote label {
     max-width: 10em;
 }
 
+.vote .choice-group {
+    text-align: right;
+}
+
 .poll .choice-sum.maximum {
     background: #AAA;
     color: #FFF;
@@ -824,4 +828,8 @@ tr.choice td {
     & > :last-child {
         margin-bottom: 0;
     }
+}
+
+.nobr {
+    white-space: nowrap;
 }
