@@ -18,9 +18,12 @@
         {{ form.hidden_tag() }}
         {{ form_errors(form) }}
 
+        {% set choices = poll.get_choices() %}
+        {% set matrix = poll.get_choice_group_matrix() %}
+
         <table class="table poll vote auto-width">
             <tr class="script-only">
-                <td></td><td></td>
+                <td colspan="{{ (matrix[0]|length if matrix else 1) }}"></td>
                 {% for value in poll.get_choice_values() %}
                 <td class="text-center">
                     <input type="button" class="btn btn-xs btn-link vote-choice-column" value="{{ _('all') }}" data-choice="{{ value.id }}"/>
@@ -30,28 +33,19 @@
                     <input type="button" class="btn btn-xs btn-link vote-choice-edit-all" value="{{ _('Show all comment fields') }}" />
                 </td>
             </tr>
-            {% set groups = poll.get_choice_groups() %}
-            {% set prev_group = None %}
-            {% for subform in form.vote_choices %}
-                {% set choice = poll.get_choice_by_id(subform.choice_id.data) %}
-                {% set group = choice.group %}
+
+            {% for i, row in enumerate(matrix) %}
+                {% set choice = choices[i] %}
+                {% set subform = form.vote_choices[i] %}
+
                 <tr data-vote-choice="{{ choice.id }}">
-
-                    {% if group != prev_group %}
-                    <td class="choice-group" rowspan="{{ poll.get_choices_by_group(group)|length }}">
-                        {% if groups|length > 1 or poll.type == "date" %}
-                            {{ group|date if poll.type == "date" else group }}
-                        {% endif %}
+                    {% for item in row if item[0] != None %}
+                    <td class="choice-group" colspan="{{ item[1] }}" rowspan="{{ item[2] }}">
+                        {{ item[0]|group_title }}
                     </td>
-                    {% endif %}
-
-                    {% set prev_group = group %}
-
-                    <td class="choice-text">
-                        {{ choice.text or choice.date.time()|time }}
-                        {{ subform.hidden_tag() }}
-                    </td>
+                    {% endfor %}
                     <td>
+                        {{ subform.hidden_tag() }}
                         {% for field in subform.value %}
                             {% if vote and field.data == poll.get_vote_choice(vote, choice).value_id %}
                                 {{ field(class="vote-choice-radio", checked=1) }}

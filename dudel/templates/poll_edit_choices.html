@@ -79,8 +79,9 @@
                 <a class="btn btn-primary" href="{{ poll.get_url() }}">{{ _("Done") }}</a>
             </div>
         </form>
-    {% elif poll.type == "date" %}
+    {% elif poll.type in ("date", "day") %}
 
+        {% if poll.type == "date" %}
         <div class="visible-xs visible-sm">
             <ul class="steps">
                 <li{% if step == 1 %} class="current"{% endif %}><span>{{ _("Step 1") }}</span>{{ _("Days") }}</li>
@@ -96,6 +97,8 @@
                 <li{% if step in (3, 4) %} class="current"{% endif %}><span>{{ _("Step 3") }}</span>{{ _("Choose combinations") }}</li>
             </ul>
         </div>
+
+        {% endif %}
 
         {% if step in (1, 2) %}
             <noscript>

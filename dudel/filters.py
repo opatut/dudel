@@ -1,8 +1,10 @@
 from dudel import app, ICONS
+from dudel.models import Choice
 from dudel.forms import LoginForm, LanguageForm
 from flask import g
 from flask.ext.babel import format_date, format_time, get_locale
 from json import dumps
+import datetime as dt
 
 date_formats = {'de': 'EEE, dd. MMM'}
 
@@ -24,10 +26,24 @@ def datetime(s, rebase=True):
 def json(s):
     return dumps(s)
 
+@app.template_filter()
+def group_title(title):
+    if isinstance(title, dt.date):
+        return date(title)
+    elif isinstance(title, dt.time):
+        return time(title)
+    else:
+        return title
+
+@app.template_filter()
+def transpose(matrix):
+    return [list(i) for i in zip(*matrix)]
+
 @app.context_processor
 def inject():
     return dict(
         ICONS=ICONS,
         login_form=LoginForm(),
-        lang_form=LanguageForm()
+        lang_form=LanguageForm(),
+        enumerate=enumerate
         )

@@ -114,7 +114,7 @@ class AtLeastNow(object):
 
 class CreatePollForm(Form):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
-    type = SelectField(lazy_gettext("Type"), choices=[("date", lazy_gettext("Schedule a meeting")), ("normal", lazy_gettext("Normal poll"))])
+    type = SelectField(lazy_gettext("Type"), choices=[("date", lazy_gettext("Schedule a date")), ("day", lazy_gettext("Choose a day")),  ("normal", lazy_gettext("Normal poll"))])
     slug = TextField(lazy_gettext("URL name"), validators=[Required(),
         Length(min=3, max=80),
         Regexp(r"^[a-zA-Z0-9_-]*$", message=lazy_gettext("Invalid character.")),

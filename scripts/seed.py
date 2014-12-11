@@ -37,9 +37,19 @@ fill_with_random_votes(poll, 8)
 
 poll = Poll()
 poll.title = "AG-Treffen"
-poll.due_date = datetime.utcnow() - timedelta(days=1)
+poll.due_date = datetime.utcnow() + timedelta(days=1)
 poll.slug = "ag"
 poll.type = "date"
+db.session.add(poll)
+
+poll = Poll()
+poll.title = "Datum"
+poll.slug = "datum"
+poll.type = "day"
+for x in range(5):
+    choice = Choice()
+    choice.date = datetime.today() + timedelta(days=x)
+    poll.choices.append(choice)
 db.session.add(poll)
 
 poll = Poll()

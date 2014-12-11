@@ -17,7 +17,7 @@ class Poll(db.Model):
     title = db.Column(db.String(80))
     description = db.Column(db.Text)
     slug = db.Column(db.String(80))
-    type = db.Column(db.Enum("date", "normal", name="poll_type"), default="normal")
+    type = db.Column(db.String(20), default="normal") # date|normal|day
     created = db.Column(db.DateTime)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
@@ -26,7 +26,7 @@ class Poll(db.Model):
     anonymous_allowed = db.Column(db.Boolean, default=True)
     public_listing = db.Column(db.Boolean, default=False)
     require_login = db.Column(db.Boolean, default=False)
-    show_results = db.Column(db.Enum("summary", "complete", "never", "summary_after_vote", "complete_after_vote", name="poll_show_results"), default="complete")
+    show_results = db.Column(db.String(20), default="complete") # summary|complete|never|summary_after_vote|complete_after_vote
     send_mail = db.Column(db.Boolean, default=False)
     one_vote_per_user = db.Column(db.Boolean, default=True)
     allow_comments = db.Column(db.Boolean, default=True)
@@ -42,6 +42,7 @@ class Poll(db.Model):
     votes = db.relationship("Vote", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
 
     _vote_choice_map = None
+    _choices = None
 
     def __init__(self):
         self.created = datetime.utcnow()
@@ -83,7 +84,11 @@ class Poll(db.Model):
         # return VoteChoice.query.filter_by(vote=vote, choice=choice).first()
 
     def get_choices(self):
-        return Choice.query.filter_by(poll_id=self.id, deleted=False).all()
+        if self._choices == None:
+            self._choices = Choice.query.filter_by(poll_id=self.id, deleted=False).all()
+            self._choices.sort(key=Choice.get_hierarchy)
+            print([c.get_hierarchy() for c in self._choices])
+        return self._choices
 
     def get_choice_values(self):
         return ChoiceValue.query.filter_by(poll_id=self.id, deleted=False).all()
@@ -124,11 +129,50 @@ class Poll(db.Model):
     def get_choice_groups(self):
         groups = {}
         for choice in self.get_choices():
-            group = choice.group
-            if not group in groups:
-                groups[group] = []
-            groups[group].append(choice)
-        return sorted([sorted(group) for group in groups.itervalues()])
+            hierarchy = choice.get_hierarchy()
+
+            group = groups
+            for part in hierarchy[:-1]:
+                if not part in group:
+                    group[part] = {}
+                group = group[part]
+            group[hierarchy[-1]] = choice
+
+        return groups
+
+    # Weird algorithm. Required for poll.html and vote.html
+    def get_choice_group_matrix(self):
+        matrix = [choice.get_hierarchy() for choice in self.get_choices()]
+        matrix = [[[item, 1, 1] for item in row] for row in matrix]
+        width = max(len(row) for row in matrix)
+
+        def fill(row, length):
+            if len(row) >= length: return
+            row.append([None, 1, 1])
+            fill(row, length)
+
+        for row in matrix:
+            fill(row, width)
+
+        # Merge None left to determine depth
+        for i in range(width-1, 0, -1):
+            for row in matrix:
+                if row[i][0] == None:
+                    row[i-1][1] = row[i][1] + 1
+
+        # Merge items up and replace by None
+        for i in range(len(matrix)-1, 0, -1):
+            for j in range(width):
+                if matrix[i][j][0] == matrix[i-1][j][0]:
+                    matrix[i-1][j][2] = matrix[i][j][2] + 1
+                    matrix[i][j][0] = None
+
+        # cut off time column in day mode, only use date field
+        if self.type == "day":
+            matrix = [[row[0]] for row in matrix]
+
+        return matrix
+
 
     def get_choices_by_group(self, group):
         return [choice for choice in self.get_choices() if choice.group == group]
@@ -140,9 +184,8 @@ class Poll(db.Model):
         while form.vote_choices:
             form.vote_choices.pop_entry()
 
-        for group in self.get_choice_groups():
-            for choice in group:
-                form.vote_choices.append_entry(dict(choice_id=choice.id))
+        for choice in self.get_choices():
+            form.vote_choices.append_entry(dict(choice_id=choice.id))
 
         for subform in form.vote_choices:
             subform.value.choices = [(v.id, v.title) for v in self.get_choice_values()]

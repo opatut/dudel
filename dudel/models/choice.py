@@ -20,15 +20,25 @@ class Choice(db.Model):
                 counts[vote_choice.value] += 1
         return counts
 
-    @property
-    def group(self):
+    def get_hierarchy(self):
         if self.date:
-            return self.date.date()
+            return [self.date.date(), self.date.time()]
         else:
-            return "default" # normal polls only have one default group
+            return [part.strip() for part in self.text.split("/") if part]
 
     def to_dict(self):
-        return dict(id=self.id, 
-            text=self.text, 
+        return dict(id=self.id,
+            text=self.text,
             date=str(self.date),
             deleted=self.deleted)
+
+    @property
+    def title(self):
+        from dudel.filters import date, datetime
+        poll_type = self.poll.type
+        if poll_type == "day":
+            return date(self.date, rebase=False)
+        elif poll_type == "date":
+            return datetime(self.date, rebase=False)
+        else:
+            return self.text

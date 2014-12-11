@@ -199,8 +199,8 @@ def poll_edit_choices(slug, step=1):
         args["form"] = form
 
         if step == 1:
-            form.dates.data = ",".join(set(choice.date.strftime("%Y-%m-%d") for choice in poll.choices))
-            form.times.data = ",".join(set(choice.date.strftime("%H:%M") for choice in poll.choices))
+            form.dates.data = ",".join(set(choice.date.strftime("%Y-%m-%d") for choice in poll.choices if not choice.deleted))
+            form.times.data = ",".join(set(choice.date.strftime("%H:%M") for choice in poll.choices if not choice.deleted))
 
         if step in (2, 3, 4) and form.validate_on_submit():
             dates = form.dates.data.split(",")
@@ -232,6 +232,37 @@ def poll_edit_choices(slug, step=1):
                 db.session.commit()
                 flash(gettext("The choices list has been updated."), "success")
                 return redirect(poll.get_url())
+    elif poll.type == "day":
+        form = DateTimeSelectForm()
+        args["form"] = form
+
+        if form.validate_on_submit():
+            dates = form.dates.data.split(",")
+            dates = sorted(list(set(parser.parse(data, fuzzy=True).date() for data in dates)))
+
+            if not dates:
+                flash(gettext("Please select at least one date."), "error")
+            else:
+                existing_dates = [choice.date.date() for choice in poll.choices]
+
+                # disable all that are not listed
+                for choice in poll.choices:
+                    choice.deleted = not choice.date.date() in dates
+
+                # create those that don't exist yet
+                for date in dates:
+                    if not date in existing_dates:
+                        choice = Choice()
+                        choice.date = date
+                        poll.choices.append(choice)
+                        db.session.add(choice)
+
+                db.session.commit()
+                flash(gettext("The choices list has been updated."), "success")
+                return redirect(poll.get_url())
+        else:
+            form.dates.data = ",".join(set(choice.date.strftime("%Y-%m-%d") for choice in poll.choices if not choice.deleted))
+
 
     else:
         form = AddChoiceForm()
