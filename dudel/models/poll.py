@@ -140,6 +140,14 @@ class Poll(db.Model):
 
         return groups
 
+    def choice_groups_valid(self):
+        # try if grouping works correctly, this is hacky but okay :D
+        try:
+            self.get_choice_groups()
+            return True
+        except TypeError:
+            return False
+
     # Weird algorithm. Required for poll.html and vote.html
     def get_choice_group_matrix(self):
         matrix = [choice.get_hierarchy() for choice in self.get_choices()]

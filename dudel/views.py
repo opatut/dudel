@@ -278,10 +278,7 @@ def poll_edit_choices(slug, step=1):
                 poll.choices.append(choice)
                 db.session.add(choice)
 
-            # try if grouping works correctly, this is hacky but okay :D
-            try:
-                poll.get_choice_groups()
-            except TypeError:
+            if not poll.choice_groups_valid():
                 flash(gettext("This choice text is not allowed due to grouping conflicts."), "error")
                 return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
@@ -298,13 +295,9 @@ def poll_edit_choices(slug, step=1):
             choice = Choice.query.filter_by(id=tid, poll_id=poll.id).first_or_404()
             choice.deleted = not choice.deleted
 
-            if not choice.deleted:
-                # try if grouping works correctly, this is hacky but okay :D
-                try:
-                    poll.get_choice_groups()
-                except TypeError:
-                    flash(gettext("You cannot undelete this choice due to grouping conflicts."), "error")
-                    return redirect(url_for("poll_edit_choices", slug=poll.slug))
+            if not choice.deleted and not poll.choice_groups_valid():
+                flash(gettext("You cannot undelete this choice due to grouping conflicts."), "error")
+                return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
             db.session.commit()
             if choice.deleted:
@@ -324,6 +317,11 @@ def poll_edit_choices(slug, step=1):
                     flash(gettext("A choice with this text already exists."), "error")
                 else:
                     choice.text = edit_form.text.data.strip()
+
+                    if not poll.choice_groups_valid():
+                        flash(gettext("This choice text is not allowed due to grouping conflicts."), "error")
+                        return redirect(url_for("poll_edit_choices", slug=poll.slug))
+
                     db.session.commit()
                     flash(gettext("The choice was edited."), "success")
                     return redirect(url_for("poll_edit_choices", slug=poll.slug))
