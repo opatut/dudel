@@ -87,7 +87,6 @@ class Poll(db.Model):
         if self._choices == None:
             self._choices = Choice.query.filter_by(poll_id=self.id, deleted=False).all()
             self._choices.sort(key=Choice.get_hierarchy)
-            print([c.get_hierarchy() for c in self._choices])
         return self._choices
 
     def get_choice_values(self):
@@ -140,16 +139,13 @@ class Poll(db.Model):
 
         return groups
 
-    def choice_groups_valid(self):
-        choices = self.get_choices()
-        for left in choices:
-            left_hierarchy = left.get_hierarchy()
-            for right in choices:
-                if left is right: continue
-                right_hierarchy = right.get_hierarchy()
-                smaller = min([len(left_hierarchy), len(right_hierarchy)])
-                if left_hierarchy[:smaller] == right_hierarchy[:smaller]:
-                    return False
+    def choice_groups_valid(self, left_hierarchy, ignore_id=None):
+        for right in self.get_choices():
+            if ignore_id != None and right.id == ignore_id: continue
+            right_hierarchy = right.get_hierarchy()
+            smaller = min([len(left_hierarchy), len(right_hierarchy)])
+            if left_hierarchy[:smaller] == right_hierarchy[:smaller]:
+                return False
         return True
 
     # Weird algorithm. Required for poll.html and vote.html
@@ -175,7 +171,7 @@ class Poll(db.Model):
         # Merge items up and replace by None
         for i in range(len(matrix)-1, 0, -1):
             for j in range(width):
-                if matrix[i][j][0] == matrix[i-1][j][0]:
+                if matrix[i][j][0] == matrix[i-1][j][0] and matrix[i][j][1] == matrix[i-1][j][1]:
                     matrix[i-1][j][2] = matrix[i][j][2] + 1
                     matrix[i][j][0] = None
 

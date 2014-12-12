@@ -272,15 +272,20 @@ def poll_edit_choices(slug, step=1):
             choice = Choice.query.filter_by(poll_id=poll.id, text=text).first()
             if choice:
                 choice.deleted = False
+                if not poll.choice_groups_valid(choice.get_hierarchy(), choice.id):
+                    flash(gettext("This choice text is not allowed due to grouping conflicts."), "error")
+                    return redirect(url_for("poll_edit_choices", slug=poll.slug))
+
             else:
                 choice = Choice()
                 choice.text = form.text.data
+
+                if not poll.choice_groups_valid(choice.get_hierarchy()):
+                    flash(gettext("This choice text is not allowed due to grouping conflicts."), "error")
+                    return redirect(url_for("poll_edit_choices", slug=poll.slug))
+
                 poll.choices.append(choice)
                 db.session.add(choice)
-
-            if not poll.choice_groups_valid():
-                flash(gettext("This choice text is not allowed due to grouping conflicts."), "error")
-                return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
             db.session.commit()
 
@@ -295,7 +300,7 @@ def poll_edit_choices(slug, step=1):
             choice = Choice.query.filter_by(id=tid, poll_id=poll.id).first_or_404()
             choice.deleted = not choice.deleted
 
-            if not choice.deleted and not poll.choice_groups_valid():
+            if not choice.deleted and not poll.choice_groups_valid(choice.get_hierarchy(), choice.id):
                 flash(gettext("You cannot undelete this choice due to grouping conflicts."), "error")
                 return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
@@ -318,7 +323,7 @@ def poll_edit_choices(slug, step=1):
                 else:
                     choice.text = edit_form.text.data.strip()
 
-                    if not poll.choice_groups_valid():
+                    if not poll.choice_groups_valid(choice.get_hierarchy(), choice.id):
                         flash(gettext("This choice text is not allowed due to grouping conflicts."), "error")
                     else:
                         db.session.commit()
