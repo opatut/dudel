@@ -320,11 +320,10 @@ def poll_edit_choices(slug, step=1):
 
                     if not poll.choice_groups_valid():
                         flash(gettext("This choice text is not allowed due to grouping conflicts."), "error")
+                    else:
+                        db.session.commit()
+                        flash(gettext("The choice was edited."), "success")
                         return redirect(url_for("poll_edit_choices", slug=poll.slug))
-
-                    db.session.commit()
-                    flash(gettext("The choice was edited."), "success")
-                    return redirect(url_for("poll_edit_choices", slug=poll.slug))
             args["edit_form"] = edit_form
             args["edit_id"] = choice.id
 

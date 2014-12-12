@@ -141,12 +141,16 @@ class Poll(db.Model):
         return groups
 
     def choice_groups_valid(self):
-        # try if grouping works correctly, this is hacky but okay :D
-        try:
-            self.get_choice_groups()
-            return True
-        except TypeError:
-            return False
+        choices = self.get_choices()
+        for left in choices:
+            left_hierarchy = left.get_hierarchy()
+            for right in choices:
+                if left is right: continue
+                right_hierarchy = right.get_hierarchy()
+                smaller = min([len(left_hierarchy), len(right_hierarchy)])
+                if left_hierarchy[:smaller] == right_hierarchy[:smaller]:
+                    return False
+        return True
 
     # Weird algorithm. Required for poll.html and vote.html
     def get_choice_group_matrix(self):
