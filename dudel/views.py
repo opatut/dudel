@@ -1,11 +1,12 @@
 from dudel import app, db, babel, supported_languages
-from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch
-from dudel.models.user import get_user
+from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member
+from dudel.login import get_user
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword
 from dudel.util import PollExpiredException, PollActionException
+import dudel.login
 from flask import redirect, abort, request, render_template, flash, url_for, g
 from flask.ext.babel import gettext
-from flask.ext.login import login_user, logout_user, current_user, login_required
+from flask.ext.login import current_user, login_required
 from dateutil import parser
 from datetime import datetime
 import json
@@ -21,6 +22,34 @@ def get_locale():
         return request.cookies.get("lang")
     else:
         return request.accept_languages.best_match(supported_languages)
+
+
+@app.route("/api/cron")
+def cron():
+    # This view should execute some regular tasks to be called by a cronjob, e.g.
+    # by simply curl-ing "/api/cron"
+
+    status = []
+
+    # Update LDAP groups
+    from dudel.plugins.ldapauth import ldap_connector
+    ldap_connector.update_groups()
+    status.append("updated LDAP groups")
+
+    return "<br />".join(status)
+
+@app.route("/api/members")
+@login_required
+def members():
+    members = []
+
+    for member in Member.query.all():
+        members.append(dict(
+            id=member.id,
+            type=member.type,
+            name=member.displayname))
+
+    return json.dumps(members, indent=4)
 
 @app.route("/", methods=("POST", "GET"))
 def index():
@@ -45,9 +74,9 @@ def index():
 def login():
     form = LoginForm()
 
+    # The validator already performs the login via login.try_login
     if form.validate_on_submit():
         user = get_user(form.username.data)
-        login_user(user)
         flash(gettext("You were logged in, %(name)s.", name=user.displayname), "success")
 
         return redirect(request.args.get("next") or url_for("index"))
@@ -56,7 +85,7 @@ def login():
 
 @app.route("/register", methods=("GET", "POST"))
 def register():
-    if app.config["AUTH_MODE"] != "password" or not app.config["REGISTRATIONS_ENABLED"]:
+    if not "password" in app.config["LOGIN_PROVIDERS"] or not app.config["REGISTRATIONS_ENABLED"]:
         abort(404)
     if current_user.is_authenticated():
         flash("You are already logged in.", "success")
@@ -69,7 +98,7 @@ def register():
         user.set_password(form.password1.data)
         db.session.add(user)
         db.session.commit()
-        login_user(user)
+        dudel.login.force_login(user)
         flash(gettext("You were logged in, %(name)s.", name=user.displayname), "success")
 
         return redirect(request.args.get("next") or url_for("index"))
@@ -80,7 +109,7 @@ def register():
 def logout():
     if current_user.is_authenticated():
         flash(gettext("You were logged out, %(name)s. Goodbye!", name=current_user.displayname), "success")
-        logout_user()
+        dudel.login.logout()
     return redirect(request.args.get("next") or url_for("index"))
 
 @app.route("/user/language", methods=("GET", "POST"))
@@ -101,10 +130,12 @@ def user_change_language():
 @app.route("/user/settings", methods=("GET", "POST"))
 @login_required
 def user_settings():
-    if app.config["AUTH_MODE"] == "password":
+    if current_user.source == "manual":
         form = SettingsFormPassword(obj=current_user)
-    else:
+    elif current_user.source == "ldap":
         form = SettingsFormLdap()
+    else:
+        abort(404)
 
     if form.validate_on_submit():
         current_user.preferred_language = form.language.data

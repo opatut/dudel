@@ -1,10 +1,10 @@
-# Home button in menu bar
-HOME_URL = "https://mafiasi.de/"
-HOME_TEXT = "Mafiasi Hub"
-
 # SQL-Alchemy Settings
 SQLALCHEMY_DATABASE_URI = "sqlite:///tmp/dudel.db" # DO NOT USE RELATIVE PATHS IF USING MIGRATION!!!
 SQLALCHEMY_ECHO = False
+
+# Home button in menu bar
+HOME_URL = "https://example.com/"
+HOME_TEXT = "Home"
 
 # Debug mode, set to False in productive environment
 DEBUG = True
@@ -13,17 +13,34 @@ DEBUG = True
 SECRET_KEY = "change me!!!"
 
 # Select which authentication method to use.
-AUTH_MODE = "password" # password|ldap|none
+LOGIN_PROVIDERS = ["password", "ldap"]
 
-# Used only when AUTH_MODE == "ldap"
-LDAP_SERVER = "ldap://localhost"
-LDAP_BIND_DN = "uid={uid},ou=People,dc=mafiasi,dc=de"
-LDAP_BASE_DN = "ou=People,dc=mafiasi,dc=de"
-LDAP_FILTER = "(uid={uid})"
-LDAP_REGISTER_URL = "https://mafiasi.de/registration/request_account"
-
-# Used only when AUTH_MODE == "password"
+# Used only if "password" in LOGIN_PROVIDERS
 REGISTRATIONS_ENABLED = True
+
+# Used only if "ldap" in LOGIN_PROVIDERS
+LDAP = dict(
+    HOST = 'ldap://localhost',
+    BASE_DN = 'dc=example,dc=com',
+    GLOBAL = dict(
+        BIND_DN = 'cn=dudel,dc=example,dc=com',
+        PASSWORD = '123456'
+    ),
+    GROUP = dict(
+        ATTRIBUTES = dict(
+            IDENTIFIER = 'id',
+            NAME = 'cn',
+            MEMBERS = 'members'
+        ),
+        DN = 'ou=groups,dc=example,dc=com',
+        FILTER = '(objectClass=posixGroup)'
+    ),
+    USER = dict(
+        BIND_DN = 'uid={username},ou=people,dc=example,dc=com',
+        DN = 'uid={username},ou=people,dc=example,dc=com'
+    ),
+    REGISTER_URL = "https://example.com/register"
+)
 
 # Sentry settings
 # SENTRY_DSN = "https://user:password@sentry.host.tld/X"
@@ -34,7 +51,7 @@ NAME_FORMAT = "%(firstname)s (%(username)s)"
 
 # Usernames of administrators
 # e.g. ["13musterm", "14musterf"]
-ADMINS = [] 
+ADMINS = []
 
 # Locale
 BABEL_DEFAULT_LOCALE = "en"

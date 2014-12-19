@@ -1,0 +1,9 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Group List</h1>
+    </div>
+
+    {{ group_table(groups) }}
+{% endblock %}

@@ -60,40 +60,42 @@
                     {{ field_error(form.language) }}
                 </div>
 
-                {% if config.AUTH_MODE == "password" %}
-                <div class="form-group">
-                    {{ form.firstname.label(class="control-label") }}
-                    {{ form.firstname(class="form-control") }}
-                    {{ field_error(form.firstname) }}
-                </div>
-
-                <div class="form-group">
-                    {{ form.lastname.label(class="control-label") }}
-                    {{ form.lastname(class="form-control") }}
-                    {{ field_error(form.lastname) }}
-                </div>
-
-                <div class="form-group">
-                    {{ form.email.label(class="control-label") }}
-                    {{ form.email(class="form-control") }}
-                    {{ field_error(form.email) }}
-                </div>
-
-                <div class="form-group">
-                    {{ form.password1.label(class="control-label")}}
-                    {{ form.password1(class="form-control") }}
-                    {{ field_error(form.password1) }}
-
-                    <div class="help-block">
-                        Leave empty to keep your current password.
+                {% if form.firstname %}
+                    <div class="form-group">
+                        {{ form.firstname.label(class="control-label") }}
+                        {{ form.firstname(class="form-control") }}
+                        {{ field_error(form.firstname) }}
                     </div>
-                </div>
 
-                <div class="form-group">
-                    {{ form.password2.label(class="control-label")}}
-                    {{ form.password2(class="form-control") }}
-                    {{ field_error(form.password2) }}
-                </div>
+                    <div class="form-group">
+                        {{ form.lastname.label(class="control-label") }}
+                        {{ form.lastname(class="form-control") }}
+                        {{ field_error(form.lastname) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.email.label(class="control-label") }}
+                        {{ form.email(class="form-control") }}
+                        {{ field_error(form.email) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.password1.label(class="control-label")}}
+                        {{ form.password1(class="form-control") }}
+                        {{ field_error(form.password1) }}
+
+                        <div class="help-block">
+                            Leave empty to keep your current password.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.password2.label(class="control-label")}}
+                        {{ form.password2(class="form-control") }}
+                        {{ field_error(form.password2) }}
+                    </div>
+                {% else %}
+                    <p>{{ _("You can edit your account settings in the centralized accounts page.") }}</p>
                 {% endif %}
 
                 <div class="form-group">

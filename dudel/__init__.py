@@ -30,11 +30,11 @@ scss = Bundle('scss/*.scss', filters='scss', output='gen/main.css')
 assets.register('scss_all', scss)
 css = Bundle(
     'css/bootstrap.css',
-    'css/font-awesome.css', 
-    'css/jquery-ui.css', 
-    'css/jquery-ui-timepicker-addon.css', 
-    'css/jquery.colorpicker.css', 
-    scss, 
+    'css/font-awesome.css',
+    'css/jquery-ui.css',
+    'css/jquery-ui-timepicker-addon.css',
+    'css/jquery.colorpicker.css',
+    scss,
     output='gen/all.css')
 assets.register('css_all', css)
 
@@ -46,5 +46,6 @@ import dudel.forms
 import dudel.filters
 import dudel.views
 import dudel.admin
+import dudel.plugins.ldapauth
 
 login_manager.login_view = "login"

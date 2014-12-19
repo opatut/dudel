@@ -1,25 +1,9 @@
-from dudel import app, db, login_manager, gravatar
+from dudel import app, db, gravatar
 from flask import abort
 import scrypt
 import random
-
-def update_user_data(username, data):
-    user = User.query.filter_by(username=username).first()
-    if not user:
-        # create the user
-        user = User()
-        user.username = username
-        db.session.add(user)
-
-    if "givenName" in data:
-        user.firstname = data["givenName"]
-    if "displayName" in data:
-        user._displayname = data["displayName"]
-    else:
-        user._displayname = None
-    user.lastname = data["sn"]
-    user.email = data["mail"]
-    db.session.commit()
+from .member import Member
+from dudel.login import login_provider
 
 # password stuff (scrypt yay)
 
@@ -39,13 +23,15 @@ def verify_password(hashed_password, guessed_password, maxtime=300):
         print "scrypt error: %s" % e    # Not fatal but a necessary measure if server is under heavy load
         return False
 
+@login_provider("password")
+def try_login_password(username, password):
+    user = User.query.filter_by(username=username).first()
+    if user and user.password and verify_password(user.password, password):
+        return user
+    return None
 
-@login_manager.user_loader
-def get_user(username):
-    return User.query.filter_by(username=username).first()
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class User(Member):
+    id = db.Column(db.Integer, db.ForeignKey("member.id"), primary_key=True)
     firstname = db.Column(db.String(80))
     lastname = db.Column(db.String(80))
     username = db.Column(db.String(80))
@@ -60,6 +46,10 @@ class User(db.Model):
     comments = db.relationship("Comment", backref="user", lazy="dynamic")
     votes = db.relationship("Vote", backref="user", lazy="dynamic")
 
+    __mapper_args__ = {
+        'polymorphic_identity': 'user',
+    }
+
     @property
     def displayname(self):
         return self._displayname or ((app.config["NAME_FORMAT"] if "NAME_FORMAT" in app.config else "%(firstname)s (%(username)s)") % {
@@ -68,6 +58,7 @@ class User(db.Model):
             "username": self.username,
             "email": self.email
             })
+
     # login stuff
     def get_id(self):
         return self.username
@@ -83,6 +74,7 @@ class User(db.Model):
 
     @property
     def is_admin(self):
+        print(self.username, app.config["ADMINS"])
         return "ADMINS" in app.config and self.username in app.config["ADMINS"]
 
     def require_admin(self):

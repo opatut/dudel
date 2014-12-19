@@ -9,7 +9,7 @@ from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, Fi
 from wtforms.ext.dateutil.fields import DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, EqualTo, Email
 from dudel.models.poll import Poll
-from dudel.models.user import User, update_user_data, verify_password
+from dudel.login import try_login
 import ldap
 from ldap.dn import escape_dn_chars
 from datetime import datetime
@@ -56,33 +56,13 @@ class CustomAuthenticator(object):
         if self.username_value_or_field in form.data:
             username = form.data[self.username_value_or_field]
 
-        if app.config["AUTH_MODE"] == "password":
-            user = User.query.filter_by(username=username).first()
-            if not user or not verify_password(user.password, field.data):
-                raise ValidationError(self.message)
-        elif app.config["AUTH_MODE"] == "ldap":
-            try:
-                connection = ldap.initialize(app.config["LDAP_SERVER"])
-
-                # At this point, we update the user info (since we already have
-                # a connection to LDAP)
-                #connection.start_tls_s()
-                escaped_username = escape_dn_chars(username)
-                connection.simple_bind_s(app.config["LDAP_BIND_DN"].format(uid=escaped_username), field.data)
-                filter = app.config["LDAP_FILTER"].format(uid=escaped_username)
-                base_dn = app.config["LDAP_BASE_DN"].format(uid=escaped_username)
-                results = connection.search_s(base_dn, ldap.SCOPE_SUBTREE, filter)
-                results = {k:(v if len(v)>1 else v[0]) for k,v in results[0][1].iteritems()}
-                connection.unbind_s()
-
-                update_user_data(username, results)
-
-            except ldap.INVALID_CREDENTIALS:
-                raise ValidationError(self.message)
-            except ldap.LDAPError, e:
-                raise ValidationError("LDAP Error: " + (e.message["desc"] if e.message else "%s (%s)"%(e[1],e[0])))
-        else:
-            raise ValidationError("Authentication not enabled, please set AUTH_MODE configuration variable.")
+        user, error = try_login(username, field.data)
+        # Unexpected error
+        if error:
+            raise ValidationError(error)
+        # No login provider accepts
+        if not user:
+            raise ValidationError(self.message)
 
 class SelectButtonInput:
     def __call__(self, field, **kwargs):

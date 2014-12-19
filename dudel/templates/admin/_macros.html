@@ -4,6 +4,11 @@
     <a href="{{ url_for('admin_user', id=user.id) }}">{{ user.displayname }}</a>
 {% endmacro %}
 
+{% macro group_link(group) %}
+    <!-- <a href="{{ url_for('admin_user', id=group.id) }}">{{ group.name }}</a> -->
+    {{ group.name }}
+{% endmacro %}
+
 {% macro poll_table(polls) %}
     {% if polls %}
     <div class="table-responsive table-scroll">
@@ -55,6 +60,7 @@
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
+                <th>Source</th>
             </tr>
             {% for user in users %}
             <tr>
@@ -66,11 +72,39 @@
                 <td>{{ user.firstname }}</td>
                 <td>{{ user.lastname }}</td>
                 <td>{{ user.email  }}</td>
+                <td><span class="label label-default">{{ user.source  }}</span></td>
             </tr>
             {% endfor %}
         </table>
     </div>
     {% else %}
         {{ alert("info", "No users found") }}
+    {% endif %}
+{% endmacro %}
+
+{% macro group_table(groups) %}
+    {% if groups %}
+    <div class="table-responsive table-scroll">
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Identifier</th>
+                <th>Members (in dudel)</th>
+                <th>Source</th>
+            </tr>
+            {% for group in groups %}
+            <tr>
+                <td>
+                    {{ group_link(group) }}
+                </td>
+                <td>{{ group.identifier }}</td>
+                <td>{{ group.members.count() }}</td>
+                <td><span class="label label-default">{{ group.source  }}</span></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+        {{ alert("info", "No groups found") }}
     {% endif %}
 {% endmacro %}
