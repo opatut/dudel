@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dudel import app, db
-from dudel.models import *
+from dudel.models import Vote, User, Poll, Choice, VoteChoice
 from datetime import datetime, timedelta
 import random
 
