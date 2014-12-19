@@ -4,13 +4,44 @@ A simple group scheduling and poll tool, following the example of doodle.com and
 
 ## Setup
 
-Make a virtual environment, activate it, run `make setup`.
+Make a virtual environment, activate it, run:
+
+    pip install -r requirements.txt
 
 Copy `config.py.example` to `config.py` and adjust your settings.
 
-Run `make seed` to create a test database, or `make init` to create a clean one.
+    cp config.py.example config.py
+    $EDITOR config.py
 
-Run `make run` to run the testserver, or use wsgi in production mode.
+Create a test database:
+
+    make seed
+
+Create an empty database:
+
+    make init
+
+Run the testserver:
+
+    make run
+
+## Migration
+
+**WARNING!** While as a database backend all SQL-Alchemy supported databases
+should work, migration is only available for PostgreSQL. This is due to complicated
+upgrade tasks that require database-specific SQL commands, and me being too lazy to
+implement many of them. For development, you probably want to use SQLite anyway and
+throw away those databases all the time (`make seed`).
+
+## Translating
+
+Please translate. Run
+
+    make i18n-update
+
+then copy/edit translations files (in `dudel/translations`), then compile them with
+
+    make i18n-compile
 
 ## License
 
