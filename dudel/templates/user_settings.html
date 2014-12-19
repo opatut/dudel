@@ -29,8 +29,10 @@
                         <td><a href="{{ poll.get_url() }}">{{ poll.title }}</a></td>
                         <td>{{ poll.votes.count() }}</td>
                         <td>
-                            {% if poll.author == current_user %}
+                            {% if poll.owner == current_user %}
                                 <span class="label label-danger"><i class="fa fa-pencil"></i> Owner</span>
+                            {% elif current_user.is_member(poll.owner) %}
+                                <span class="label label-danger"><i class="fa fa-pencil"></i> Owner (group)</span>
                             {% endif %}
                         </td>
                         <td>
@@ -53,12 +55,6 @@
             <form method="POST">
                 {{ form.hidden_tag() }}
                 {{ field_error(form.hidden_tag) }}
-
-                <div class="form-group">
-                    {{ form.language.label }}
-                    {{ form.language(class="form-control", **{'data-slug-field':"#slug"}) }}
-                    {{ field_error(form.language) }}
-                </div>
 
                 {% if form.firstname %}
                     <div class="form-group">
@@ -97,6 +93,19 @@
                 {% else %}
                     <p>{{ _("You can edit your account settings in the centralized accounts page.") }}</p>
                 {% endif %}
+
+                <div class="form-group">
+                    {{ form.preferred_language.label }}
+                    {{ form.preferred_language(class="form-control", **{'data-slug-field':"#slug"}) }}
+                    {{ field_error(form.preferred_language) }}
+                </div>
+
+                <label>Various</label>
+                <div class="checkbox">
+                    {{ form.autowatch() }}
+                    {{ form.autowatch.label }}
+                    {{ field_error(form.autowatch) }}
+                </div>
 
                 <div class="form-group">
                     <input type="submit" value="{{ _('Save') }}" class="btn btn-primary"/>

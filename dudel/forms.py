@@ -5,7 +5,7 @@ from flask.ext.wtf import Form, RecaptchaField
 from flask.ext.wtf.recaptcha.validators import Recaptcha as RecaptchaValidator
 from flask.ext.login import current_user
 from wtforms import ValidationError
-from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField
+from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField, IntegerField
 from wtforms.ext.dateutil.fields import DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, EqualTo, Email
 from dudel.models.poll import Poll
@@ -133,7 +133,8 @@ class RegisterForm(MultiForm):
     email = TextField(lazy_gettext("Email"), validators=[Required(), Email()])
 
 class SettingsForm(MultiForm):
-    language = SelectField(lazy_gettext("Language"), choices=LANGUAGES)
+    preferred_language = SelectField(lazy_gettext("Language"), choices=LANGUAGES)
+    autowatch = BooleanField(lazy_gettext("Auto-watch polls"))
 
 class SettingsFormPassword(SettingsForm):
     firstname = TextField(lazy_gettext("First name"))
@@ -152,8 +153,9 @@ class EditPollForm(Form):
     anonymous_allowed = BooleanField(lazy_gettext("Allow anonymous votes"))
     require_login = BooleanField(lazy_gettext("Require login to vote"))
     public_listing = BooleanField(lazy_gettext("Show in public poll list"))
-    one_vote_per_user = BooleanField(lazy_gettext("One vote per user (only effective with) login)"))
+    one_vote_per_user = BooleanField(lazy_gettext("One vote per user (only effective with login)"))
     allow_comments = BooleanField(lazy_gettext("Allow comments"))
+    owner_id = SelectField(lazy_gettext("Ownership"), choices=[(0, "Nobody")], coerce=int)
     # password = TextField("Password")
     # password_level = SelectField("Password mode", choices=[
     #     (0, "Do not use password"),

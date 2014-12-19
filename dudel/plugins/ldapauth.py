@@ -39,11 +39,11 @@ class LdapConnector(object):
         groups = {}
 
         for dn, data in results:
-            name = data[config["GROUP"]["ATTRIBUTES"]["NAME"]][0]
-            identifier = data[config["GROUP"]["ATTRIBUTES"]["IDENTIFIER"]][0]
+            name = data[config["GROUPS"]["ATTRIBUTES"]["NAME"]][0]
+            identifier = data[config["GROUPS"]["ATTRIBUTES"]["IDENTIFIER"]][0]
             members = []
-            if config["GROUP"]["ATTRIBUTES"]["MEMBERS"] in data:
-                members = data[config["GROUP"]["ATTRIBUTES"]["MEMBERS"]]
+            if config["GROUPS"]["ATTRIBUTES"]["MEMBERS"] in data:
+                members = data[config["GROUPS"]["ATTRIBUTES"]["MEMBERS"]]
 
             groups[identifier] = (identifier, name, members)
 
@@ -69,16 +69,16 @@ class LdapConnector(object):
 
     def get_groups(self):
         self.bind_global()
-        results = self.connection.search_s(config["GROUP"]["DN"], ldap.SCOPE_SUBTREE, config["GROUP"]["FILTER"])
+        results = self.connection.search_s(config["GROUPS"]["DN"], ldap.SCOPE_SUBTREE, config["GROUPS"]["FILTER"])
 
         groups = {}
 
         for dn, data in results:
-            name = data[config["GROUP"]["ATTRIBUTES"]["NAME"]][0]
-            identifier = data[config["GROUP"]["ATTRIBUTES"]["IDENTIFIER"]][0]
+            name = data[config["GROUPS"]["ATTRIBUTES"]["name"]][0]
+            identifier = data[config["GROUPS"]["ATTRIBUTES"]["identifier"]][0]
             members = []
-            if config["GROUP"]["ATTRIBUTES"]["MEMBERS"] in data:
-                members = data[config["GROUP"]["ATTRIBUTES"]["MEMBERS"]]
+            if config["GROUPS"]["ATTRIBUTES"]["members"] in data:
+                members = data[config["GROUPS"]["ATTRIBUTES"]["members"]]
 
             groups[identifier] = (identifier, name, members)
 
@@ -115,21 +115,23 @@ class LdapConnector(object):
             # first time.
             if not user: continue
 
-            if not user in group.members:
-                group.members.append(user)
+            if not user in group.users:
+                group.users.append(user)
 
         # Remove members not in the group anymore
-        new_members = []
-        for member in group.members:
-            if member.username in data[2]:
-                new_members.append(member)
-        group.members = new_members
+        users = []
+        for user in group.users:
+            if user.username in data[2]:
+                users.append(user)
+        group.users = users
 
     def try_login(self, username, password):
+        escaped_username = ldap.dn.escape_dn_chars(username)
+
         try:
             self.connect()
-            escaped_username = ldap.dn.escape_dn_chars(username)
-            self.bind(config["USER"]["BIND_DN"].format(username=escaped_username), password)
+            bind_dn = config["LOGIN"]["BIND_DN"].format(username=escaped_username)
+            self.bind(bind_dn, password)
 
         except ldap.INVALID_CREDENTIALS:
             return False
@@ -137,8 +139,8 @@ class LdapConnector(object):
             return "LDAP Error while logging in: " + str(e)
 
         try:
-            search_dn = config["USER"]["DN"].format(username=escaped_username)
-            results = self.connection.search_s(search_dn, ldap.SCOPE_SUBTREE)
+            data_dn = config["LOGIN"]["DATA_DN"].format(username=escaped_username)
+            results = self.connection.search_s(data_dn, ldap.SCOPE_SUBTREE)
             results = {k:(v if len(v)>1 else v[0]) for k,v in results[0][1].iteritems()}
             self.connection.unbind_s()
         except ldap.LDAPError, e:
@@ -159,10 +161,10 @@ class LdapConnector(object):
         return user
 
     def _update_user(self, user, data):
-        attrs = config["USER"]["ATTRIBUTES"]
+        attrs = config["USERS"]["ATTRIBUTES"]
         for attr in ("username", "firstname", "_displayname", "lastname", "email"):
             if attr in attrs:
-                setattr(user, attr, data[attrs[attr]][0])
+                setattr(user, attr, data[attrs[attr]])
 
 
 ldap_connector = LdapConnector()

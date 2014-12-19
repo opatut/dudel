@@ -18,8 +18,8 @@
             {{ pollDetail(_("Expires"), poll.due_date|date, "clock-o") }}
         {% endif %}
 
-        {% if poll.author %}
-            {{ pollDetail(_("Ownership"), _("you") if poll.author == current_user else poll.author.displayname, "briefcase") }}
+        {% if poll.owner %}
+            {{ pollDetail(_("Ownership"), _("you") if poll.owner == current_user else poll.owner.displayname, "briefcase") }}
         {% endif %}
 
         {% if poll.anonymous_allowed %}

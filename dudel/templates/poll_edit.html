@@ -3,33 +3,12 @@
 {% block polltitle %}{{ _("Settings") }}{% endblock %}
 
 {% block poll_content %}
-    {% if not poll.author %}
-        <p class="well text-center">
-            <span style="margin-right: 1em;">
-                {{ _("This poll does not belong to any user. While logged in, you can claim authorship to receive exclusive editing rights.") }}
-            </span>
-
-            {% if current_user.is_anonymous() %}
-            <a href="{{ url_for('login', next=url_for('poll_claim', slug=poll.slug)) }}" class="btn btn-primary btn-sm">{{ _("Log in and claim authorship") }}</a>
-            {% else %}
-            <a href="{{ url_for('poll_claim', slug=poll.slug) }}" class="btn btn-primary btn-sm">{{ _("Claim authorship") }}</a>
-            {% endif %}
-
-            {{ alert("info", _("Please bear in mind that these settings can be changed by anyone as long as the poll is unclaimed, rendering every security setting useless."))}}
-        </p>
-    {% elif poll.author == current_user %}
+    {% if poll.owner and not current_user.is_member(poll.owner) %}
         <p class="well text-center">
             <strong>{{ _("Note:") }}</strong>
-            {{ _("You have exclusive ownership of this poll. <a href=\"%(link)s\">Click here</a> to free the poll and allow other users to edit the settings.", link=url_for('poll_unclaim', slug=poll.slug)) }}
-        </p>
-    {% else %}
-        <p class="well text-center">
-            <strong>{{ _("Note:") }}</strong>
-            {{ _("This poll is owned by %(author)s, but you can edit it due to your administrator privileges. <a href=\"%(link)s\">Click here</a> to free the poll and allow other users to edit the settings.", author=poll.author.displayname, link=url_for('poll_unclaim', slug=poll.slug)) }}
+            {{ _("This poll is owned by %(owner)s, but you can edit it due to your administrator privileges.", owner=poll.owner.displayname) }}
         </p>
     {% endif %}
-
-    <hr />
 
     <form method="POST">
         <h3>{{ _("Settings") }}</h3>
@@ -52,11 +31,15 @@
                     {{ form.show_results.label }}
                     {{ form.show_results(class="form-control") }}
                     {{ field_error(form.show_results) }}
+
+                    <div class="help-block">
+                        Owners of this poll and administrators will always see all votes.
+                    </div>
                 </div>
                 <div class="form-group">
                     {{ form.description.label }}
                     {{ form.description(class="form-control monospace", rows=6) }}
-                    {{ field_error(form.show_results) }}
+                    {{ field_error(form.description) }}
                     {{ markdown_info(true) }}
                 </div>
             </div>
@@ -104,13 +87,24 @@
                     {{ form.one_vote_per_user.label }}
                     {{ field_error(form.one_vote_per_user) }}
                 </div>
-{#
-                <div class="checkbox">
-                    {{ form.send_mail() }}
-                    {{ form.send_mail.label }}
-                    {{ field_error(form.send_mail) }}
+
+                <div class="help-block">
+                    These settings are not retroactive, meaning that changing them will not
+                    modify votes/comments already created.
                 </div>
-#}
+
+                <hr />
+
+                <div class="form-group">
+                    {{ form.owner_id.label }}
+                    {{ form.owner_id(class="form-control", rows=6) }}
+                    {{ field_error(form.owner_id) }}
+                    <div class="help-block">
+                        Only the owner of a poll, or a member of the owner group, can edit the settings on this
+                        page. If you set this to "Nobody", then anyone may claim exclusive ownership. Most
+                        restrictive settings above are useless if you do not claim ownership of this poll.
+                    </div>
+                </div>
 
                 <hr />
 

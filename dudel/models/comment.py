@@ -13,7 +13,7 @@ class Comment(db.Model):
         if not self.user: return True
         if user.is_anonymous(): return False
         if user.is_admin: return True
-        return user == self.user or user == self.poll.author
+        return user == self.user or user == self.poll.user_can_administrate(user)
 
     def to_dict(self):
         return dict(id=self.id,

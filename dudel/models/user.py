@@ -39,9 +39,9 @@ class User(Member):
     _displayname = db.Column(db.String(80))
     email = db.Column(db.String(80))
     preferred_language = db.Column(db.String(80))
+    autowatch = db.Column(db.Boolean, default=False)
 
     # relationships
-    polls = db.relationship("Poll", backref="author", lazy="dynamic")
     watches = db.relationship("PollWatch", backref="user", cascade="all, delete-orphan", lazy="dynamic")
     comments = db.relationship("Comment", backref="user", lazy="dynamic")
     votes = db.relationship("Vote", backref="user", lazy="dynamic")
@@ -74,7 +74,6 @@ class User(Member):
 
     @property
     def is_admin(self):
-        print(self.username, app.config["ADMINS"])
         return "ADMINS" in app.config and self.username in app.config["ADMINS"]
 
     def require_admin(self):
@@ -87,13 +86,27 @@ class User(Member):
     def get_avatar(self, size):
         return gravatar(self.email, size)
 
+    def is_member(self, of):
+        if not of: return False
+        if of.type == "user":
+            return of == self
+        else:
+            return self in of.users
+
     @property
     def poll_list(self):
+        from dudel.models.poll import Poll
+        from dudel.models.group import Group, group_users
         # TODO: try to do it in SQL
         watched = [watch.poll for watch in self.watches if not watch.poll.deleted]
         owned = self.polls.filter_by(deleted=False).all()
+        # Owned by groups I am member of
+        owned += Poll.query.filter_by(deleted=False).join(Group).join(group_users).filter_by(user_id=self.id).all()
         voted = [vote.poll for vote in self.votes if not vote.poll.deleted]
         all = watched + owned + voted
         all = list(set(all))
         all.sort(key=lambda x: x.created, reverse=True)
         return all
+
+    def __repr__(self):
+        return "<User:%s>" % self.displayname

@@ -19,7 +19,7 @@ class Poll(db.Model):
     slug = db.Column(db.String(80))
     type = db.Column(db.String(20), default="normal") # date|normal|day
     created = db.Column(db.DateTime)
-    author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    owner_id = db.Column(db.Integer, db.ForeignKey("member.id"))
 
     # === Extra settings ===
     due_date = db.Column(db.DateTime)
@@ -106,10 +106,22 @@ class Poll(db.Model):
         return [choice for choice in self.get_choices() if choice.date == dt and not choice.deleted]
 
     def user_can_administrate(self, user):
-        return (user and user.is_authenticated() and (self.author == user or user.is_admin))
+        # Owners may administrate
+        if self.owner and user.is_authenticated() and user.is_member(self.owner): return True
+        # Admins may administrate
+        if (user.is_authenticated() and user.is_admin): return True
+        # Everyone else may not
+        return False
 
     def user_can_edit(self, user):
-        return not self.author or self.author == user or (user.is_authenticated() and user.is_admin)
+        # If no owner is set, everyone may edit
+        if not self.owner: return True
+        # Owners may edit
+        if user.is_authenticated() and user.is_member(self.owner): return True
+        # Admins may edit
+        if user.is_authenticated() and user.is_admin: return True
+        # Everyone else may not
+        return False
 
     def get_user_votes(self, user):
         return [] if user.is_anonymous() else Vote.query.filter_by(poll = self, user = user).all()

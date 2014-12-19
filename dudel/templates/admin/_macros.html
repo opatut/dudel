@@ -29,7 +29,7 @@
                 <td><a href="{{ url_for('admin_poll', id=poll.id) }}">{{ poll.title }}</a></td>
                 <td><a href="{{ poll.get_url() }}">/{{ poll.slug }}/</a></td>
                 <td>{{ poll.created | datetime }}</td>
-                <td>{{ user_link(poll.author) if poll.author else "-" }}</td>
+                <td>{{ poll.owner.displayname if poll.owner else "-" }}</td>
                 <td>{{ (poll.due_date|datetime) if poll.due_date else "-" }}</td>
                 <td>{{ poll.votes.count() }}</td>
                 <td>

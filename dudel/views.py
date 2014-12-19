@@ -133,14 +133,15 @@ def user_settings():
     if current_user.source == "manual":
         form = SettingsFormPassword(obj=current_user)
     elif current_user.source == "ldap":
-        form = SettingsFormLdap()
+        form = SettingsFormLdap(obj=current_user)
     else:
         abort(404)
 
     if form.validate_on_submit():
-        current_user.preferred_language = form.language.data
+        current_user.preferred_language = form.preferred_language.data
+        current_user.autowatch = form.autowatch.data
 
-        if app.config["AUTH_MODE"] == "password":
+        if current_user.source == "manual":
             form.populate_obj(current_user)
             if form.password1.data:
                 current_user.set_password(form.password1.data)
@@ -194,29 +195,29 @@ def poll_edit(slug):
     poll.check_edit_permission()
     form = EditPollForm(obj=poll)
 
+    if current_user.is_authenticated():
+        form.owner_id.choices = [(0, "Nobody"),
+            (current_user.id, current_user.displayname)]
+        for group in current_user.groups:
+            form.owner_id.choices.append((group.id, group.displayname))
+
+        if poll.owner:
+            current = (poll.owner.id, poll.owner.displayname)
+            if not current in form.owner_id.choices:
+                form.owner_id.choices.append(current)
+
     if form.validate_on_submit():
         form.populate_obj(poll)
         db.session.commit()
         flash(gettext("Poll settings have been saved."), "success")
         #return redirect(poll.get_url())
         return redirect(url_for("poll_edit", slug=poll.slug))
+    else:
+        form.owner_id.data = poll.owner_id
+
 
     return render_template("poll_edit.html", poll=poll, form=form)
 
-
-@app.route("/<slug>/claim/", methods=("POST", "GET"))
-@login_required
-def poll_claim(slug):
-    poll = get_poll(slug)
-    poll.check_expiry()
-    poll.check_edit_permission()
-    if poll.author:
-        abort(403)
-
-    poll.author = current_user
-    db.session.commit()
-    flash(gettext("You claimed this poll. Only you may edit it now."), "success")
-    return redirect(url_for("poll_edit", slug=poll.slug))
 
 @app.route("/<slug>/watch/<watch>", methods=("POST", "GET"))
 @login_required
@@ -233,21 +234,6 @@ def poll_watch(slug, watch):
 
     flash(gettext("You are now watching this poll.") if watch else gettext("You are not watching this poll anymore."), "success")
     return redirect(request.args.get("next", None) or poll.get_url())
-
-@app.route("/<slug>/unclaim/", methods=("POST", "GET"))
-@login_required
-def poll_unclaim(slug):
-    poll = get_poll(slug)
-    poll.check_expiry()
-    poll.check_edit_permission()
-    if not poll.user_can_edit(current_user):
-        abort(403)
-
-    poll.author = None
-    db.session.commit()
-    flash(gettext("You freed this poll. Everyone may edit it now."), "success")
-    return redirect(url_for("poll_edit", slug=poll.slug))
-
 
 @app.route("/<slug>/choices/", methods=("POST", "GET"))
 @app.route("/<slug>/choices/<int:step>", methods=("POST", "GET"))
@@ -479,7 +465,7 @@ def poll_vote(slug):
 
     groups = poll.get_choice_groups()
     if not groups:
-        flash(gettext("The poll author has not yet created any choices. You cannot vote on the poll yet."), "warning")
+        flash(gettext("The poll owner has not yet created any choices. You cannot vote on the poll yet."), "warning")
         return redirect(poll.get_url())
 
     form = CreateVoteForm()
@@ -522,7 +508,11 @@ def poll_vote(slug):
                 "email/poll_voted.txt", voter=vote.displayname)
 
             db.session.commit()
-            return redirect(poll.get_url())
+
+            if current_user.is_authenticated() and current_user.autowatch:
+                return redirect(url_for("poll_watch", slug=poll.slug, watch="yes", next=poll.get_url()))
+            else:
+                return redirect(poll.get_url())
 
     if not request.method == "POST":
         poll.fill_vote_form(form)

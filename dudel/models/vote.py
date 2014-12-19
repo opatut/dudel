@@ -22,7 +22,7 @@ class Vote(db.Model):
         # only if logged in
         if not user.is_authenticated(): return False
         # allow for poll author
-        if self.poll.author and self.poll.author == user: return True
+        if self.poll.user_can_administrate(user): return True
         # allow for user
         if self.user and self.user == user: return True
         # allow for admin
@@ -33,8 +33,8 @@ class Vote(db.Model):
     def user_can_edit(self, user):
         # disallow on deleted/expired polls
         if self.poll.deleted or self.poll.is_expired: return False
-        # allow for author
-        if self.poll.author and self.poll.author == user: return True
+        # allow for poll author
+        if self.poll.user_can_administrate(user): return True
         # allow for admin
         if user.is_authenticated() and user.is_admin: return True
         # allow for creator
