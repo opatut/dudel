@@ -102,33 +102,19 @@
                             {% for vote in poll.votes %}
                                 {% if show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
                                     <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
-                                        <td class="author">
+                                        <td class="author" data-toggle="popover" data-title="{{ vote.displayname }}" data-content="{{ vote.created|datetime }}{% if vote.comment %}<div class='comment'>{{ vote.comment }}</div>{% endif %}">
                                             {% if vote.comment %}
                                                 <div class="pull-left" style="margin-right: 0.4em;">
                                                     <i class="fa fa-comment-o"></i>
                                                 </div>
                                             {% endif %}
                                             {{ vote.displayname }}
-
-                                            <div class="custom-tooltip right">
-                                                <div class="date">voted on {{ vote.created|datetime }}</div>
-                                                {% if vote.comment %}
-                                                    <div class="comment">{{ vote.comment }}</div>
-                                                {% endif %}
-                                            </div>
                                         </td>
                                         {% for choice in choices %}
                                             {% set vote_choice = poll.get_vote_choice(vote, choice) %}
                                             {% if vote_choice and not vote_choice.value.deleted %}
-                                            <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}">
+                                            <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}" data-toggle="popover" data-title="{{ choice.title }}" data-content="{{ vote.displayname }}{% if vote_choice.comment %}<div class='comment'>{{ vote_choice.comment }}</div>{% endif %}" data-placement="bottom">
                                                 <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
-                                                <div class="custom-tooltip below">
-                                                    <div class="name">{{ vote.displayname }}</div>
-                                                    <div class="value">{{ choice.title }}</div>
-                                                    {% if vote_choice.comment %}
-                                                        <div class="comment">{{ vote_choice.comment }}</div>
-                                                    {% endif %}
-                                                </div>
                                             </td>
                                             {% else %}
                                             <td class="vote-choice text-center none">
@@ -175,7 +161,9 @@
                                 </th>
                                 {% set scores, counts, totals, max_score = poll.get_stats() %}
                                 {% for choice in choices %}
-                                    <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}">
+                                    <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}"
+                                        data-toggle="popover" data-title="{{ choice.title }}" data-content="{% for choice_value in poll.get_choice_values() %}<div class='value'>{{ counts[choice][choice_value] }}<i class='fa fa-times'></i><span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>{{ choice_value.title }}</div>{% endfor %}<div class='score'>{{ _('Score:') }} {{ '%.f' % scores[choice] }}</div>" data-placement="top">
+
                                         {% if totals[choice] != 0 %}
                                             {{ "%.f %%" % (scores[choice]*100.0/totals[choice]) }}
                                         {% else %}
@@ -183,19 +171,6 @@
                                         {% endif %}
                                         <span class="print-only">{{ '%.f' % scores[choice] }}</span>
 
-                                        <div class="custom-tooltip above">
-                                            <div class="name">{{ choice.title }}</div>
-                                            {% for choice_value in poll.get_choice_values() %}
-                                            <div class="value">
-                                                {{ counts[choice][choice_value]  }} <i class="fa fa-times"></i>
-                                                <span class="label choice-sum-value-label" style="background-color: #{{ choice_value.color }};">
-                                                    <span class="fa fa-{{ choice_value.icon }}"></span>
-                                                </span>
-                                                {{ choice_value.title }}
-                                            </div>
-                                            {% endfor %}
-                                            <div class="score">{{ _("Score:") }} {{ '%.f' % scores[choice] }}</div>
-                                        </div>
                                     </th>
                                 {% endfor %}
                                 <th class="noprint"></th>

@@ -107,101 +107,22 @@ table.vote label {
     text-align: center;
 }
 
+.popover-title {
+    font-weight: bold;
+}
 
-.choice-sum,
-.vote-choice,
-.author,
-.has-custom-tooltip {
-    position: relative;
-
-    & > .custom-tooltip {
-        $tooltipColor: rgba(0, 0, 0, 0.7);
-        $tooltipWidth: 140px;
-
-        position: absolute;
-        z-index: 10000;
-        font-size: 10pt;
-        text-align: left;
-        display: none;
-        min-width: $tooltipWidth;
-        pointer-events:none;
-        font-weight: normal;
-
-        background: $tooltipColor;
-        padding: 8px;
-        color: #222;
-        color: #FFF;
-
-        &.below {
-            top: 40px;
-            left: 50%;
-            margin-left: - $tooltipWidth / 2;
-        }
-
-        &.above {
-            bottom: 40px;
-            left: 50%;
-            margin-left: - $tooltipWidth / 2;
-        }
-
-        &.right {
-            left: 100%;
-        }
-
-        &.left {
-            right: 100%;
-        }
-
-        &.left, &.right {
-            top: 0;
-            min-height: 40px;
-        }
-
-        &:before {
-            content: " ";
-            border: 10px solid transparent;
-            position: absolute;
-            left: $tooltipWidth / 2;
-        }
-
-        &.below:before {
-            margin-left: -10px;
-            top: -20px;
-            border-bottom-color: $tooltipColor;
-        }
-
-        &.above:before {
-            bottom: -20px;
-            border-top-color: $tooltipColor;
-        }
-
-        &.left:before {
-            right: -20px;
-            border-left-color: $tooltipColor;
-        }
-
-        &.right:before {
-            left: -20px;
-            border-right-color: $tooltipColor;
-        }
-
-        .name {
-            font-weight: bold;
-        }
-
-        .value {
-            color: #EEE;
-        }
-
-        .comment {
-            font-style: italic;
-        }
+.popover-content {
+    .comment {
+        color: #888;
+        font-size: 0.8em;
+        margin-top: 0.5em;
     }
+}
 
-
-    &:hover > .custom-tooltip {
-        display: block;
-    }
+.choice-separator {
+    font-size: 0.7em;
+    color: #888;
+    margin: 0 0.4em;
 }
 
 .vote .vote-choice {

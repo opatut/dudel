@@ -41,4 +41,5 @@ class Choice(db.Model):
         elif poll_type == "date":
             return datetime(self.date, rebase=False)
         else:
-            return self.text
+            return '<i class="fa fa-chevron-right choice-separator"></i>'.join(self.get_hierarchy())
+            # return self.text

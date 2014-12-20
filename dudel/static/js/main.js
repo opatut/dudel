@@ -31,6 +31,12 @@ $(document).ready(function() {
     $("tr.script-only").css("display", "table-row");
     $("table.script-only").css("display", "table");
 
+    $('[data-toggle="popover"]').popover({
+        html: true,
+        container: 'body',
+        trigger: 'hover'
+    });
+
     // $("#password_level").change(function() {
     //     $("#password").attr("disabled", $(this).val() == "0");
     // });

@@ -284,4 +284,3 @@ class Poll(db.Model):
                 return False
 
         return True
-
