@@ -125,6 +125,13 @@ table.vote label {
     margin: 0 0.4em;
 }
 
+.datetime-input-suggest {
+    font-size: 0.8em;
+    .date, .time {
+        font-weight: bold;
+    }
+}
+
 .vote .vote-choice {
     width: 4em !important;
 }

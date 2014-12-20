@@ -231,13 +231,17 @@
             <form method="POST" class="form">
                 {{ comment_form.hidden_tag() }}
                 <div class="form-group">
-                    {{ comment_form.name.label }}
-                    {% if current_user.is_anonymous() %}
-                        {{ comment_form.name(class="form-control") }}
-                    {% else %}
-                        <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
-                    {% endif %}
-                    {{ field_error(comment_form.name) }}
+                    <div class="row">
+                        <div class="col-sm-4">
+                            {{ comment_form.name.label }}
+                            {% if current_user.is_anonymous() %}
+                                {{ comment_form.name(class="form-control") }}
+                            {% else %}
+                                <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
+                            {% endif %}
+                            {{ field_error(comment_form.name) }}
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     {{ comment_form.text.label }}

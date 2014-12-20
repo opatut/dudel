@@ -135,13 +135,6 @@ $(document).ready(function() {
         $("#time-slider-form").submit();
     });
 
-    $("#due_date").datetimepicker({
-        dateFormat: "yy-mm-dd",
-        timeFormat: "HH:mm",
-        stepMinute: 15,
-        minDateTime: new Date()
-    });
-
     $(".icon-preview button").click(function() {
         $("#icon").val($(this).data("icon"));
     }).each(function() {

@@ -93,14 +93,16 @@
             </div>
         </footer>
 
-        <script type="text/javascript" src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/util.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-timepicker-addon.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.colorpicker.js') }}"></script>
+        {% assets "js_all" -%}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {%- endassets %}
+
+
+        <script type="text/javascript">
+            i18n.load("{{lang}}");
+            Date.setLocale("{{lang}}");
+        </script>
+
         {% block foot %}{% endblock %}
     </body>
 </html>

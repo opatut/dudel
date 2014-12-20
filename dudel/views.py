@@ -611,3 +611,8 @@ def poll_action(e):
         flash(gettext("You do not have permission to %(action)s this poll.", action=e.action), "error")
         return redirect(e.poll.get_url())
 
+@app.route('/static/translations/<locale>.po')
+def root(locale):
+    if locale not in ("de",):
+        abort(404)
+    return open('dudel/translations/%s/LC_MESSAGES/messages.po' % locale).read()
