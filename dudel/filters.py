@@ -5,7 +5,6 @@ from flask import g
 from flask.ext.babel import format_date, format_time, get_locale
 from json import dumps
 import datetime as dt
-from dudel.views import get_locale
 
 date_formats = {'de': 'EEE, dd. MMM'}
 
@@ -42,6 +41,7 @@ def transpose(matrix):
 
 @app.context_processor
 def inject():
+    from dudel.views import get_locale
     return dict(
         ICONS=ICONS,
         login_form=LoginForm(),
