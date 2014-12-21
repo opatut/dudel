@@ -33,7 +33,7 @@
                     {{ field_error(form.show_results) }}
 
                     <div class="help-block">
-                        Owners of this poll and administrators will always see all votes.
+                        {{ _("Owners of this poll and administrators will always see all votes.") }}
                     </div>
                 </div>
                 <div class="form-group">
@@ -89,8 +89,7 @@
                 </div>
 
                 <div class="help-block">
-                    These settings are not retroactive, meaning that changing them will not
-                    modify votes/comments already created.
+                    {{ _("These settings are not retroactive, meaning that changing them will not modify votes/comments already created.") }}
                 </div>
 
                 <hr />
@@ -100,9 +99,7 @@
                     {{ form.owner_id(class="form-control", rows=6) }}
                     {{ field_error(form.owner_id) }}
                     <div class="help-block">
-                        Only the owner of a poll, or a member of the owner group, can edit the settings on this
-                        page. If you set this to "Nobody", then anyone may claim exclusive ownership. Most
-                        restrictive settings above are useless if you do not claim ownership of this poll.
+                        {{ _('Only the owner of a poll, or a member of the owner group, can edit the settings on this page. If you set this to "Nobody", then anyone may claim exclusive ownership. Most restrictive settings above are useless if you do not claim ownership of this poll.') }}
                     </div>
                 </div>
 

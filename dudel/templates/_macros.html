@@ -50,6 +50,6 @@
 
 {% macro markdown_info(helpBlock) %}
     {% if helpBlock %}<p class="help-block">{% endif %}
-        {{ _('You can use <a href="http://daringfireball.net/projects/markdown/" target="_blank">Markdown</a> syntax for formatting.') }}
+        {{ _('You can use <a href="%(link)s" target="_blank">Markdown</a> syntax for formatting.', link="http://daringfireball.net/projects/markdown/") | safe }}
     {% if helpBlock %}</p>{% endif %}
 {% endmacro %}

@@ -125,7 +125,7 @@
         {% if step in (1, 2) %}
             <noscript>
                 <p class="alert alert-warning">
-                {{ _("It's a pity you don't have <b>JavaScript</b> turned on, so you'll have to type in comma separated values in the correct format yourself, no spaces allowed. Or just stop being paranoid and enable JavaScript on this site. You'll get a certainly fancy interface for date and time input...") }}
+                {{ _("It's a pity you don't have <b>JavaScript</b> turned on, so you'll have to type in comma separated values in the correct format yourself, no spaces allowed. Or just stop being paranoid and enable JavaScript on this site. You'll get a certainly fancy interface for date and time input...") | safe }}
                 </p>
             </noscript>
 

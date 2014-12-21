@@ -116,9 +116,7 @@
         <h3>Delete vote</h3>
 
         <p>
-            You can delete this vote if it has been cast accidentally. Please do
-            not abuse this feature, else we'll have to remove it again. Also, we log
-            who uses this, just to make sure.
+            {{ _("You can delete this vote if it has been cast accidentally. Please do not abuse this feature, else we'll have to remove it again. Also, we log who uses this, just to make sure.") }}
         </p>
 
         <a href="{{ url_for('poll_vote_delete', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-danger btn-xs"><span class="fa fa-trash-o"></span> {{ _("Delete vote") }}</a>

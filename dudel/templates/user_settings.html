@@ -9,8 +9,7 @@
             <h1>{{ _("Poll overview") }}</h1>
 
             <p>
-                This list shows all the polls you have participated in, either by owning them, voting on them,
-                or watching them.
+                {{ _("This list shows all the polls you have participated in, either by owning them, voting on them, or watching them.") }}
             </p>
 
             {% set watches = current_user.watches.all() %}

@@ -88,7 +88,7 @@ def register():
     if not "password" in app.config["LOGIN_PROVIDERS"] or not app.config["REGISTRATIONS_ENABLED"]:
         abort(404)
     if current_user.is_authenticated():
-        flash("You are already logged in.", "success")
+        flash(gettext("You are already logged in."), "success")
         return redirect(request.args.get("next") or url_for("index"))
     form = RegisterForm()
 
@@ -196,7 +196,7 @@ def poll_edit(slug):
     form = EditPollForm(obj=poll)
 
     if current_user.is_authenticated():
-        form.owner_id.choices = [(0, "Nobody"),
+        form.owner_id.choices = [(0, gettext("Nobody")),
             (current_user.id, current_user.displayname)]
         for group in current_user.groups:
             form.owner_id.choices.append((group.id, group.displayname))
