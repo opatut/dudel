@@ -9,9 +9,9 @@ import datetime as dt
 date_formats = {'de': 'EEE, dd. MMM'}
 
 @app.template_filter()
-def date(s, rebase=True):
+def date(s, rebase=True, year=False):
     return format_date(s,
-                       date_formats.get(get_locale().language, 'EEE, dd MMM'),
+                       date_formats.get(get_locale().language, 'EEE, dd MMM') + (' yyyy' if year else ''),
                        rebase=rebase)
 
 @app.template_filter()

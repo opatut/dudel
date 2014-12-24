@@ -7,14 +7,21 @@ class Vote(db.Model):
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     anonymous = db.Column(db.Boolean, default=False)
+    assigned_by_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     created = db.Column(db.DateTime)
     comment = db.Column(db.Text)
+
+    invite = db.relationship("PollInvite", backref="vote", lazy="dynamic")
 
     def __init__(self):
         self.created = datetime.utcnow()
 
     # relationship
     vote_choices = db.relationship("VoteChoice", backref="vote", cascade="all, delete-orphan", lazy="dynamic")
+
+    @property
+    def assigned(self):
+        return self.assigned_by and self.assigned_by != self.user
 
     def user_can_delete(self, user):
         # disallow on deleted/expired polls

@@ -1,3 +1,17 @@
+@import url(http://weloveiconfonts.com/api/?family=entypo);
+
+/* entypo */
+[class*="entypo-"]:before {
+  font-family: 'entypo', sans-serif;
+  font-size: 14px;
+}
+
+.icon-block {
+    display: inline-block;
+    width: 1em;
+    text-align: center;
+}
+
 * {
     border-radius: 0 !important;
 }
@@ -233,6 +247,27 @@ table.poll td.none {
 label + .help-inline {
     margin-left: 1em;
 }
+
+ul.help-list {
+    color: #737373;
+    font-size: 0.8em;
+    margin: 0.5em 0;
+    padding: 0;
+
+    li {
+        margin-left: 1.2em;
+        list-style: none;
+
+        &:before {
+            content: "✓";
+            margin-left: -1.2em;
+            width: 1.2em;
+            display: inline-block;
+            font-family: "entypo";
+        }
+    }
+}
+
 
 .checkbox-cell {
     background-color: #F6F6F6;

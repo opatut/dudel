@@ -152,9 +152,11 @@ class EditPollForm(Form):
     due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional()])
     anonymous_allowed = BooleanField(lazy_gettext("Allow anonymous votes"))
     require_login = BooleanField(lazy_gettext("Require login to vote"))
+    require_invite = BooleanField(lazy_gettext("Require invite to vote (requires login)"))
     public_listing = BooleanField(lazy_gettext("Show in public poll list"))
     one_vote_per_user = BooleanField(lazy_gettext("One vote per user (only effective with login)"))
     allow_comments = BooleanField(lazy_gettext("Allow comments"))
+    show_invites = BooleanField(lazy_gettext("Show invites as empty votes"))
     owner_id = SelectField(lazy_gettext("Ownership"), choices=[(0, "Nobody")], coerce=int)
     # password = TextField("Password")
     # password_level = SelectField("Password mode", choices=[
@@ -193,3 +195,8 @@ class CommentForm(Form):
 class LanguageForm(Form):
     language = SelectField(lazy_gettext("Language"), choices=LANGUAGES, option_widget=SelectButtonInput())
 
+class PollInviteForm(Form):
+    member = TextField(lazy_gettext("Group or User"))
+
+class VoteAssignForm(Form):
+    user = TextField(lazy_gettext("New vote owner"))

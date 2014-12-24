@@ -34,25 +34,18 @@ class LdapConnector(object):
 
     def get_users(self):
         self.bind_global()
-        results = self.connection.search_s(config["USERS"]["DN"], ldap.SCOPE_SUBTREE)
+        results = self.connection.search_s(config["USERS"]["DN"], ldap.SCOPE_SUBTREE, config["USERS"]["FILTER"])
 
-        groups = {}
-
-        for dn, data in results:
-            name = data[config["GROUPS"]["ATTRIBUTES"]["NAME"]][0]
-            identifier = data[config["GROUPS"]["ATTRIBUTES"]["IDENTIFIER"]][0]
-            members = []
-            if config["GROUPS"]["ATTRIBUTES"]["MEMBERS"] in data:
-                members = data[config["GROUPS"]["ATTRIBUTES"]["MEMBERS"]]
-
-            groups[identifier] = (identifier, name, members)
-
-        return groups
+        return results
 
     def update_users(self):
         users = self.get_users()
 
-        for username, data in users.items():
+        for dn, data in users:
+            if not config["USERS"]["ATTRIBUTES"]["username"] in data:
+                continue
+            username = data[config["USERS"]["ATTRIBUTES"]["username"]][0].decode("utf-8")
+
             from dudel.models.user import User
             user = User.query.filter_by(username=username).first()
             if not user:
@@ -74,8 +67,8 @@ class LdapConnector(object):
         groups = {}
 
         for dn, data in results:
-            name = data[config["GROUPS"]["ATTRIBUTES"]["name"]][0]
-            identifier = data[config["GROUPS"]["ATTRIBUTES"]["identifier"]][0]
+            name = data[config["GROUPS"]["ATTRIBUTES"]["name"]][0].decode("utf-8")
+            identifier = data[config["GROUPS"]["ATTRIBUTES"]["identifier"]][0].decode("utf-8")
             members = []
             if config["GROUPS"]["ATTRIBUTES"]["members"] in data:
                 members = data[config["GROUPS"]["ATTRIBUTES"]["members"]]
@@ -102,11 +95,13 @@ class LdapConnector(object):
         db.session.commit()
 
     def _update_group(self, group, data):
-        group.identifier = data[0]
-        group.name = data[1]
+        group.identifier = data[0].decode("utf-8")
+        group.name = data[1].decode("utf-8")
+
+        usernames = [name.decode("utf-8") for name in data[2]]
 
         # Add new members
-        for uid in data[2]:
+        for uid in usernames:
             from dudel.models.user import User
             user = User.query.filter_by(username=uid).first()
 
@@ -121,7 +116,7 @@ class LdapConnector(object):
         # Remove members not in the group anymore
         users = []
         for user in group.users:
-            if user.username in data[2]:
+            if user.username in usernames:
                 users.append(user)
         group.users = users
 
@@ -163,8 +158,11 @@ class LdapConnector(object):
     def _update_user(self, user, data):
         attrs = config["USERS"]["ATTRIBUTES"]
         for attr in ("username", "firstname", "_displayname", "lastname", "email"):
-            if attr in attrs:
-                setattr(user, attr, data[attrs[attr]])
+            if attr in attrs and attrs[attr] in data:
+                value = data[attrs[attr]]
+                if isinstance(value, list):
+                    value = value[0]
+                setattr(user, attr, value.decode("utf-8"))
 
 
 ldap_connector = LdapConnector()

@@ -3,6 +3,8 @@ from flask import abort
 import scrypt
 import random
 from .member import Member
+from .pollinvite import PollInvite
+from .vote import Vote
 from dudel.login import login_provider
 
 # password stuff (scrypt yay)
@@ -44,7 +46,10 @@ class User(Member):
     # relationships
     watches = db.relationship("PollWatch", backref="user", cascade="all, delete-orphan", lazy="dynamic")
     comments = db.relationship("Comment", backref="user", lazy="dynamic")
-    votes = db.relationship("Vote", backref="user", lazy="dynamic")
+    invites = db.relationship("PollInvite", backref="user", lazy="dynamic", foreign_keys=[PollInvite.user_id])
+    invites_created = db.relationship("PollInvite", backref="creator", lazy="dynamic", foreign_keys=[PollInvite.creator_id])
+    votes = db.relationship("Vote", backref="user", lazy="dynamic", foreign_keys=[Vote.user_id])
+    votes_assigned = db.relationship("Vote", backref="assigned_by", lazy="dynamic", foreign_keys=[Vote.assigned_by_id])
 
     __mapper_args__ = {
         'polymorphic_identity': 'user',
@@ -97,16 +102,30 @@ class User(Member):
     def poll_list(self):
         from dudel.models.poll import Poll
         from dudel.models.group import Group, group_users
-        # TODO: try to do it in SQL
-        watched = [watch.poll for watch in self.watches if not watch.poll.deleted]
+
+        # Polls I watched
+        watched = [watch.poll for watch in self.watches]
+
+        # Owned by myself
         owned = self.polls.filter_by(deleted=False).all()
         # Owned by groups I am member of
         owned += Poll.query.filter_by(deleted=False).join(Group).join(group_users).filter_by(user_id=self.id).all()
-        voted = [vote.poll for vote in self.votes if not vote.poll.deleted]
-        all = watched + owned + voted
-        all = list(set(all))
-        all.sort(key=lambda x: x.created, reverse=True)
-        return all
+
+        # Polls I voted on
+        voted = [vote.poll for vote in self.votes]
+
+        # Polls I am invited to
+        invited = [invite.poll for invite in self.invites]
+
+        # All of them, filtered, without duplicates, sorted
+        my_polls = watched + owned + voted + invited
+        my_polls = [poll for poll in my_polls if not poll.deleted]
+        my_polls = list(set(my_polls))
+        my_polls.sort(key=lambda x: x.created, reverse=True)
+        return my_polls
 
     def __repr__(self):
         return "<User:%s>" % self.displayname
+
+    def is_invited(self, poll):
+        return self.invites.filter_by(poll_id=poll.id).count() > 0

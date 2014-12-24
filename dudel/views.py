@@ -1,15 +1,17 @@
+# -*- coding: utf-8 -*-
 from dudel import app, db, babel, supported_languages
-from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member
+from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, PollInvite
 from dudel.login import get_user
-from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword
+from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, PollInviteForm, VoteAssignForm
 from dudel.util import PollExpiredException, PollActionException
 import dudel.login
-from flask import redirect, abort, request, render_template, flash, url_for, g
+from flask import redirect, abort, request, render_template, flash, url_for, g, Response
 from flask.ext.babel import gettext
 from flask.ext.login import current_user, login_required
 from dateutil import parser
 from datetime import datetime
-import json
+import json, re
+from sqlalchemy import func
 
 def get_poll(slug):
     return Poll.query.filter_by(slug=slug, deleted=False).first_or_404()
@@ -29,14 +31,17 @@ def cron():
     # This view should execute some regular tasks to be called by a cronjob, e.g.
     # by simply curl-ing "/api/cron"
 
-    status = []
-
     # Update LDAP groups
     from dudel.plugins.ldapauth import ldap_connector
-    ldap_connector.update_groups()
-    status.append("updated LDAP groups")
 
-    return "<br />".join(status)
+    def generate():
+        ldap_connector.update_users()
+        yield "updated LDAP users\n"
+
+        ldap_connector.update_groups()
+        yield "updated LDAP groups\n"
+
+    return Response(generate(), mimetype="text/plain")
 
 @app.route("/api/members")
 @login_required
@@ -217,6 +222,86 @@ def poll_edit(slug):
 
 
     return render_template("poll_edit.html", poll=poll, form=form)
+
+@app.route("/<slug>/invites/", methods=("POST", "GET"))
+def poll_invites(slug):
+    poll = get_poll(slug)
+    poll.check_edit_permission()
+    form = PollInviteForm()
+
+    if form.validate_on_submit():
+        # Search for the group or user
+        found = []
+        notfound = []
+        alreadyInvitedOrVoted = []
+
+        names = re.split(r'[^a-zA-Z0-9!öäüÜÄÖß_-]', form.member.data)
+        for name in names:
+            if not name: continue
+            user = User.query.filter(func.lower(User.username) == func.lower(name)).first()
+            group = Group.query.filter(func.lower(Group.name) == func.lower(name)).first()
+            if group and user:
+                print('Warning! User & Group with similar/same name: "%s" vs. "%s".' % (user.username, group.displayname))
+
+            if not user and not group:
+                notfound.append(name)
+                continue
+
+            if user:
+                users = [user]
+            else:
+                users = group.users
+
+            for user in users:
+                invite = PollInvite.query.filter_by(poll_id=poll.id, user_id=user.id).first()
+                if invite:
+                    alreadyInvitedOrVoted.append(user)
+                    continue
+
+                invite = PollInvite()
+                invite.user = user
+                invite.poll = poll
+                if current_user.is_authenticated():
+                    invite.creator = current_user
+
+                vote = Vote.query.filter_by(poll_id=poll.id, user_id=user.id).first()
+                if vote:
+                    # create an invite, just to track them
+                    invite.vote = vote
+                    alreadyInvitedOrVoted.append(user)
+                else:
+                    found.append(user)
+
+                db.session.add(invite)
+
+        db.session.commit()
+
+        if notfound:
+            flash(gettext("The following %(count)d user/groups were not found: %(names)s.", count=len(notfound), names=", ".join(notfound)), "error")
+        if found:
+            flash(gettext("You have invited %(count)d users.", count=len(found)), "success")
+        if alreadyInvitedOrVoted:
+            flash(gettext("%(count)d users were skipped, since they either are already invited or have already voted.", count=len(alreadyInvitedOrVoted)), "info")
+
+        #return redirect(poll.get_url())
+        return redirect(url_for("poll_invites", slug=poll.slug))
+
+    return render_template("poll_invites.html", poll=poll, form=form)
+
+
+@app.route("/<slug>/invites/<int:id>/delete", methods=("POST", "GET"))
+def poll_invite_delete(slug, id):
+    poll = get_poll(slug)
+    poll.check_edit_permission()
+
+    invite = PollInvite.query.filter_by(id=id).first_or_404()
+    if invite.poll != poll: abort(404)
+
+    db.session.delete(invite)
+    db.session.commit()
+
+    flash(gettext("The invite was deleted."), "success")
+    return redirect(url_for("poll_invites", slug=poll.slug))
 
 
 @app.route("/<slug>/watch/<watch>", methods=("POST", "GET"))
@@ -454,14 +539,20 @@ def poll_vote(slug):
     poll = get_poll(slug)
     poll.check_expiry()
 
-    if poll.require_login and current_user.is_anonymous():
+    # Check if user needs to log in
+    if (poll.require_login or poll.require_invite) and current_user.is_anonymous():
         flash(gettext("You need to login to vote on this poll."), "error")
         return redirect(url_for("login", next=url_for("poll_vote", slug=poll.slug)))
 
+    # Check if user voted already
     if poll.one_vote_per_user and not current_user.is_anonymous() and poll.get_user_votes(current_user):
         flash(gettext("You can only vote once on this poll. Please edit your choices by clicking the edit button on the right."), "error")
         return redirect(poll.get_url())
 
+    # Check if user was invited
+    if poll.require_invite and not current_user.is_invited(poll):
+        flash(gettext("You need an invite to vote on this poll."), "error")
+        return redirect(poll.get_url())
 
     groups = poll.get_choice_groups()
     if not groups:
@@ -502,6 +593,11 @@ def poll_vote(slug):
                 vote_choice.choice = choice
                 db.session.add(vote_choice)
 
+            if current_user.is_authenticated():
+                invite = PollInvite.query.filter_by(user_id=current_user.id, poll_id=poll.id).first()
+                if invite:
+                    invite.vote = vote
+
             flash(gettext("You have voted."), "success")
 
             poll.send_watchers("[Dudel] New vote: " + poll.title,
@@ -518,6 +614,49 @@ def poll_vote(slug):
         poll.fill_vote_form(form)
 
     return render_template("vote.html", poll=poll, form=form)
+
+@app.route("/<slug>/vote/<int:vote_id>/assign", methods=("POST", "GET"))
+@login_required
+def poll_vote_assign(slug, vote_id):
+    poll = get_poll(slug)
+    poll.check_expiry()
+    if not poll.user_can_administrate(current_user): abort(403)
+
+    vote = Vote.query.filter_by(id=vote_id).first_or_404()
+    if vote.poll != poll: abort(404)
+    if vote.user: abort(403)
+
+    form = VoteAssignForm()
+
+    if form.validate_on_submit():
+        # find the user
+        user = User.query.filter(func.lower(User.username) == func.lower(form.user.data)).first()
+        if not user:
+            flash(gettext("The user was not found, please try again."), "error")
+            return redirect(url_for("poll_vote_assign", slug=poll.slug, vote_id=vote.id))
+
+        # check for existing votes
+        vote_count = Vote.query.filter_by(poll_id=poll.id, user_id=user.id).count()
+        if poll.one_vote_per_user and vote_count > 0:
+            flash(gettext("The user has already voted and cannot have multiple votes."), "error")
+            return redirect(url_for("poll_vote_assign", slug=poll.slug, vote_id=vote.id))
+
+        # all's right, assign
+        vote.user = user
+        vote.assigned_by = current_user
+        vote.name = ""
+
+        # assign invite to this vote, if any
+        invite = PollInvite.query.filter_by(user_id=user.id, poll_id=poll.id).first()
+        if invite:
+            invite.vote = vote
+
+        # done.
+        db.session.commit()
+        flash(gettext("You assigned this vote to %(user)s.", user=user.displayname), "success")
+        return redirect(poll.get_url())
+
+    return render_template("poll_vote_assign.html", poll=poll, vote=vote, form=form)
 
 @app.route("/<slug>/vote/<int:vote_id>/edit", methods=("POST", "GET"))
 def poll_vote_edit(slug, vote_id):
@@ -536,9 +675,16 @@ def poll_vote_edit(slug, vote_id):
         return redirect(poll.get_url())
 
     form = CreateVoteForm(obj=vote)
-    if poll.require_login and current_user.is_anonymous():
-        flash(gettext("You need to login to edit votes on this poll."))
+
+    # Check if user is logged in
+    if (poll.require_login or poll.require_invite) and current_user.is_anonymous():
+        flash(gettext("You need to login to edit votes on this poll."), "error")
         return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
+
+    # Check if user was invited
+    if poll.require_invite and not current_user.is_invited(poll):
+        flash(gettext("You need an invite to edit votes on this poll."), "error")
+        return redirect(poll.get_url())
 
     if request.method == "POST":
         for subform in form.vote_choices:
@@ -568,6 +714,11 @@ def poll_vote_edit(slug, vote_id):
 
                 vote_choice.comment = subform.comment.data
                 vote_choice.value = value
+
+            # remove 'assigned-by' tag if the user themselves edited the vote, and notify them about this change
+            if vote.user and vote.user == current_user and vote.assigned:
+                vote.assigned_by = None
+                flash(gettext("The vote is not considered \"assigned\" anymore, since you edited it."), "info")
 
             db.session.commit()
             flash(gettext("The vote has been edited."), "success")

@@ -9,7 +9,7 @@
             <h1>{{ _("Poll overview") }}</h1>
 
             <p>
-                {{ _("This list shows all the polls you have participated in, either by owning them, voting on them, or watching them.") }}
+                {{ _("This list shows all the polls you have participated in, either by owning them, voting on them, being invited, or watching.") }}
             </p>
 
             {% set watches = current_user.watches.all() %}
@@ -18,30 +18,36 @@
             <table class="table table-condensed table-striped">
                 <tr>
                     <th>Poll title</th>
-                    <th width="10">Votes</th>
-                    <th width="10">Owner</th>
-                    <th width="10">Voted</th>
-                    <th width="10">Watching</th>
+                    <th>Created</th>
+                    <th colspan="3">Tags</th>
                 </tr>
                 {% for poll in polls %}
                     <tr>
                         <td><a href="{{ poll.get_url() }}">{{ poll.title }}</a></td>
-                        <td>{{ poll.votes.count() }}</td>
-                        <td>
+                        <td>{{ poll.created|date(year=True) }}</td>
+                        <td width="10">
                             {% if poll.owner == current_user %}
-                                <span class="label label-danger"><i class="fa fa-pencil"></i> Owner</span>
+                                <span class="label label-danger"><i class="fa fa-pencil"></i> {{ _("Owner") }}</span>
                             {% elif current_user.is_member(poll.owner) %}
-                                <span class="label label-danger"><i class="fa fa-pencil"></i> Owner (group)</span>
+                                <span class="label label-danger"><i class="fa fa-pencil"></i> {{ _("Owner (group)") }}</span>
+                            {% else %}
+                                <span class="label label-default"><i class="fa fa-ban"></i> {{ _("Not owner") }}</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td width="10">
                             {% if poll.get_user_votes(current_user) %}
-                                <span class="label label-success"><i class="fa fa-check"></i> Voted</span>
+                                <span class="label label-success"><i class="fa fa-check"></i> {{ _("Voted") }}</span>
+                            {% elif current_user.is_invited(poll) %}
+                                <span class="label label-info"><i class="fa fa-envelope"></i> {{ _("Invited") }}</span>
+                            {% else %}
+                                <span class="label label-default"><i class="fa fa-pencil"></i> {{ _("Not voted") }}</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td width="10">
                             {% if poll.is_watching(current_user) %}
                                 <span class="label label-warning"><i class="fa fa-eye"></i> {{ _("Watching") }}</span>
+                            {% else %}
+                                <span class="label label-default"><i class="fa fa-eye-slash"></i> {{ _("Not watching") }}</span>
                             {% endif %}
                         </td>
                     </tr>
