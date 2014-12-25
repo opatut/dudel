@@ -1,19 +1,11 @@
-@import url(http://weloveiconfonts.com/api/?family=entypo);
-
-/* entypo */
-[class*="entypo-"]:before {
-  font-family: 'entypo', sans-serif;
-  font-size: 14px;
-}
-
-.icon-block {
-    display: inline-block;
-    width: 1em;
-    text-align: center;
-}
-
 * {
     border-radius: 0 !important;
+}
+
+.btn-xs .fa {
+    font-size: 14px;
+    margin: -1px;
+    vertical-align: -1px;
 }
 
 .alert {

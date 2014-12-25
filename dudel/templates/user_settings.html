@@ -112,6 +112,12 @@
                     {{ field_error(form.autowatch) }}
                 </div>
 
+                <div class="checkbox">
+                    {{ form.allow_invitation_mails() }}
+                    {{ form.allow_invitation_mails.label }}
+                    {{ field_error(form.allow_invitation_mails) }}
+                </div>
+
                 <div class="form-group">
                     <input type="submit" value="{{ _('Save') }}" class="btn btn-primary"/>
                 </div>

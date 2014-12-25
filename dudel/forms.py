@@ -135,6 +135,7 @@ class RegisterForm(MultiForm):
 class SettingsForm(MultiForm):
     preferred_language = SelectField(lazy_gettext("Language"), choices=LANGUAGES)
     autowatch = BooleanField(lazy_gettext("Auto-watch polls"))
+    allow_invite_mails = BooleanField(lazy_gettext("Allow to receive emails for poll invitations"))
 
 class SettingsFormPassword(SettingsForm):
     firstname = TextField(lazy_gettext("First name"))
@@ -152,11 +153,11 @@ class EditPollForm(Form):
     due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional()])
     anonymous_allowed = BooleanField(lazy_gettext("Allow anonymous votes"))
     require_login = BooleanField(lazy_gettext("Require login to vote"))
-    require_invite = BooleanField(lazy_gettext("Require invite to vote (requires login)"))
+    require_invitation = BooleanField(lazy_gettext("Require invitation to vote (requires login)"))
     public_listing = BooleanField(lazy_gettext("Show in public poll list"))
     one_vote_per_user = BooleanField(lazy_gettext("One vote per user (only effective with login)"))
     allow_comments = BooleanField(lazy_gettext("Allow comments"))
-    show_invites = BooleanField(lazy_gettext("Show invites as empty votes"))
+    show_invitations = BooleanField(lazy_gettext("Show invitations as empty votes"))
     owner_id = SelectField(lazy_gettext("Ownership"), choices=[(0, "Nobody")], coerce=int)
     # password = TextField("Password")
     # password_level = SelectField("Password mode", choices=[

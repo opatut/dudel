@@ -3,7 +3,7 @@ from flask import abort
 import scrypt
 import random
 from .member import Member
-from .pollinvite import PollInvite
+from .invitation import Invitation
 from .vote import Vote
 from dudel.login import login_provider
 
@@ -42,12 +42,13 @@ class User(Member):
     email = db.Column(db.String(80))
     preferred_language = db.Column(db.String(80))
     autowatch = db.Column(db.Boolean, default=False)
+    allow_invitation_mails = db.Column(db.Boolean, default=True)
 
     # relationships
     watches = db.relationship("PollWatch", backref="user", cascade="all, delete-orphan", lazy="dynamic")
     comments = db.relationship("Comment", backref="user", lazy="dynamic")
-    invites = db.relationship("PollInvite", backref="user", lazy="dynamic", foreign_keys=[PollInvite.user_id])
-    invites_created = db.relationship("PollInvite", backref="creator", lazy="dynamic", foreign_keys=[PollInvite.creator_id])
+    invitations = db.relationship("Invitation", backref="user", lazy="dynamic", foreign_keys=[Invitation.user_id])
+    invitations_created = db.relationship("Invitation", backref="creator", lazy="dynamic", foreign_keys=[Invitation.creator_id])
     votes = db.relationship("Vote", backref="user", lazy="dynamic", foreign_keys=[Vote.user_id])
     votes_assigned = db.relationship("Vote", backref="assigned_by", lazy="dynamic", foreign_keys=[Vote.assigned_by_id])
 
@@ -115,7 +116,7 @@ class User(Member):
         voted = [vote.poll for vote in self.votes]
 
         # Polls I am invited to
-        invited = [invite.poll for invite in self.invites]
+        invited = [invite.poll for invite in self.invitations]
 
         # All of them, filtered, without duplicates, sorted
         my_polls = watched + owned + voted + invited
@@ -128,4 +129,4 @@ class User(Member):
         return "<User:%s>" % self.displayname
 
     def is_invited(self, poll):
-        return self.invites.filter_by(poll_id=poll.id).count() > 0
+        return self.invitations.filter_by(poll_id=poll.id).count() > 0

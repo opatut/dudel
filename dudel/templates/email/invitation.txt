@@ -1,0 +1,12 @@
+Dear {{ user.displayname }},
+
+You were invited to vote on the poll "{{ poll.title }}".
+
+Visit this link to see the poll page and submit your vote: {{ url_for('poll', slug=poll.slug, _external=True) }}
+
+Sincerely,
+The Dudel.
+
+------------------------------------------
+
+You receive this mail because you allow invitation emails in your profile. Visit the following link to unsubscribe from these notifications: {{ url_for('user_settings', _external=True) }}

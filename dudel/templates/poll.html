@@ -30,8 +30,8 @@
             {{ pollDetail(_("Public listing"), _("public"), "list") }}
         {% endif %}
 
-        {% if poll.require_invite %}
-            {{ pollDetail(_("Invite required"), _("Invite required"), "envelope") }}
+        {% if poll.require_invitation %}
+            {{ pollDetail(_("Invitation required"), _("Invitation required"), "envelope") }}
         {% elif poll.require_login %}
             {{ pollDetail(_("Login required"), _("login required"), "user") }}
         {% endif %}
@@ -49,10 +49,10 @@
         {% set user_votes = [] if current_user.is_anonymous() else poll.get_user_votes(current_user) %}
         {% if poll.one_vote_per_user and user_votes %}
             <a class="btn btn-primary" href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=user_votes[0].id) }}">{{ _("Edit vote") }}</a>
-        {% elif (poll.require_login or poll.require_invite) and current_user.is_anonymous() %}
+        {% elif (poll.require_login or poll.require_invitation) and current_user.is_anonymous() %}
             <a class="btn btn-primary" href="{{ url_for('login', next=url_for('poll_vote', slug=poll.slug)) }}">{{ _("Log in to vote") }}</a>
-        {% elif poll.require_invite and not current_user.is_invited(poll) %}
-            <a class="btn btn-success disabled" href="#">{{ _("Invite required to vote") }}</a>
+        {% elif poll.require_invitation and not current_user.is_invited(poll) %}
+            <a class="btn btn-success disabled" href="#">{{ _("Invitation required to vote") }}</a>
         {% else %}
             <a class="btn btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}">{{ _("Vote now") }}</a>
         {% endif %}
@@ -145,26 +145,29 @@
                                     </tr>
                                 {% endif %}
                             {% endfor %}
-                            {% if show_votes and poll.show_invites %}
-                                {% for invite in poll.invites if not invite.voted %}
-                                        <tr class="invite">
-                                            <td class="author" data-toggle="popover" data-title="{{ invite.user.displayname }}" data-content="{{ _('This user was invited on %(date)s at %(time)s to vote in this poll.', date=invite.created|date, time=invite.created|time) }}">
-                                                <div class="pull-left" style="margin-right: 0.4em;">
-                                                    <i class="fa fa-envelope"></i>
-                                                </div>
-                                                {{ invite.user.displayname }}
+                            {% if show_votes and poll.show_invitations %}
+                                {% for invitation in poll.invitations if not invitation.voted %}
+                                    <tr class="invitation">
+                                        <td class="author" data-toggle="popover" data-title="{{ invitation.user.displayname }}" data-content="{{ _('This user was invited on %(date)s at %(time)s to vote in this poll.', date=invitation.created|date, time=invitation.created|time) }}">
+                                            <div class="pull-left" style="margin-right: 0.4em;">
+                                                <i class="fa fa-envelope"></i>
+                                            </div>
+                                            {{ invitation.user.displayname }}
+                                        </td>
+                                        {% for choice in choices %}
+                                            <td class="vote-choice text-center none">
+                                                <span class="fa fa-question"></span>
                                             </td>
-                                            {% for choice in choices %}
-                                                <td class="vote-choice text-center none">
-                                                    <span class="fa fa-question"></span>
-                                                </td>
-                                            {% endfor %}
-                                            <td class="noprint vote-actions">
-                                                {% if invite.user == current_user %}
-                                                    <a class="btn btn-xs btn-success" title="{{ _('Vote now') }}" href="{{ url_for('poll_vote', slug=poll.slug) }}"><i class="fa fa-pencil"></i></a>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
+                                        {% endfor %}
+                                        <td class="noprint vote-actions">
+                                            {% if invitation.user == current_user %}
+                                                <a class="btn btn-xs btn-success" title="{{ _('Vote now') }}" href="{{ url_for('poll_vote', slug=poll.slug) }}"><i class="fa fa-pencil"></i></a>
+                                            {% endif %}
+                                            {% if poll.user_can_edit(current_user) %}
+                                                <a href="{{ url_for('poll_invitations', slug=poll.slug) }}" class="btn btn-xs btn-default" title="{{ _('Manage invitations') }}"><i class="fa fa-ellipsis-h"></i></a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
                                 {% endfor %}
                             {% endif %}
                             {% if not show_votes %}

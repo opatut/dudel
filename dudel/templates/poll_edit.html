@@ -78,9 +78,9 @@
                     {{ field_error(form.require_login) }}
                 </div>
                 <div class="checkbox">
-                    {{ form.require_invite() }}
-                    {{ form.require_invite.label }}
-                    {{ field_error(form.require_invite) }}
+                    {{ form.require_invitation() }}
+                    {{ form.require_invitation.label }}
+                    {{ field_error(form.require_invitation) }}
                 </div>
                 <div class="checkbox">
                     {{ form.public_listing() }}
@@ -93,9 +93,9 @@
                     {{ field_error(form.one_vote_per_user) }}
                 </div>
                 <div class="checkbox">
-                    {{ form.show_invites() }}
-                    {{ form.show_invites.label }}
-                    {{ field_error(form.show_invites) }}
+                    {{ form.show_invitations() }}
+                    {{ form.show_invitations.label }}
+                    {{ field_error(form.show_invitations) }}
                 </div>
 
                 <div class="help-block">
@@ -118,7 +118,7 @@
                 <label>{{ _("Very advanced stuff") }}</label>
                 <ul class="list-unstyled">
                     <li><a href="{{ url_for('poll_edit_values', slug=poll.slug) }}">{{ _("Edit possible answer values") }}</a></li>
-                    <li><a href="{{ url_for('poll_invites', slug=poll.slug) }}">{{ _("Manage invites") }}</a></li>
+                    <li><a href="{{ url_for('poll_invitations', slug=poll.slug) }}">{{ _("Manage invitations") }}</a></li>
                     {% if poll.user_can_administrate(current_user) %}
                     <li><a href="{{ url_for('poll_delete', slug=poll.slug) }}" class="red">{{ _("Delete this poll") }}</a></li>
                     {% endif %}

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from dudel import app, db, babel, supported_languages
-from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, PollInvite
+from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
 from dudel.login import get_user
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, PollInviteForm, VoteAssignForm
 from dudel.util import PollExpiredException, PollActionException
@@ -145,6 +145,7 @@ def user_settings():
     if form.validate_on_submit():
         current_user.preferred_language = form.preferred_language.data
         current_user.autowatch = form.autowatch.data
+        current_user.allow_invitation_mails = form.allow_invitation_mails.data
 
         if current_user.source == "manual":
             form.populate_obj(current_user)
@@ -223,8 +224,8 @@ def poll_edit(slug):
 
     return render_template("poll_edit.html", poll=poll, form=form)
 
-@app.route("/<slug>/invites/", methods=("POST", "GET"))
-def poll_invites(slug):
+@app.route("/<slug>/invitations/", methods=("POST", "GET"))
+def poll_invitations(slug):
     poll = get_poll(slug)
     poll.check_edit_permission()
     form = PollInviteForm()
@@ -253,26 +254,27 @@ def poll_invites(slug):
                 users = group.users
 
             for user in users:
-                invite = PollInvite.query.filter_by(poll_id=poll.id, user_id=user.id).first()
-                if invite:
+                invitation = Invitation.query.filter_by(poll_id=poll.id, user_id=user.id).first()
+                if invitation:
                     alreadyInvitedOrVoted.append(user)
                     continue
 
-                invite = PollInvite()
-                invite.user = user
-                invite.poll = poll
+                invitation = Invitation()
+                invitation.user = user
+                invitation.poll = poll
                 if current_user.is_authenticated():
-                    invite.creator = current_user
+                    invitation.creator = current_user
 
                 vote = Vote.query.filter_by(poll_id=poll.id, user_id=user.id).first()
                 if vote:
-                    # create an invite, just to track them
-                    invite.vote = vote
+                    # create an invitation, just to track them
+                    invitation.vote = vote
                     alreadyInvitedOrVoted.append(user)
                 else:
                     found.append(user)
 
-                db.session.add(invite)
+                db.session.add(invitation)
+                invitation.send_mail()
 
         db.session.commit()
 
@@ -284,25 +286,49 @@ def poll_invites(slug):
             flash(gettext("%(count)d users were skipped, since they either are already invited or have already voted.", count=len(alreadyInvitedOrVoted)), "info")
 
         #return redirect(poll.get_url())
-        return redirect(url_for("poll_invites", slug=poll.slug))
+        return redirect(url_for("poll_invitations", slug=poll.slug))
 
-    return render_template("poll_invites.html", poll=poll, form=form)
+    return render_template("poll_invitations.html", poll=poll, form=form)
 
 
-@app.route("/<slug>/invites/<int:id>/delete", methods=("POST", "GET"))
-def poll_invite_delete(slug, id):
+@app.route("/<slug>/invitations/<int:id>/delete")
+def poll_invitation_delete(slug, id):
     poll = get_poll(slug)
     poll.check_edit_permission()
 
-    invite = PollInvite.query.filter_by(id=id).first_or_404()
-    if invite.poll != poll: abort(404)
+    invitation = Invitation.query.filter_by(id=id).first_or_404()
+    if invitation.poll != poll: abort(404)
 
-    db.session.delete(invite)
+    db.session.delete(invitation)
     db.session.commit()
 
-    flash(gettext("The invite was deleted."), "success")
-    return redirect(url_for("poll_invites", slug=poll.slug))
+    flash(gettext("The invitation was deleted."), "success")
+    return redirect(url_for("poll_invitations", slug=poll.slug))
 
+@app.route("/<slug>/invitations/<int:id>/resend")
+def poll_invitation_resend(slug, id):
+    poll = get_poll(slug)
+    poll.check_edit_permission()
+
+    invitation = Invitation.query.filter_by(id=id).first_or_404()
+    if invitation.poll != poll: abort(404)
+
+    invitation.send_mail(reminder=True)
+
+    flash(gettext("The invitation was resent."), "success")
+    return redirect(url_for("poll_invitations", slug=poll.slug))
+
+@app.route("/<slug>/invitations/resend")
+def poll_invitations_resend_all(slug):
+    poll = get_poll(slug)
+    poll.check_edit_permission()
+
+    for invitation in poll.invitations:
+        if not invitation.voted:
+            invitation.send_mail(reminder=True)
+
+    flash(gettext("All invitations were resent."), "success")
+    return redirect(url_for("poll_invitations", slug=poll.slug))
 
 @app.route("/<slug>/watch/<watch>", methods=("POST", "GET"))
 @login_required
@@ -540,7 +566,7 @@ def poll_vote(slug):
     poll.check_expiry()
 
     # Check if user needs to log in
-    if (poll.require_login or poll.require_invite) and current_user.is_anonymous():
+    if (poll.require_login or poll.require_invitation) and current_user.is_anonymous():
         flash(gettext("You need to login to vote on this poll."), "error")
         return redirect(url_for("login", next=url_for("poll_vote", slug=poll.slug)))
 
@@ -550,8 +576,8 @@ def poll_vote(slug):
         return redirect(poll.get_url())
 
     # Check if user was invited
-    if poll.require_invite and not current_user.is_invited(poll):
-        flash(gettext("You need an invite to vote on this poll."), "error")
+    if poll.require_invitation and not current_user.is_invited(poll):
+        flash(gettext("You need an invitation to vote on this poll."), "error")
         return redirect(poll.get_url())
 
     groups = poll.get_choice_groups()
@@ -594,9 +620,9 @@ def poll_vote(slug):
                 db.session.add(vote_choice)
 
             if current_user.is_authenticated():
-                invite = PollInvite.query.filter_by(user_id=current_user.id, poll_id=poll.id).first()
-                if invite:
-                    invite.vote = vote
+                invitation = Invitation.query.filter_by(user_id=current_user.id, poll_id=poll.id).first()
+                if invitation:
+                    invitation.vote = vote
 
             flash(gettext("You have voted."), "success")
 
@@ -646,10 +672,10 @@ def poll_vote_assign(slug, vote_id):
         vote.assigned_by = current_user
         vote.name = ""
 
-        # assign invite to this vote, if any
-        invite = PollInvite.query.filter_by(user_id=user.id, poll_id=poll.id).first()
-        if invite:
-            invite.vote = vote
+        # assign invitation to this vote, if any
+        invitation = Invitation.query.filter_by(user_id=user.id, poll_id=poll.id).first()
+        if invitation:
+            invitation.vote = vote
 
         # done.
         db.session.commit()
@@ -677,13 +703,13 @@ def poll_vote_edit(slug, vote_id):
     form = CreateVoteForm(obj=vote)
 
     # Check if user is logged in
-    if (poll.require_login or poll.require_invite) and current_user.is_anonymous():
+    if (poll.require_login or poll.require_invitation) and current_user.is_anonymous():
         flash(gettext("You need to login to edit votes on this poll."), "error")
         return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
 
     # Check if user was invited
-    if poll.require_invite and not current_user.is_invited(poll):
-        flash(gettext("You need an invite to edit votes on this poll."), "error")
+    if poll.require_invitation and not current_user.is_invited(poll):
+        flash(gettext("You need an invitation to edit votes on this poll."), "error")
         return redirect(poll.get_url())
 
     if request.method == "POST":

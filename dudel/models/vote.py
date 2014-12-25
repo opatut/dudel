@@ -11,7 +11,7 @@ class Vote(db.Model):
     created = db.Column(db.DateTime)
     comment = db.Column(db.Text)
 
-    invite = db.relationship("PollInvite", backref="vote", lazy="dynamic")
+    invitation = db.relationship("Invitation", backref="vote", lazy="dynamic")
 
     def __init__(self):
         self.created = datetime.utcnow()

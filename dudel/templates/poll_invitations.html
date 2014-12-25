@@ -1,0 +1,66 @@
+{% extends "base_poll.html" %}
+
+{% block polltitle %}{{ _("Settings") }}{% endblock %}
+
+{% block poll_content %}
+    <h2>{{ _("Invitations") }}</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-hover table-condensed table-striped">
+                <tr>
+                    <th width="10"></th>
+                    <th>User</th>
+                    <th>Invited</th>
+                    <th width="10">Actions</th>
+                </tr>
+                {% for invitation in poll.invitations %}
+                    <tr>
+                        <td title="{{ _('Voted') if invitation.voted else _('Vote pending') }}">
+                            <i class="fa fa-{{ 'check' if invitation.voted else 'envelope-o' }}"></i>
+                        </td>
+                        <td>
+                            {{ invitation.user.displayname }}
+                        </td>
+                        <td>
+                            {{ invitation.created|datetime }}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('poll_invitation_resend', slug=poll.slug, id=invitation.id) }}" title="{{ _('Resend invitation') }}" class="btn btn-xs btn-default"><i class="fa fa-refresh"></i></a>
+                            <a href="{{ url_for('poll_invitation_delete', slug=poll.slug, id=invitation.id) }}" title="{{ _('Remove invitation') }}" class="btn btn-xs btn-default"><i class="fa fa-trash-o"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-md-6">
+            <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ field_error(form.hidden_tag) }}
+
+            <div class="form-group">
+                {{ form.member.label }}
+                <div class="input-group">
+                    {{ form.member(class="form-control") }}
+                    <div class="input-group-btn">
+                        <input type="submit" class="btn btn-primary" value="{{ _('Invite') }}" />
+                    </div>
+                </div>
+                {{ field_error(form.member) }}
+
+                <ul class="help-list">
+                    <li>{{ _("Enter the username or group title of the user or group of users you want to invite.") }}</li>
+                    <li>{{ _("You can enter multiple users or groups.") }}</li>
+                    <li>{{ _("Duplicates are ignored automatically.") }}</li>
+                    <li>{{ _("Group invitations are resolved immediately, so adding more members to a group later will not invite those new members, unless you re-invite the group.") }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+        <hr />
+
+        <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="fa fa-arrow-left"></span> {{ _("Back to poll") }}</a>
+        <a href="{{ url_for('poll_invitations_resend_all', slug=poll.slug) }}" class="btn btn-default"><span class="fa fa-refresh"></span> {{ _("Resend all invitations") }}</a>
+    </form>
+{% endblock %}

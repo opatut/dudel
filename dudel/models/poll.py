@@ -26,13 +26,13 @@ class Poll(db.Model):
     anonymous_allowed = db.Column(db.Boolean, default=True)
     public_listing = db.Column(db.Boolean, default=False)
     require_login = db.Column(db.Boolean, default=False)
-    require_invite = db.Column(db.Boolean, default=False)
+    require_invitation = db.Column(db.Boolean, default=False)
     show_results = db.Column(db.String(20), default="complete") # summary|complete|never|summary_after_vote|complete_after_vote
     send_mail = db.Column(db.Boolean, default=False)
     one_vote_per_user = db.Column(db.Boolean, default=True)
     allow_comments = db.Column(db.Boolean, default=True)
     deleted = db.Column(db.Boolean, default=False)
-    show_invites = db.Column(db.Boolean, default=True)
+    show_invitations = db.Column(db.Boolean, default=True)
 
     RESERVED_NAMES = ["login", "logout", "index", "user", "admin"]
 
@@ -42,7 +42,7 @@ class Poll(db.Model):
     watchers = db.relationship("PollWatch", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
     comments = db.relationship("Comment", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
     votes = db.relationship("Vote", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
-    invites = db.relationship("PollInvite", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
+    invitations = db.relationship("Invitation", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
 
     _vote_choice_map = None
     _choices = None
