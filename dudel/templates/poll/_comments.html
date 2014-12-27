@@ -1,0 +1,69 @@
+{% from "_macros.html" import alert, form_errors, field_error, markdown_info %}
+{% set comments = poll.get_comments() %}
+
+{% if comments %}
+    <hr />
+    <h3>{{ _("Comments") }}</h3>
+    <div class="comments">
+    {% for comment in comments %}
+        <div class="comment">
+            <a name="comment-{{ comment.id }}"></a>
+            <div class="avatar">
+                <img src="{{ comment.user.get_avatar(48) if comment.user_id else comment.name|gravatar(48) }}" />
+            </div>
+            <div class="meta">
+                <div class="author">{{ comment.name or comment.user.displayname }}</div>
+                {{ _("commented on") }}
+                <div class="date">{{ comment.created | date }} at {{ comment.created | time }}</div>
+                {% if comment.user_can_edit(current_user) %}
+                <div class="edit">
+                    <a href="{{ url_for('poll_delete_comment', slug=poll.slug, id=comment.id) }}" title="{{ _('delete comment') }}" class="btn btn-default btn-xs"><i class="fa fa-trash-o"></i></a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="text">{{ comment.text | markdown }}</div>
+        </div>
+    {% endfor %}
+    </div>
+{% endif %}
+
+{% if poll.allow_comments %}
+    <hr />
+    <div class="noprint">
+        <h3>{{ _("Post a comment") }}</h3>
+        <form method="POST" class="form">
+            {{ comment_form.hidden_tag() }}
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ comment_form.name.label }}
+                        {% if current_user.is_anonymous() %}
+                            {{ comment_form.name(class="form-control") }}
+                        {% else %}
+                            <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
+                        {% endif %}
+                        {{ field_error(comment_form.name) }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                {{ comment_form.text.label }}
+                {{ comment_form.text(class="form-control", rows=6) }}
+                {{ field_error(comment_form.text) }}
+                {{ markdown_info(true) }}
+            </div>
+            {% if current_user.is_anonymous() %}
+            <div class="form-group">
+                {{ comment_form.captcha }}
+                {{ field_error(comment_form.captcha) }}
+                <p class="help-block">
+                    {{ _("You can avoid this captcha if you login.") }}
+                </p>
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <input type="submit" value="{{ _('Post comment') }}" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+{% endif %}

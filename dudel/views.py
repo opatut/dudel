@@ -86,7 +86,7 @@ def login():
 
         return redirect(request.args.get("next") or url_for("index"))
 
-    return render_template("login.html", form=form)
+    return render_template("user/login.html", form=form)
 
 @app.route("/register", methods=("GET", "POST"))
 def register():
@@ -108,7 +108,7 @@ def register():
 
         return redirect(request.args.get("next") or url_for("index"))
 
-    return render_template("register.html", form=form)
+    return render_template("user/register.html", form=form)
 
 @app.route("/logout")
 def logout():
@@ -156,7 +156,7 @@ def user_settings():
         flash(gettext("Your user settings were updated."), "success")
         return redirect(url_for('user_settings'))
 
-    return render_template("user_settings.html", form=form)
+    return render_template("user/settings.html", form=form)
 
 @app.route("/<slug>/", methods=("GET", "POST"))
 def poll(slug):
@@ -181,7 +181,7 @@ def poll(slug):
         db.session.commit()
         return redirect(poll.get_url() + "#comment-" + str(comment.id))
 
-    return render_template("poll.html", poll=poll, comment_form=comment_form)
+    return render_template("poll/view.html", poll=poll, comment_form=comment_form)
 
 @app.route("/<slug>/comment/delete/<int:id>", methods=("POST", "GET"))
 def poll_delete_comment(slug, id):
@@ -222,7 +222,7 @@ def poll_edit(slug):
         form.owner_id.data = poll.owner_id
 
 
-    return render_template("poll_edit.html", poll=poll, form=form)
+    return render_template("poll/settings/edit.html", poll=poll, form=form)
 
 @app.route("/<slug>/invitations/", methods=("POST", "GET"))
 def poll_invitations(slug):
@@ -264,7 +264,7 @@ def poll_invitations(slug):
         #return redirect(poll.get_url())
         return redirect(url_for("poll_invitations", slug=poll.slug))
 
-    return render_template("poll_invitations.html", poll=poll, form=form)
+    return render_template("poll/settings/invitations.html", poll=poll, form=form)
 
 
 @app.route("/<slug>/invitations/<int:id>/delete")
@@ -470,7 +470,7 @@ def poll_edit_choices(slug, step=1):
 
         args["form"] = form
 
-    return render_template("poll_edit_choices.html", poll=poll, step=step, **args)
+    return render_template("poll/settings/choices.html", poll=poll, step=step, **args)
 
 @app.route("/<slug>/values/", methods=("POST", "GET"))
 def poll_edit_values(slug):
@@ -522,7 +522,7 @@ def poll_edit_values(slug):
             return redirect(url_for("poll_edit_values", slug=poll.slug))
         args["form"] = form
 
-    return render_template("poll_edit_values.html", poll=poll, **args)
+    return render_template("poll/settings/values.html", poll=poll, **args)
 
 @app.route("/<slug>/delete", methods=("POST", "GET"))
 def poll_delete(slug):
@@ -534,7 +534,7 @@ def poll_delete(slug):
         flash(gettext("The poll was deleted."), "success")
         return redirect(url_for("index"))
 
-    return render_template("poll_delete.html", poll=poll)
+    return render_template("poll/settings/delete.html", poll=poll)
 
 @app.route("/<slug>/vote", methods=("POST", "GET"))
 def poll_vote(slug):
@@ -615,7 +615,7 @@ def poll_vote(slug):
     if not request.method == "POST":
         poll.fill_vote_form(form)
 
-    return render_template("vote.html", poll=poll, form=form)
+    return render_template("poll/vote/edit.html", poll=poll, form=form)
 
 @app.route("/<slug>/vote/<int:vote_id>/assign", methods=("POST", "GET"))
 @login_required
@@ -658,7 +658,7 @@ def poll_vote_assign(slug, vote_id):
         flash(gettext("You assigned this vote to %(user)s.", user=user.displayname), "success")
         return redirect(poll.get_url())
 
-    return render_template("poll_vote_assign.html", poll=poll, vote=vote, form=form)
+    return render_template("poll/vote/assign.html", poll=poll, vote=vote, form=form)
 
 @app.route("/<slug>/vote/<int:vote_id>/edit", methods=("POST", "GET"))
 def poll_vote_edit(slug, vote_id):
@@ -732,7 +732,7 @@ def poll_vote_edit(slug, vote_id):
             vote_choice = VoteChoice.query.filter_by(vote_id = vote.id, choice_id = subform.choice_id.data).first()
             subform.comment.data = vote_choice.comment if vote_choice else ""
 
-    return render_template("vote.html", poll=poll, form=form, vote=vote)
+    return render_template("poll/vote/edit.html", poll=poll, form=form, vote=vote)
 
 @app.route("/<slug>/vote/<int:vote_id>/delete", methods=("POST", "GET"))
 def poll_vote_delete(slug, vote_id):
@@ -831,7 +831,7 @@ def poll_copy(slug):
         form.due_date.data = poll.due_date if (poll.due_date and poll.due_date > datetime.utcnow()) else None
         form.reset_ownership.data = not poll.user_can_administrate(current_user)
 
-    return render_template("poll_copy.html", poll=poll, form=form)
+    return render_template("poll/settings/copy.html", poll=poll, form=form)
 
 @app.errorhandler(PollExpiredException)
 def poll_expired(e):

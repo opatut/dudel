@@ -1,0 +1,23 @@
+{% if not poll.is_expired and poll.has_choices %}
+<div class="noprint">
+    {% set user_votes = [] if current_user.is_anonymous() else poll.get_user_votes(current_user) %}
+    {% if poll.one_vote_per_user and user_votes %}
+        <a class="btn btn-primary" href="{{ url_for('poll_vote_edit', slug=poll.slug, vote_id=user_votes[0].id) }}">{{ _("Edit vote") }}</a>
+    {% elif (poll.require_login or poll.require_invitation) and current_user.is_anonymous() %}
+        <a class="btn btn-primary" href="{{ url_for('login', next=url_for('poll_vote', slug=poll.slug)) }}">{{ _("Log in to vote") }}</a>
+    {% elif poll.require_invitation and not current_user.is_invited(poll) %}
+        <a class="btn btn-success disabled" href="#">{{ _("Invitation required to vote") }}</a>
+    {% else %}
+        <a class="btn btn-success" href="{{ url_for('poll_vote', slug=poll.slug) }}">{{ _("Vote now") }}</a>
+    {% endif %}
+
+    {% if current_user.is_authenticated() %}
+        {% if poll.is_watching(current_user) %}
+            <a class="btn btn-default" href="{{ url_for('poll_watch', slug=poll.slug, watch='no') }}"><i class="fa fa-eye-slash"></i> {{ _("Unwatch poll") }}</a>
+        {% else %}
+            <a class="btn btn-default" href="{{ url_for('poll_watch', slug=poll.slug, watch='yes') }}"><i class="fa fa-eye"></i> {{ _("Watch poll") }}</a>
+        {% endif %}
+    {% endif %}
+</div center>
+{% endif %}
+
