@@ -26,3 +26,13 @@ class ChoiceValue(db.Model):
             deleted=self.deleted,
             weight=self.weight)
 
+    def copy(self):
+        n = ChoiceValue()
+        n.title = self.title
+        n.icon = self.icon
+        n.color = self.color
+        n.deleted = self.deleted
+        n.weight = self.weight
+        n.poll = self.poll
+        return n
+

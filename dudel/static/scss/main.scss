@@ -788,3 +788,12 @@ tr.choice td {
 .nobr {
     white-space: nowrap;
 }
+
+#dateoffset-preview {
+    color: #888 !important;
+
+    .from, .to {
+        display: inline;
+        font-weight: bold;
+    }
+}

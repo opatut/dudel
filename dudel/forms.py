@@ -69,33 +69,24 @@ class SelectButtonInput:
         return Markup('<button name="%s" type="submit" value="%s" class="btn-link">%s</button>'
                         % (field.name, field.data, field.label.text))
 
-class YourNameRequired(object):
-    def __call__(self, form, field):
-        if form["anonymous"].data:
-            return # nevermind if we are anonymous!
-        if not field.data:
-            raise ValidationError(gettext("This field is required."))
-
-class RequiredIfAnonymous(object):
-    def __call__(self, form, field):
-        if not field.data and current_user.is_anonymous():
-            raise ValidationError(gettext("This field is required."))
-
 class RecaptchaIfAnonymous(RecaptchaValidator):
     def __call__(self, form, field):
         if current_user.is_anonymous():
             super(RecaptchaIfAnonymous, self).__call__(form, field)
 
-class AtLeastNow(object):
+class RequiredIf(object):
+    def __init__(self, condition):
+        self.condition = condition
+
     def __call__(self, form, field):
-        if field.data < datetime.utcnow():
-            raise ValidationError(gettext("Please select a date later than right now."))
+        if self.condition(form, field) and not field.data:
+            raise ValidationError(gettext("This field is required."))
+
 
 ################################################################################
 
-class CreatePollForm(Form):
+class PollForm(Form):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
-    type = SelectField(lazy_gettext("Type"), choices=[("date", lazy_gettext("Date and Time")), ("day", lazy_gettext("Date")),  ("normal", lazy_gettext("Normal poll"))])
     slug = TextField(lazy_gettext("URL name"), validators=[Required(),
         Length(min=3, max=80),
         Regexp(r"^[a-zA-Z0-9_-]*$", message=lazy_gettext("Invalid character.")),
@@ -103,6 +94,17 @@ class CreatePollForm(Form):
         NoneOf(Poll.RESERVED_NAMES, message=lazy_gettext("This is a reserved name."))
         ])
     due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional()])
+
+class CreatePollForm(PollForm):
+    type = SelectField(lazy_gettext("Type"), choices=[("date", lazy_gettext("Date and Time")), ("day", lazy_gettext("Date")),  ("normal", lazy_gettext("Normal poll"))])
+
+class CopyPollForm(PollForm):
+    copy_choices = BooleanField(lazy_gettext("Copy choices"), default=True)
+    copy_invitations = BooleanField(lazy_gettext("Copy invitations"), default=True)
+    copy_choice_values = BooleanField(lazy_gettext("Copy possible answer values"), default=True)
+    date_offset = IntegerField(lazy_gettext("Date shift (days)"), default=0)
+    create_invitations_from_votes = BooleanField(lazy_gettext("Create invitations from votes"), default=False)
+    reset_ownership = BooleanField(lazy_gettext("Reset ownership"), default=True)
 
 class DateTimeSelectForm(Form):
     dates = TextField(lazy_gettext("Dates"), validators = [Regexp("^([\d]{4}-[\d]{2}-[\d]{2},?)*$")])
@@ -179,8 +181,14 @@ class CreateVoteChoiceForm(Form):
     comment = TextField(lazy_gettext("Comment"))
     choice_id = HiddenField("choice id", validators=[Required()])
 
+def anonymous_not_checked(form, field):
+    return not form["anonymous"].data
+
+def not_logged_in(form, field):
+    return current_user.is_anonymous()
+
 class CreateVoteForm(Form):
-    name = TextField(lazy_gettext("Your Name"), validators=[YourNameRequired(), Length(max=80)])
+    name = TextField(lazy_gettext("Your Name"), validators=[RequiredIf(anonymous_not_checked), Length(max=80)])
     anonymous = BooleanField(lazy_gettext("Post anonymous vote"))
     vote_choices = FieldList(FormField(CreateVoteChoiceForm))
     comment = TextAreaField(lazy_gettext("Comment"), validators=[Optional()])
@@ -189,7 +197,7 @@ class PollPassword(Form):
     password = PasswordField(lazy_gettext("Poll password"), validators=[Required()])
 
 class CommentForm(Form):
-    name = TextField(lazy_gettext("Your Name"), validators=[RequiredIfAnonymous(), Length(max=80)])
+    name = TextField(lazy_gettext("Your Name"), validators=[RequiredIf(not_logged_in), Length(max=80)])
     text = TextAreaField(lazy_gettext("Comment"))
     captcha = RecaptchaField(validators=[RecaptchaIfAnonymous()])
 

@@ -14,7 +14,6 @@
 
 {% macro form_errors(form) %}
     {% if form.errors %}
-
         {% for field_name in form.errors %}
             {% for error in form.errors[field_name] %}
                 {% if error is mapping %}
@@ -28,7 +27,6 @@
                 {% endif %}
             {% endfor %}
         {% endfor %}
-
     {% endif %}
 {% endmacro %}
 

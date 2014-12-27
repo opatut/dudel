@@ -4,6 +4,7 @@ from dudel.models.choicevalue import ChoiceValue
 from dudel.models.comment import Comment
 from dudel.models.pollwatch import PollWatch
 from dudel.models.vote import Vote
+from dudel.models.invitation import Invitation
 from dudel.models.votechoice import VoteChoice
 from dudel.util import PollExpiredException, PollActionException
 from datetime import datetime, timedelta
@@ -34,7 +35,7 @@ class Poll(db.Model):
     deleted = db.Column(db.Boolean, default=False)
     show_invitations = db.Column(db.Boolean, default=True)
 
-    RESERVED_NAMES = ["login", "logout", "index", "user", "admin"]
+    RESERVED_NAMES = ["login", "logout", "index", "user", "admin", "api", "register", "static"]
 
     # relationships
     choices = db.relationship("Choice", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
@@ -47,16 +48,56 @@ class Poll(db.Model):
     _vote_choice_map = None
     _choices = None
 
-    def __init__(self):
+    def __init__(self, create_choice_values=True):
         self.created = datetime.utcnow()
+
         # create yes/no/maybe default choice values
-        self.choice_values.append(ChoiceValue("yes", "check", "9C6", 1.0))
-        self.choice_values.append(ChoiceValue("no", "ban", "F96", 0.0))
-        self.choice_values.append(ChoiceValue("maybe", "question", "FF6", 0.5))
+        if create_choice_values:
+            self.choice_values.append(ChoiceValue("yes", "check", "9C6", 1.0))
+            self.choice_values.append(ChoiceValue("no", "ban", "F96", 0.0))
+            self.choice_values.append(ChoiceValue("maybe", "question", "FF6", 0.5))
 
     @property
     def is_expired(self):
         return self.due_date and self.due_date < datetime.utcnow()
+
+    def invite(self, user):
+        result = True
+        invitation = Invitation.query.filter_by(poll_id=self.id, user_id=user.id).first()
+        if invitation:
+            return False
+
+        invitation = Invitation()
+        invitation.user = user
+        invitation.poll = self
+        if current_user.is_authenticated():
+            invitation.creator = current_user
+
+        vote = Vote.query.filter_by(poll_id=self.id, user_id=user.id).first()
+        if vote:
+            # create an invitation, just to track them
+            invitation.vote = vote
+            result = False
+
+        db.session.add(invitation)
+        invitation.send_mail()
+        return result
+
+    def invite_all(self, users):
+        invited = []
+        failed = []
+
+        users = list(set(users))
+
+        for user in users:
+            if not user: continue
+            if self.invite(user):
+                invited.append(user)
+            else:
+                failed.append(user)
+
+        return invited, failed
+
 
     def show_votes(self, user):
         return self.user_can_administrate(user) \
@@ -287,3 +328,8 @@ class Poll(db.Model):
                 return False
 
         return True
+
+    def get_choice_range(self):
+        values = [choice.value for choice in self.get_choices()]
+        if not values: return None, None
+        return min(values), max(values)

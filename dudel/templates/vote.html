@@ -1,18 +1,19 @@
 {% extends "base_poll.html" %}
 
-{% block polltitle %}{{ _("Vote") }}{% endblock %}
+{% block polltitle %}{{ _("Edit Vote") if vote else _("Vote") }}{% endblock %}
 
 {% block poll_content %}
-
     {% if not vote and not current_user.is_anonymous() and poll.get_user_votes(current_user) %}
         {{ alert("warning", _("You have already voted on this poll. Maybe instead of voting again you'd rather edit your choices?")) }}
     {% endif %}
 
-    {{ alert("info", _("Hold left mouse button and drag mouse to select multiple vote choices.")) }}
-
     {% if vote %}
         {{ alert("warning", _("You are editing a vote, not casting a new one.")) }}
     {% endif %}
+
+    <ul class="help-list">
+        <li>{{ _("Hold left mouse button and drag mouse to select multiple vote choices.") }}</li>
+    </ul>
 
     <form method="POST" class="form-inline">
         {{ form.hidden_tag() }}
@@ -83,7 +84,7 @@
                     {% if poll.anonymous_allowed %}
                     <div class="checkbox">
                         {{ form.anonymous() }}
-                        {{ form.anonymous.label() }}
+                        {{ form.anonymous.label }}
                     </div>
                     {% endif %}
                 </td>
@@ -101,8 +102,7 @@
             </tr>
 
             <tr>
-                <td></td>
-                <td></td>
+                <td colspan="{{ (matrix[0]|length if matrix else 1) }}">
                 <td colspan="3">
                     <button type="submit" class="btn btn-success btn-block"><span class="fa fa-check"></span> {{ _("Save vote") }}</button>
                 </td>

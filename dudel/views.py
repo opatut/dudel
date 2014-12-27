@@ -2,14 +2,14 @@
 from dudel import app, db, babel, supported_languages
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
 from dudel.login import get_user
-from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, PollInviteForm, VoteAssignForm
+from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, PollInviteForm, VoteAssignForm, CopyPollForm
 from dudel.util import PollExpiredException, PollActionException
 import dudel.login
 from flask import redirect, abort, request, render_template, flash, url_for, g, Response
 from flask.ext.babel import gettext
 from flask.ext.login import current_user, login_required
 from dateutil import parser
-from datetime import datetime
+from datetime import datetime, timedelta
 import json, re
 from sqlalchemy import func
 
@@ -238,43 +238,19 @@ def poll_invitations(slug):
 
         names = re.split(r'[^a-zA-Z0-9!öäüÜÄÖß_-]', form.member.data)
         for name in names:
-            if not name: continue
+            if not name:
+                continue
+
             user = User.query.filter(func.lower(User.username) == func.lower(name)).first()
             group = Group.query.filter(func.lower(Group.name) == func.lower(name)).first()
-            if group and user:
-                print('Warning! User & Group with similar/same name: "%s" vs. "%s".' % (user.username, group.displayname))
 
             if not user and not group:
                 notfound.append(name)
                 continue
 
-            if user:
-                users = [user]
-            else:
-                users = group.users
-
-            for user in users:
-                invitation = Invitation.query.filter_by(poll_id=poll.id, user_id=user.id).first()
-                if invitation:
-                    alreadyInvitedOrVoted.append(user)
-                    continue
-
-                invitation = Invitation()
-                invitation.user = user
-                invitation.poll = poll
-                if current_user.is_authenticated():
-                    invitation.creator = current_user
-
-                vote = Vote.query.filter_by(poll_id=poll.id, user_id=user.id).first()
-                if vote:
-                    # create an invitation, just to track them
-                    invitation.vote = vote
-                    alreadyInvitedOrVoted.append(user)
-                else:
-                    found.append(user)
-
-                db.session.add(invitation)
-                invitation.send_mail()
+            invited, failed = poll.invite_all([user] if user else group.users)
+            found.extend(invited)
+            alreadyInvitedOrVoted.extend(failed)
 
         db.session.commit()
 
@@ -773,6 +749,89 @@ def poll_vote_delete(slug, vote_id):
     flash(gettext("The vote has been deleted"), "success")
     return redirect(poll.get_url())
 
+@app.route("/<slug>/copy", methods=("POST", "GET"))
+def poll_copy(slug):
+    poll = get_poll(slug)
+
+    form = CopyPollForm()
+    if form.validate_on_submit():
+        new_poll = Poll(create_choice_values=not form.copy_choice_values.data)
+
+        # New data
+        new_poll.title = form.title.data.strip()
+        new_poll.slug = form.slug.data
+        new_poll.due_date = form.due_date.data
+        new_poll.created = datetime.utcnow()
+
+        # Copied data
+        new_poll.description = poll.description
+        new_poll.type = poll.type
+        new_poll.anonymous_allowed = poll.anonymous_allowed
+        new_poll.public_listing = poll.public_listing
+        new_poll.require_login = poll.require_login
+        new_poll.require_invitation = poll.require_invitation
+        new_poll.show_results = poll.show_results
+        new_poll.one_vote_per_user = poll.one_vote_per_user
+        new_poll.allow_comments = poll.allow_comments
+        new_poll.show_invitations = poll.show_invitations
+        new_poll.owner_id = poll.owner_id
+
+        # Copy choice values
+        if form.copy_choice_values.data:
+            new_poll.choice_values = []
+            for choice_value in poll.choice_values:
+                new_choice_value = choice_value.copy()
+                new_choice_value.poll = new_poll
+
+        # Copy invitations
+        invitation_users = []
+        if form.copy_invitations:
+            invitation_users.extend([invitation.user for invitation in poll.invitations])
+
+        # Create invitations from votes
+        if form.create_invitations_from_votes.data:
+            invitation_users.extend([vote.user for vote in poll.votes])
+
+        # Copy choices
+        if form.copy_choices.data:
+            date_offset = None
+            if poll.type in ("day", "date"):
+                date_offset = timedelta(days=form.date_offset.data)
+
+            for choice in poll.choices:
+                new_choice = choice.copy()
+                new_choice.poll = new_poll
+                if date_offset and new_choice.date:
+                    new_choice.date += date_offset
+
+        # Copy watchers
+        for watch in poll.watchers:
+            new_watch = watch.copy()
+            new_watch.poll = new_poll
+
+        # Reset owneship if desired
+        if form.reset_ownership.data:
+            new_poll.owner = None
+
+        db.session.add(new_poll)
+        flash(gettext("The poll was copied."), "success")
+
+        # Perform invitations
+        invited, failed = new_poll.invite_all(invitation_users)
+        if invited:
+            flash(gettext("You have invited %(count)d users.", count=len(invited)), "success")
+        if failed:
+            flash(gettext("%(count)d users could not be invited.", count=len(failed)), "info")
+
+        db.session.commit()
+        return redirect(new_poll.get_url())
+
+    elif request.method == "GET":
+        form.title.data = gettext("Copy of %(title)s", title=poll.title)
+        form.due_date.data = poll.due_date if (poll.due_date and poll.due_date > datetime.utcnow()) else None
+        form.reset_ownership.data = not poll.user_can_administrate(current_user)
+
+    return render_template("poll_copy.html", poll=poll, form=form)
 
 @app.errorhandler(PollExpiredException)
 def poll_expired(e):

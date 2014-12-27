@@ -119,6 +119,7 @@
                 <ul class="list-unstyled">
                     <li><a href="{{ url_for('poll_edit_values', slug=poll.slug) }}">{{ _("Edit possible answer values") }}</a></li>
                     <li><a href="{{ url_for('poll_invitations', slug=poll.slug) }}">{{ _("Manage invitations") }}</a></li>
+                    <li><a href="{{ url_for('poll_copy', slug=poll.slug) }}">{{ _("Copy poll") }}</a></li>
                     {% if poll.user_can_administrate(current_user) %}
                     <li><a href="{{ url_for('poll_delete', slug=poll.slug) }}" class="red">{{ _("Delete this poll") }}</a></li>
                     {% endif %}

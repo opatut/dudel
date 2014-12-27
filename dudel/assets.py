@@ -24,6 +24,7 @@ assets.register('css_all', css_all)
 coffee = Bundle(
     'coffee/gettext.coffee',
     'coffee/datetime.coffee',
+    'coffee/dateoffset.coffee',
     filters='coffeescript',
     output='gen/coffee.js'
 )

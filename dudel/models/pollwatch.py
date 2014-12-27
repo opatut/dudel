@@ -8,3 +8,6 @@ class PollWatch(db.Model):
     def __init__(self, poll, user):
         self.poll = poll
         self.user = user
+
+    def copy(self):
+        return PollWatch(self.poll, self.user)

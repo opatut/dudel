@@ -43,3 +43,21 @@ class Choice(db.Model):
         else:
             return '<i class="fa fa-chevron-right choice-separator"></i>'.join(self.get_hierarchy())
             # return self.text
+
+    @property
+    def value(self):
+        poll_type = self.poll.type
+        if poll_type == "day":
+            return self.date.date()
+        elif poll_type == "date":
+            return self.date
+        else:
+            return self.text
+
+    def copy(self):
+        n = Choice()
+        n.text = self.text
+        n.date = self.date
+        n.poll = self.poll
+        n.deleted = self.deleted
+        return n

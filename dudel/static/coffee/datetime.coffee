@@ -49,7 +49,6 @@ i18n.ready (gettext) ->
                 display.find("div").hide()
                 display.find(".success").show()
                 hidden.val date.format '{yyyy}-{MM}-{dd} {HH}:{mm}'
-                console.log date.format '{yyyy}-{MM}-{dd} {HH}:{mm}'
             else
                 display.find("div").hide()
                 display.find(".failure").show()

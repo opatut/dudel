@@ -11,6 +11,7 @@ function makeRandomString(length) {
 
 function slugField() {
     var field = $("[data-slug-field]");
+    if(field.length == 0) return;
     var val = field.val();
     var slug = get_slug(val);
     var slug_input = $(field.attr("data-slug-field"));
@@ -25,6 +26,7 @@ function slugField() {
 $(document).ready(function() {
     $("#randomize-slug").on("click", slugField);
     $("[data-slug-field]").on("input", slugField);
+    slugField();
 
     $(".script-only").css("display", "block");
     $("td.script-only").css("display", "table-cell");
