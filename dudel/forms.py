@@ -97,6 +97,7 @@ class PollForm(Form):
 
 class CreatePollForm(PollForm):
     type = SelectField(lazy_gettext("Type"), choices=[("date", lazy_gettext("Date and Time")), ("day", lazy_gettext("Date")),  ("normal", lazy_gettext("Normal poll"))])
+    visibility = SelectField(lazy_gettext("Visibility"), choices=[("public", lazy_gettext("Public")), ("hidden", lazy_gettext("Hidden"))], default="private")
 
 class CopyPollForm(PollForm):
     copy_choices = BooleanField(lazy_gettext("Copy choices"), default=True)
@@ -137,7 +138,7 @@ class RegisterForm(MultiForm):
 class SettingsForm(MultiForm):
     preferred_language = SelectField(lazy_gettext("Language"), choices=LANGUAGES)
     autowatch = BooleanField(lazy_gettext("Auto-watch polls"))
-    allow_invite_mails = BooleanField(lazy_gettext("Allow to receive emails for poll invitations"))
+    allow_invitation_mails = BooleanField(lazy_gettext("Allow to receive emails for poll invitations"))
 
 class SettingsFormPassword(SettingsForm):
     firstname = TextField(lazy_gettext("First name"))

@@ -27,6 +27,8 @@ i18n.ready (gettext) ->
     $hideVotes        = $ "#filter-hide-votes input[type='radio']"
     $hideVotesFilter  = $ "#filter-hide-votes-filter"
 
+    return if $filterButton.length == 0
+
     # Extract scores from table
     scores = []
     $(".choice-sum").each ->

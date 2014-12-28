@@ -62,6 +62,7 @@ def index():
     if form.validate_on_submit():
         poll = Poll()
         form.populate_obj(poll)
+        form.public_listing = (form.visibility.data == "public")
         db.session.add(poll)
         db.session.commit()
         flash(gettext("Poll created"))

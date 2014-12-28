@@ -1,3 +1,5 @@
+{% from "_macros.html" import alert %}
+
 {% macro renderVote(vote) %}
     {% if show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
         <tr class="vote {% if not current_user.is_anonymous() and vote.user == current_user %} mine{% endif %}" data-author="{{ vote.displayname }}">
@@ -135,7 +137,7 @@
                             {% set scores, counts, totals, max_score = poll.get_stats() %}
                             {% for choice in choices %}
                                 <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}"
-                                    data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{% for choice_value in poll.get_choice_values() %}<div class='value'>{{ counts[choice][choice_value] }}<i class='fa fa-times'></i><span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>{{ choice_value.title }}</div>{% endfor %}<div class='score'>{{ _('Score') }}: {{ '%.f' % scores[choice] }}</div>" data-placement="top" data-score="{{ scores[choice]*1.0/totals[choice] }}">
+                                    data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{% for choice_value in poll.get_choice_values() %}<div class='value'>{{ counts[choice][choice_value] }}<i class='fa fa-times'></i><span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>{{ choice_value.title }}</div>{% endfor %}<div class='score'>{{ _('Score') }}: {{ '%.f' % scores[choice] }}</div>" data-placement="top" data-score="{{ scores[choice]*1.0/totals[choice] if totals[choice] != 0 else 1 }}">
 
                                     {% if totals[choice] != 0 %}
                                         {{ "%.f %%" % (scores[choice]*100.0/totals[choice]) }}
