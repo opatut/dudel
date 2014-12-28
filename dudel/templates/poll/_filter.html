@@ -1,0 +1,83 @@
+{% from "_macros.html" import markdown_info %}
+
+<div class="modal fade" id="filter-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Filter</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <label for="">Score threshold</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="filter-threshold-percent" />
+                                <span class="input-group-addon">%</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 text-center">
+                            <label>&nbsp;</label>
+                            <div class="or">
+                                <i class="fa fa-exchange"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <label for="">Best ... results</label>
+                            <input type="number" min="0" max="{{ poll.get_choices()|length }}" class="form-control" id="filter-threshold-count" />
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label>{{ _("Filter votes") }}</label>
+
+                    <div class="row" id="filter-hide-votes">
+                        <div class="col-sm-6">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="filter-hide-votes" value="show-all" checked>
+                                    Show all votes
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="filter-hide-votes" value="hide-all">
+                                    Hide all votes
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="filter-hide-votes" value="show-filter">
+                                    Show votes that match the filter
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="filter-hide-votes" value="hide-filter">
+                                    Hide votes that match the filter
+                                </label>
+                            </div>
+                            <div class="form-group" id="filter-hide-votes-filter-group">
+                                <div class="input-group">
+                                    <input type="text" id="filter-hide-votes-filter" class="form-control" placeholder="Filter" />
+                                    <span class="input-group-addon" data-toggle="popover" data-trigger="hover" data-content="{{ _('Use regular expressions to match multiple votes.') }}" data-container="#filter-hide-votes-filter-group" data-placement="top">
+                                        <i class="fa fa-question-circle"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="filter-reset" class="btn btn-default pull-left" data-dismiss="modal"><i class="fa fa-undo"></i> Reset</button>
+                <button type="button" id="filter-apply" class="btn btn-primary" data-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -18,6 +18,12 @@
             <a class="btn btn-default" href="{{ url_for('poll_watch', slug=poll.slug, watch='yes') }}"><i class="fa fa-eye"></i> {{ _("Watch poll") }}</a>
         {% endif %}
     {% endif %}
-</div center>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#filter-modal" id="filter-button">
+        <i class="fa fa-filter"></i> Filter
+    </button>
+</div>
 {% endif %}
 
+{% include "poll/_filter.html" %}

@@ -4,16 +4,16 @@
 
 {% block content %}
     <h1>{{ poll.title }} <small>{% block polltitle %}{% endblock %}</small></h1>
-    <ul class="nav nav-tabs" style="margin-bottom: 10px;">
-        <li {% if request.endpoint == "poll" %} class="active"{% endif %}><a href="{{ poll.get_url() }}"><span class="fa fa-gavel"></span> {{ _("Poll") }}</a></li>
+    <ul class="nav nav-tabs poll-tabs">
+        <li {% if request.endpoint == "poll" %} class="active"{% endif %}><a href="{{ poll.get_url() }}"><i class="fa fa-gavel"></i> <span>{{ _("Poll") }}</span></a></li>
 
         {% if poll.user_can_edit(current_user) %}
-            <li{% if request.endpoint in ("poll_edit", "poll_edit_values") %} class="active"{% endif %}><a href="{{ url_for('poll_edit', slug=poll.slug) }}"><span class="fa fa-wrench"></span> {{ _("Settings") }}</a></li>
-            <li{% if request.endpoint in ("poll_invitations",) %} class="active"{% endif %}><a href="{{ url_for('poll_invitations', slug=poll.slug) }}"><span class="fa fa-envelope"></span> {{ _("Invitations") }}</a></li>
-            <li{% if request.endpoint == "poll_edit_choices" %} class="active"{% endif %}><a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}"><span class="fa fa-list"></span> {{ _("Choices") }}</a></li>
+            <li{% if request.endpoint in ("poll_edit", "poll_edit_values") %} class="active"{% endif %}><a href="{{ url_for('poll_edit', slug=poll.slug) }}"><i class="fa fa-wrench"></i> <span>{{ _("Settings") }}</span></a></li>
+            <li{% if request.endpoint in ("poll_invitations",) %} class="active"{% endif %}><a href="{{ url_for('poll_invitations', slug=poll.slug) }}"><i class="fa fa-envelope"></i> <span>{{ _("Invitations") }}</span></a></li>
+            <li{% if request.endpoint == "poll_edit_choices" %} class="active"{% endif %}><a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}"><i class="fa fa-list"></i> <span>{{ _("Choices") }}</span></a></li>
         {% endif %}
 
-        {#<li{% if request.endpoint == "poll_vote" %} class="active"{% endif %}><a href="{{ url_for('poll_vote', slug=poll.slug) }}"><span class="fa fa-check"></span> Vote</a></li>#}
+        {#<li{% if request.endpoint == "poll_vote" %} class="active"{% endif %}><a href="{{ url_for('poll_vote', slug=poll.slug) }}"><i class="fa fa-check"></i> Vote</a></li>#}
     </ul>
 
     {% block poll_content %}{% endblock %}

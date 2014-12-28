@@ -1,7 +1,7 @@
 {% macro renderVote(vote) %}
     {% if show_votes or (not current_user.is_anonymous() and vote.user == current_user) %}
-        <tr{% if not current_user.is_anonymous() and vote.user == current_user %} class="mine"{% endif %}>
-            <td class="author" data-toggle="popover" data-title="{{ vote.displayname }}" data-content="{{ vote.created|datetime }}{% if vote.comment %}<div class='comment'>{{ vote.comment }}</div>{% endif %}{% if vote.assigned %}<div class='assigned'>{{ _('Assigned after voting by %(user)s', user=vote.assigned_by.displayname) }}</div>{% endif %}">
+        <tr class="vote {% if not current_user.is_anonymous() and vote.user == current_user %} mine{% endif %}" data-author="{{ vote.displayname }}">
+            <td class="author" data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ vote.displayname }}" data-content="{{ vote.created|datetime }}{% if vote.comment %}<div class='comment'>{{ vote.comment }}</div>{% endif %}{% if vote.assigned %}<div class='assigned'>{{ _('Assigned after voting by %(user)s', user=vote.assigned_by.displayname) }}</div>{% endif %}">
                 {% if vote.comment or vote.assigned %}
                     <div class="pull-left" style="margin-right: 0.4em;">
                         {% if vote.comment %}
@@ -17,7 +17,7 @@
             {% for choice in choices %}
                 {% set vote_choice = poll.get_vote_choice(vote, choice) %}
                 {% if vote_choice and not vote_choice.value.deleted %}
-                <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}" data-toggle="popover" data-title="{{ choice.title }}" data-content="{{ vote.displayname }}{% if vote_choice.comment %}<div class='comment'>{{ vote_choice.comment }}</div>{% endif %}" data-placement="bottom">
+                <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}" data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{{ vote.displayname }}{% if vote_choice.comment %}<div class='comment'>{{ vote_choice.comment }}</div>{% endif %}" data-placement="bottom">
                     <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
                 </td>
                 {% else %}
@@ -43,7 +43,7 @@
 
 {% macro renderInvitation(invitation) %}
     <tr class="invitation">
-        <td class="author" data-toggle="popover" data-title="{{ invitation.user.displayname }}" data-content="{{ _('This user was invited on %(date)s at %(time)s to vote in this poll.', date=invitation.created|date, time=invitation.created|time) }}">
+        <td class="author" data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ invitation.user.displayname }}" data-content="{{ _('This user was invited on %(date)s at %(time)s to vote in this poll.', date=invitation.created|date, time=invitation.created|time) }}">
             <div class="pull-left" style="margin-right: 0.4em;">
                 <i class="fa fa-envelope"></i>
             </div>
@@ -67,6 +67,7 @@
 
 {# START CONTENT #}
 
+
 {% set show_votes = poll.show_votes(current_user) %}
 {% set show_summary = poll.show_summary(current_user) %}
 {% if poll.show_results != "complete" and poll.user_can_administrate(current_user) %}
@@ -79,7 +80,7 @@
 
         <div class="table-noscroll-y">
             <div class="table-scroll-x" style="padding-bottom: 100px;">
-                <table class="table poll auto-width">
+                <table class="table poll auto-width" id="poll">
                     <thead>
                         {% for row in matrix %}
                         <tr>
@@ -124,7 +125,7 @@
                     </tbody>
                     {% if show_summary %}
                     <tfoot>
-                        <tr>
+                        <tr id="scores">
                             {% set total = poll.votes.count() %}
                             <th>
                                 <span class="print-only">
@@ -134,7 +135,7 @@
                             {% set scores, counts, totals, max_score = poll.get_stats() %}
                             {% for choice in choices %}
                                 <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}"
-                                    data-toggle="popover" data-title="{{ choice.title }}" data-content="{% for choice_value in poll.get_choice_values() %}<div class='value'>{{ counts[choice][choice_value] }}<i class='fa fa-times'></i><span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>{{ choice_value.title }}</div>{% endfor %}<div class='score'>{{ _('Score') }}: {{ '%.f' % scores[choice] }}</div>" data-placement="top">
+                                    data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{% for choice_value in poll.get_choice_values() %}<div class='value'>{{ counts[choice][choice_value] }}<i class='fa fa-times'></i><span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>{{ choice_value.title }}</div>{% endfor %}<div class='score'>{{ _('Score') }}: {{ '%.f' % scores[choice] }}</div>" data-placement="top" data-score="{{ scores[choice]*1.0/totals[choice] }}">
 
                                     {% if totals[choice] != 0 %}
                                         {{ "%.f %%" % (scores[choice]*100.0/totals[choice]) }}

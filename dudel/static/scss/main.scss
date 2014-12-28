@@ -8,6 +8,23 @@
     vertical-align: -1px;
 }
 
+.filtered {
+    display: none;
+}
+
+.or {
+    $size: 32px;
+    display: block;
+    width: $size * 2;
+    height: $size;
+    line-height: $size - 2px;
+    background: #EEE;
+    margin: 0 auto;
+    border: 1px solid #DDD;
+    border-radius: 100px !important;
+    color: #AAA;
+}
+
 .alert {
     padding: 0.7em 0em;
 }
@@ -385,53 +402,35 @@ tr.choice td {
 .poll-details {
     list-style: none;
     margin: 0;
-    padding: 0;
-}
-
-.poll-details li {
-    display: inline-block;
+    margin-bottom: 8px;
+    padding: 4px;
     background: #F6F6F6;
-    color: #666;
-    padding: 4px 8px;
-}
 
-/*@media (min-width: 768px) {
-    .poll-details {
-        margin-left: 2em;
-        float: right;
+    li {
+        display: block;
+        color: #666;
+        padding: 4px 8px;
+
+        .title {
+            display: inline-block;
+        }
+
+        .content {
+            font-weight: bold;
+        }
+
+        i {
+            display: inline-block;
+            width: 16px;
+            text-align: center;
+        }
     }
 }
-*/
-.poll-details li .title {
-    display: inline-block;
-}
 
-.poll-details li .content {
-    font-weight: bold;
-}
-
-/*.poll-details {
-    list-style: none;
-    padding: 0;
-    display: table;
-    width: 100%;
-    border-collapse: separate !important;
-    border-spacing: 4px !important;
-}
-
-.poll-details li {
-    display: table-cell;
-    margin: 0;
-    width: 1%;
-    background: #EEE;
-    padding: 5px;
-}
-
-*/
-.poll-details li i {
-    display: inline-block;
-    width: 16px;
-    text-align: center;
+@media(min-width: 786px) {
+    .poll-details li {
+        display: inline-block;
+    }
 }
 
 .time-input {
@@ -529,12 +528,23 @@ tr.choice td {
     margin-bottom: 4px;
 }
 
+.poll-tabs {
+    margin-bottom: 8px;
+}
+
 @media(max-width: 785px) {
     .nav-tabs {
         margin: 1em 0;
-    }
-    .nav-tabs li a {
-        padding: 0.3em 0.6em;
+
+        span {
+            display: none;
+        }
+        i {
+            font-size: 1.4em;
+        }
+        li a {
+            // padding: 0.3em 0.6em;
+        }
     }
 }
 

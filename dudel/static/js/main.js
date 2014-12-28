@@ -34,9 +34,7 @@ $(document).ready(function() {
     $("table.script-only").css("display", "table");
 
     $('[data-toggle="popover"]').popover({
-        html: true,
-        container: 'body',
-        trigger: 'hover'
+        html: true
     });
 
     // $("#password_level").change(function() {
@@ -188,6 +186,13 @@ $(document).ready(function() {
         });
 
         group.find(".btn[value='" + select.val() + "']").addClass("active");
+    });
+
+    $(".slider-input").slider({
+        handle: 'round',
+        formater: function(v) {
+            return v + " %";
+        }
     });
 });
 

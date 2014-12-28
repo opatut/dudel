@@ -38,5 +38,4 @@ class Localisator
 
         return key
 
-
 i18n = new Localisator()

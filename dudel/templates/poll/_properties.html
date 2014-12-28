@@ -6,10 +6,10 @@
 {% endmacro %}
 
 <ul class="poll-details">
-    {{ property(_("Created on"), poll.created|date, "calendar") }}
+    {{ property(_("Creation date"), poll.created|date, "calendar") }}
 
     {% if poll.due_date %}
-        {{ property(_("Expires"), poll.due_date|date, "clock-o") }}
+        {{ property(_("Expiration date"), poll.due_date|date, "clock-o") }}
     {% endif %}
 
     {% if poll.owner %}
@@ -17,11 +17,11 @@
     {% endif %}
 
     {% if poll.anonymous_allowed %}
-        {{ property(_("Anonymous voting"), _("anonymous voting allowed"), "question-circle") }}
+        {{ property(_("Anonymous voting allowed"), _("anonymous voting"), "question-circle") }}
     {% endif %}
 
     {% if poll.public_listing %}
-        {{ property(_("Public listing"), _("public"), "list") }}
+        {{ property(_("Listed in public polls list"), _("public"), "list") }}
     {% endif %}
 
     {% if poll.require_invitation %}
@@ -31,7 +31,7 @@
     {% endif %}
 
     {% if current_user.is_authenticated() %}
-        {{ property(_("Watching"),
+        {{ property(_("Watching poll"),
             _("watching") if poll.is_watching(current_user) else _("not watching"),
             "eye" if poll.is_watching(current_user) else "eye-slash") }}
     {% endif %}
