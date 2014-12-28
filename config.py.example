@@ -49,6 +49,12 @@ LDAP = dict(
 # May contain fields: firstname, lastname, username, email
 NAME_FORMAT = "%(firstname)s (%(username)s)"
 
+# Allow customization of slugs
+ALLOW_CUSTOM_SLUGS = True
+
+# Generate random slugs by default
+RANDOM_SLUGS = False
+
 # Usernames of administrators
 # e.g. ["13musterm", "14musterf"]
 ADMINS = []

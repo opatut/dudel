@@ -87,7 +87,7 @@ class RequiredIf(object):
 
 class PollForm(Form):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
-    slug = TextField(lazy_gettext("URL name"), validators=[Required(),
+    slug = TextField(lazy_gettext("URL name"), validators=[Optional(),
         Length(min=3, max=80),
         Regexp(r"^[a-zA-Z0-9_-]*$", message=lazy_gettext("Invalid character.")),
         UniqueObject(Poll, "slug", dict(deleted=False), message=lazy_gettext("A poll with this URL name already exists.")),

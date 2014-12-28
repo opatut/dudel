@@ -22,7 +22,7 @@ $ ->
     update = (random) ->
         title     = $title.val()
 
-        if random or not title
+        if RANDOM_SLUGS or random or not title
             slug = makeRandomString 8
         else
             slug = get_slug title

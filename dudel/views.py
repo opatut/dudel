@@ -3,7 +3,7 @@ from dudel import app, db, babel, supported_languages
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
 from dudel.login import get_user
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, PollInviteForm, VoteAssignForm, CopyPollForm
-from dudel.util import PollExpiredException, PollActionException
+from dudel.util import PollExpiredException, PollActionException, random_string, get_slug
 import dudel.login
 from flask import redirect, abort, request, render_template, flash, url_for, g, Response
 from flask.ext.babel import gettext
@@ -63,10 +63,24 @@ def index():
         poll = Poll()
         form.populate_obj(poll)
         form.public_listing = (form.visibility.data == "public")
-        db.session.add(poll)
-        db.session.commit()
-        flash(gettext("Poll created"))
-        return redirect(url_for("poll_edit_choices", slug=poll.slug))
+
+        success = True
+        if not app.config["ALLOW_CUSTOM_SLUGS"] or not form.slug.data:
+            if app.config["RANDOM_SLUGS"]:
+                poll.slug = random_string()
+            else:
+                poll.slug = get_slug(poll.title)
+
+            # check if poll with that slug exists
+            if Poll.query.filter_by(slug=poll.slug, deleted=False).first():
+                form.slug.errors = [gettext("A poll with this URL name already exists.")]
+                success = False
+
+        if success:
+            db.session.add(poll)
+            db.session.commit()
+            flash(gettext("Poll created"))
+            return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
     polls = Poll.query.filter_by(deleted=False, public_listing=True).filter(not Poll.due_date or Poll.due_date >= datetime.utcnow()).order_by(db.desc(Poll.created)).all()
 
