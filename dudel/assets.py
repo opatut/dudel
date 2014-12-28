@@ -12,7 +12,6 @@ assets.register('scss', scss)
 # CSS
 css_all = Bundle(
     'css/bootstrap.css',
-    'css/bootstrap-slider.css',
     'css/font-awesome.css',
     'css/jquery-ui.css',
     'css/jquery-ui-timepicker-addon.css',
@@ -37,7 +36,6 @@ js_libs = Bundle(
     'js/lib/jquery.js',
     'js/lib/jquery-ui.min.js',
     'js/lib/bootstrap.js',
-    'js/lib/bootstrap-slider.js',
     'js/lib/sugar.js',
     'js/lib/sugar-de.js',
     'js/lib/pofile.js',
