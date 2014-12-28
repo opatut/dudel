@@ -26,6 +26,7 @@ coffee = Bundle(
     'coffee/datetime.coffee',
     'coffee/dateoffset.coffee',
     'coffee/votefilter.coffee',
+    'coffee/vote.coffee',
     'coffee/slug.coffee',
     filters='coffeescript',
     output='gen/coffee.js'
