@@ -88,16 +88,12 @@ i18n.ready (gettext) ->
 
         filtered = false
 
-        console.log "hello"
-
         regex = null
         try
             regex = new RegExp(filter, "i")
         catch e
             $hideVotesFilter.closest(".form-group").addClass("has-error")
             return
-
-        console.log "hello2"
 
         $votes.each ->
             $vote = $(this)
