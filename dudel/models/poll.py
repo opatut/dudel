@@ -298,36 +298,25 @@ class Poll(db.Model):
             comments=dictify(self.comments, lambda c: not c.deleted),
             choice_groups=[[choice.id for choice in group] for group in self.get_choice_groups()])
 
+    @property
+    def last_changed(self):
+        dates = []
+        dates.append(self.created)
+
+        if self.due_date:
+            dates.append(self.due_date)
+
+        for vote in self.votes:
+            dates.append(vote.created)
+
+        for comment in self.comments:
+            dates.append(comment.created)
+
+        return max(dates)
+
+    @property
     def should_auto_delete(self):
-        now = datetime.utcnow() + timedelta(days=100)
-
-        # should live at least 30 days
-        threshold_created = 30
-        if now < self.created + timedelta(days=threshold_created):
-            return False
-
-        # should live at least 30 days after deadline
-        threshold_deadline = 30
-        if self.due_date and now < self.due_date + timedelta(days=threshold_created):
-            return False
-
-        # should live at least 60 days after last vote
-        threshold_lastvote = 60
-        votedates = [vote.created for vote in self.votes]
-        if votedates:
-            votedate = max(votedates)
-            if votedate and now < votedate + timedelta(days=threshold_lastvote):
-                return False
-
-        # should live at least 30 days after last comment
-        threshold_lastcomment = 30
-        commentdates = [comment.created for comment in self.comments]
-        if commentdates:
-            commentdate = max(commentdate)
-            if commentdate and now < commentdate + timedelta(days=threshold_lastvote):
-                return False
-
-        return True
+        return self.last_changed + timedelta(days=60) < datetime.utcnow()
 
     def get_choice_range(self):
         values = [choice.value for choice in self.get_choices()]

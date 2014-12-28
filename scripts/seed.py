@@ -77,4 +77,11 @@ for x in range(21):
 
 fill_with_random_votes(poll, 42)
 
+poll = Poll()
+poll.title = "Should-auto-delete"
+poll.created = datetime.utcnow() - timedelta(days=90)
+poll.slug = "autodelete"
+poll.type = "normal"
+db.session.add(poll)
+
 db.session.commit()

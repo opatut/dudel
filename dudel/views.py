@@ -35,11 +35,24 @@ def cron():
     from dudel.plugins.ldapauth import ldap_connector
 
     def generate():
-        ldap_connector.update_users()
-        yield "updated LDAP users\n"
+        try:
+            ldap_connector.update_users()
+            yield "updated LDAP users\n"
+        except Exception, e:
+            yield "error updating LDAP users: %s\n" % str(e)
 
-        ldap_connector.update_groups()
-        yield "updated LDAP groups\n"
+        try:
+            ldap_connector.update_groups()
+            yield "updated LDAP groups\n"
+        except Exception, e:
+            yield "error updating LDAP groups: %s\n" % str(e)
+
+        for poll in Poll.query.filter(deleted=False).all():
+            if poll.should_auto_delete:
+                poll.deleted = True
+                yield "auto-deleted poll: %s\n" % poll.title
+
+        db.session.commit()
 
     return Response(generate(), mimetype="text/plain")
 

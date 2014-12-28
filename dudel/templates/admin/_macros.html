@@ -17,7 +17,7 @@
                 <th></th>
                 <th>Title</th>
                 <th>Link name</th>
-                <th>Created</th>
+                <th>Last changed</th>
                 <th>Author</th>
                 <th>Due date</th>
                 <th>Votes</th>
@@ -28,17 +28,17 @@
                 <td><i class="fa fa-{{ {'normal':'list', 'date':'clock-o', 'day': 'calendar'}[poll.type] }}" title="Type: {{ poll.type }}"></i></td>
                 <td><a href="{{ url_for('admin_poll', id=poll.id) }}">{{ poll.title }}</a></td>
                 <td><a href="{{ poll.get_url() }}">/{{ poll.slug }}/</a></td>
-                <td>{{ poll.created | datetime }}</td>
+                <td>{{ poll.last_changed | datetime }}</td>
                 <td>{{ poll.owner.displayname if poll.owner else "-" }}</td>
                 <td>{{ (poll.due_date|datetime) if poll.due_date else "-" }}</td>
                 <td>{{ poll.votes.count() }}</td>
                 <td>
                     {% if poll.deleted %}
                         <span class="label label-danger"><i class="fa fa-times"></i> Deleted</span>
-                    {% endif %}
-
-                    {% if poll.should_auto_delete() %}
-                        <span class="label label-orange"><i class="fa fa-exclamation-sign"></i> Autodelete</span>
+                    {% elif poll.should_auto_delete %}
+                        <span class="label label-warning"><i class="fa fa-exclamation-triangle"></i> Autodelete</span>
+                    {% elif poll.is_expired %}
+                        <span class="label label-info"><i class="fa fa-clock-o"></i> Expired</span>
                     {% endif %}
                 </td>
             </tr>
