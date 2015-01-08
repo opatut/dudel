@@ -89,7 +89,7 @@
             <tr>
                 <th>Name</th>
                 <th>Identifier</th>
-                <th>Members (in dudel)</th>
+                <th>Members</th>
                 <th>Source</th>
             </tr>
             {% for group in groups %}
@@ -98,7 +98,7 @@
                     {{ group_link(group) }}
                 </td>
                 <td>{{ group.identifier }}</td>
-                <td>{{ group.members.count() }}</td>
+                <td>{{ group.users.count() }}</td>
                 <td><span class="label label-default">{{ group.source  }}</span></td>
             </tr>
             {% endfor %}

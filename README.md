@@ -45,7 +45,7 @@ then copy/edit translations files (in `dudel/translations`), then compile them w
 
 ## License
 
-    Copyright (C) 2013
+    Copyright (C) 2013 - 2015
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
