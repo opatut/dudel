@@ -1,14 +1,14 @@
 # German translations for dudel.
 # Copyright (C) 2014 The dudel authors
 # This file is distributed under the same license as dudel.
-# Paul Bienkowski <pb@opatut.de>, 2014.
+# Paul Bienkowski <pb@opatut.de>, 2014, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-12-27 12:58+0100\n"
-"PO-Revision-Date: 2014-12-27 15:01+0100\n"
+"POT-Creation-Date: 2015-01-08 09:01+0100\n"
+"PO-Revision-Date: 2015-01-08 09:03+0100\n"
 "Last-Translator: Paul Bienkowski <pb@opatut.de>\n"
 "Language-Team: German <>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -30,8 +30,8 @@ msgstr "Ungültige Benutzerdaten"
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
-#: dudel/forms.py:89 dudel/forms.py:120 dudel/forms.py:153
-#: dudel/templates/poll_edit_values.html:27
+#: dudel/forms.py:89 dudel/forms.py:121 dudel/forms.py:154
+#: dudel/templates/poll/settings/values.html:27
 msgid "Title"
 msgstr "Titel"
 
@@ -43,7 +43,7 @@ msgstr "URL"
 msgid "Invalid character."
 msgstr "Ungültiges Zeichen"
 
-#: dudel/forms.py:93
+#: dudel/forms.py:93 dudel/views.py:89
 msgid "A poll with this URL name already exists."
 msgstr "Es gibt bereits eine Umfrage mit dieser URL."
 
@@ -51,7 +51,7 @@ msgstr "Es gibt bereits eine Umfrage mit dieser URL."
 msgid "This is a reserved name."
 msgstr "Dieser Name ist reserviert."
 
-#: dudel/forms.py:96 dudel/forms.py:155
+#: dudel/forms.py:96 dudel/forms.py:156
 msgid "Due date"
 msgstr "Ablaufdatum"
 
@@ -71,234 +71,246 @@ msgstr "Datum"
 msgid "Normal poll"
 msgstr "Normale Umfrage"
 
-#: dudel/forms.py:102
+#: dudel/forms.py:100
+msgid "Visibility"
+msgstr "Sichtbarkeit"
+
+#: dudel/forms.py:100
+msgid "Public"
+msgstr "Öffentlich"
+
+#: dudel/forms.py:100
+msgid "Hidden"
+msgstr "Versteckt"
+
+#: dudel/forms.py:103
 msgid "Copy choices"
 msgstr "Wahlmöglichkeiten kopieren"
 
-#: dudel/forms.py:103
+#: dudel/forms.py:104
 msgid "Copy invitations"
 msgstr "Einladungen kopieren"
 
-#: dudel/forms.py:104
+#: dudel/forms.py:105
 msgid "Copy possible answer values"
 msgstr "Mögliche Antworten kopieren"
 
-#: dudel/forms.py:105
+#: dudel/forms.py:106
 msgid "Date shift (days)"
 msgstr "Zeitversetzung (in Tagen)"
 
-#: dudel/forms.py:106
+#: dudel/forms.py:107
 msgid "Create invitations from votes"
 msgstr "Einladungen aus Stimmen erstellen"
 
-#: dudel/forms.py:107
+#: dudel/forms.py:108
 msgid "Reset ownership"
 msgstr "Besitzer zurücksetzen"
 
-#: dudel/forms.py:110
+#: dudel/forms.py:111
 msgid "Dates"
 msgstr "Daten"
 
-#: dudel/forms.py:111 dudel/templates/poll_edit_choices.html:110
+#: dudel/forms.py:112 dudel/templates/poll/settings/choices.html:110
 msgid "Times"
 msgstr "Zeiten"
 
-#: dudel/forms.py:114 dudel/forms.py:117
-#: dudel/templates/poll_edit_choices.html:20
+#: dudel/forms.py:115 dudel/forms.py:118
+#: dudel/templates/poll/settings/choices.html:20
 msgid "Choice"
 msgstr "Wahlmöglichkeit"
 
-#: dudel/forms.py:121
+#: dudel/forms.py:122
 msgid "Color"
 msgstr "Farbe"
 
-#: dudel/forms.py:122
+#: dudel/forms.py:123
 msgid "Icon"
 msgstr "Symbol"
 
-#: dudel/forms.py:123 dudel/templates/poll_edit_values.html:29
+#: dudel/forms.py:124 dudel/templates/poll/settings/values.html:29
 msgid "Weight"
 msgstr "Gewichtung"
 
-#: dudel/forms.py:126 dudel/forms.py:130
+#: dudel/forms.py:127 dudel/forms.py:131
 msgid "Username"
 msgstr "Benutzername"
 
-#: dudel/forms.py:127 dudel/forms.py:133 dudel/forms.py:145
+#: dudel/forms.py:128 dudel/forms.py:134 dudel/forms.py:146
 msgid "Password"
 msgstr "Passwort"
 
-#: dudel/forms.py:131 dudel/forms.py:143
+#: dudel/forms.py:132 dudel/forms.py:144
 msgid "First name"
 msgstr "Vorname"
 
-#: dudel/forms.py:132 dudel/forms.py:144
+#: dudel/forms.py:133 dudel/forms.py:145
 msgid "Last name"
 msgstr "Nachname"
 
-#: dudel/forms.py:134 dudel/forms.py:146
+#: dudel/forms.py:135 dudel/forms.py:147
 msgid "Password again"
 msgstr "Passwort wiederholen"
 
-#: dudel/forms.py:135 dudel/forms.py:147
+#: dudel/forms.py:136 dudel/forms.py:148
 msgid "Email"
 msgstr "Email"
 
-#: dudel/forms.py:138 dudel/forms.py:205
+#: dudel/forms.py:139 dudel/forms.py:206
 msgid "Language"
 msgstr "Sprache"
 
-#: dudel/forms.py:139
+#: dudel/forms.py:140
 msgid "Auto-watch polls"
 msgstr "Automatisch beobachten"
 
-#: dudel/forms.py:140
+#: dudel/forms.py:141
 msgid "Allow to receive emails for poll invitations"
 msgstr "E-Mails für Einladungen zu Umfragen zulassen"
 
-#: dudel/forms.py:154
+#: dudel/forms.py:155
 msgid "Description"
 msgstr "Beschreibung"
 
-#: dudel/forms.py:156
+#: dudel/forms.py:157
 msgid "Allow anonymous votes"
 msgstr "Anonyme Stimmen zulassen"
 
-#: dudel/forms.py:157
+#: dudel/forms.py:158
 msgid "Require login to vote"
 msgstr "Anmeldung zum Abstimmen voraussetzen"
 
-#: dudel/forms.py:158
+#: dudel/forms.py:159
 msgid "Require invitation to vote (requires login)"
 msgstr "Einladung zum Abstimmen voraussetzen (erfordert Anmeldung)"
 
-#: dudel/forms.py:159
+#: dudel/forms.py:160
 msgid "Show in public poll list"
 msgstr "In öffentlicher Umfragenliste anzeigen"
 
-#: dudel/forms.py:160
+#: dudel/forms.py:161
 msgid "One vote per user (only effective with login)"
 msgstr ""
 "Eine Stimme pro Benutzer (nur effektiv, wenn Anmeldung vorausgesetzt wird)"
 
-#: dudel/forms.py:161
+#: dudel/forms.py:162
 msgid "Allow comments"
 msgstr "Kommentare zulassen"
 
-#: dudel/forms.py:162
+#: dudel/forms.py:163
 msgid "Show invitations as empty votes"
 msgstr "Einladungen als leere Stimmen anzeigen"
 
-#: dudel/forms.py:163 dudel/templates/poll.html:22
+#: dudel/forms.py:164 dudel/templates/poll/_properties.html:16
 msgid "Ownership"
 msgstr "Besitzer"
 
-#: dudel/forms.py:171
+#: dudel/forms.py:172
 msgid "Results display"
 msgstr "Anzeige der Ergebnisse"
 
-#: dudel/forms.py:172
+#: dudel/forms.py:173
 msgid "show all votes"
 msgstr "Alle Stimmen anzeigen"
 
-#: dudel/forms.py:173
+#: dudel/forms.py:174
 msgid "show only summary"
 msgstr "Nur eine Zusammenfassung anzeigen"
 
-#: dudel/forms.py:174
+#: dudel/forms.py:175
 msgid "Do not show results"
 msgstr "Keine Ergebnisse anzeigen"
 
-#: dudel/forms.py:175
+#: dudel/forms.py:176
 msgid "Show all votes, but only after voting"
 msgstr "Alle Stimmen anzeigen, aber erst nach Ende der Umfrage"
 
-#: dudel/forms.py:176
+#: dudel/forms.py:177
 msgid "Show summary, but only after voting"
 msgstr "Zusammenfassung anzeigen, aber erst nach Ende der Umfrage"
 
-#: dudel/forms.py:177
+#: dudel/forms.py:178
 msgid "Send mail to participants about results"
 msgstr "Die Teilnehmer per E-Mail über die Ergebnisse informieren"
 
-#: dudel/forms.py:180
+#: dudel/forms.py:181
 msgid "Value"
 msgstr "Wert"
 
-#: dudel/forms.py:181 dudel/forms.py:194 dudel/forms.py:201
+#: dudel/forms.py:182 dudel/forms.py:195 dudel/forms.py:202
 msgid "Comment"
 msgstr "Kommentar"
 
-#: dudel/forms.py:191 dudel/forms.py:200
+#: dudel/forms.py:192 dudel/forms.py:201
 msgid "Your Name"
 msgstr "Dein Name"
 
-#: dudel/forms.py:192
+#: dudel/forms.py:193
 msgid "Post anonymous vote"
 msgstr "Anonym abstimmen"
 
-#: dudel/forms.py:197
+#: dudel/forms.py:198
 msgid "Poll password"
 msgstr "Passwort der Umfrage"
 
-#: dudel/forms.py:208
+#: dudel/forms.py:209
 msgid "Group or User"
 msgstr "Gruppe oder Benutzer"
 
-#: dudel/forms.py:211
+#: dudel/forms.py:212
 msgid "New vote owner"
 msgstr "Neuer Besitzer der Stimme"
 
-#: dudel/views.py:67
+#: dudel/views.py:95
 msgid "Poll created"
 msgstr "Umfrage erstellt"
 
-#: dudel/views.py:85 dudel/views.py:107
+#: dudel/views.py:113 dudel/views.py:135
 #, python-format
 msgid "You were logged in, %(name)s."
 msgstr "Du wurdest angemeldet, %(name)s."
 
-#: dudel/views.py:96
+#: dudel/views.py:124
 msgid "You are already logged in."
 msgstr "Du bist bereits eingeloggt."
 
-#: dudel/views.py:116
+#: dudel/views.py:144
 #, python-format
 msgid "You were logged out, %(name)s. Goodbye!"
 msgstr "Du wurdest abgemeldet, %(name)s. Bis bald!"
 
-#: dudel/views.py:156
+#: dudel/views.py:184
 msgid "Your user settings were updated."
 msgstr "Deine Benutzereinstellungen wurden gespeichert."
 
-#: dudel/views.py:180
+#: dudel/views.py:208
 msgid "Your comment was saved."
 msgstr "Dein Kommentar wurde gespeichert."
 
-#: dudel/views.py:195
+#: dudel/views.py:223
 msgid "The comment was deleted."
 msgstr "Der Kommentar wurde gelöscht."
 
-#: dudel/views.py:205
+#: dudel/views.py:233
 msgid "Nobody"
 msgstr "Niemand"
 
-#: dudel/views.py:218
+#: dudel/views.py:246
 msgid "Poll settings have been saved."
 msgstr "Die Einstellungen der Umfrage wurden gespeichert."
 
-#: dudel/views.py:258
+#: dudel/views.py:286
 #, python-format
 msgid "The following %(count)d user/groups were not found: %(names)s."
 msgstr ""
 "Die folgenden %(count)d Benutzer/Gruppen wurden nicht gefunden: %(names)s."
 
-#: dudel/views.py:260 dudel/views.py:822
+#: dudel/views.py:288 dudel/views.py:850
 #, python-format
 msgid "You have invited %(count)d users."
 msgstr "Du hast %(count)d Benutzer eingeladen."
 
-#: dudel/views.py:262
+#: dudel/views.py:290
 #, python-format
 msgid ""
 "%(count)d users were skipped, since they either are already invited or have "
@@ -307,90 +319,90 @@ msgstr ""
 "%(count)d Benutzer wurden übersprungen, da sie entweder bereits eingeladen "
 "sind oder abgestimmt haben."
 
-#: dudel/views.py:281
+#: dudel/views.py:309
 msgid "The invitation was deleted."
 msgstr "Die Einladung wurde gelöscht."
 
-#: dudel/views.py:294
+#: dudel/views.py:322
 msgid "The invitation was resent."
 msgstr "Die Einladung wurde erneut versandt."
 
-#: dudel/views.py:306
+#: dudel/views.py:334
 msgid "All invitations were resent."
 msgstr "Alle Einladungen wurden erneut versandt."
 
-#: dudel/views.py:322
+#: dudel/views.py:350
 msgid "You are now watching this poll."
 msgstr "Du beobachtest nun diese Umfrage."
 
-#: dudel/views.py:322
+#: dudel/views.py:350
 msgid "You are not watching this poll anymore."
 msgstr "Du hast aufgehöhrt, diese Umfrage zu beobachten."
 
-#: dudel/views.py:352
+#: dudel/views.py:380
 msgid "Please select at least one combination."
 msgstr "Bitte wähle mindestens eine Kombination."
 
-#: dudel/views.py:369 dudel/views.py:397
+#: dudel/views.py:397 dudel/views.py:425
 msgid "The choices list has been updated."
 msgstr "Die Liste der Wahlmöglichkeiten wurde aktualisiert."
 
-#: dudel/views.py:380
+#: dudel/views.py:408
 msgid "Please select at least one date."
 msgstr "Bitte wähle mindestens ein Datum."
 
-#: dudel/views.py:412 dudel/views.py:420 dudel/views.py:463
+#: dudel/views.py:440 dudel/views.py:448 dudel/views.py:491
 msgid "This choice text is not allowed due to grouping conflicts."
 msgstr ""
 "Dieser Auswahltext ist aufgrund von Gruppierungskonflikten nicht möglich."
 
-#: dudel/views.py:429 dudel/views.py:445
+#: dudel/views.py:457 dudel/views.py:473
 msgid "The choice was disabled."
 msgstr "Die Wahlmöglichkeit wurde deaktiviert."
 
-#: dudel/views.py:431 dudel/views.py:447
+#: dudel/views.py:459 dudel/views.py:475
 msgid "The choice was added."
 msgstr "Die Wahlmöglichkeit wurde hinzugefügt."
 
-#: dudel/views.py:440
+#: dudel/views.py:468
 msgid "You cannot undelete this choice due to grouping conflicts."
 msgstr ""
 "Aufgrund von Gruppierungskonflikten kannst du diese Möglichkeit nicht "
 "löschen."
 
-#: dudel/views.py:458
+#: dudel/views.py:486
 msgid "A choice with this text already exists."
 msgstr "Es gibt bereits eine Wahlmöglichkeit mit diesem Text."
 
-#: dudel/views.py:466
+#: dudel/views.py:494
 msgid "The choice was edited."
 msgstr "Die Wahlmöglichkeit wurde bearbeitet."
 
-#: dudel/views.py:489
+#: dudel/views.py:517
 msgid "The choice value was removed."
 msgstr "Die Antwort wurde entfernt."
 
-#: dudel/views.py:491
+#: dudel/views.py:519
 msgid "The choice value restored."
 msgstr "Die Antwort wurde wiederhergestellt."
 
-#: dudel/views.py:505
+#: dudel/views.py:533
 msgid "The choice value was edited."
 msgstr "Die Antwort wurde bearbeitet."
 
-#: dudel/views.py:521
+#: dudel/views.py:549
 msgid "The choice value was added."
 msgstr "Die Antwort wurde hinzugefügt."
 
-#: dudel/views.py:534
+#: dudel/views.py:562
 msgid "The poll was deleted."
 msgstr "Die Umfrage wurde gelöscht."
 
-#: dudel/views.py:546
+#: dudel/views.py:574
 msgid "You need to login to vote on this poll."
 msgstr "Du musst dich anmelden, um an dieser Umfrage teilzunehmen."
 
-#: dudel/views.py:551
+#: dudel/views.py:579
 msgid ""
 "You can only vote once on this poll. Please edit your choices by clicking "
 "the edit button on the right."
@@ -398,11 +410,11 @@ msgstr ""
 "Du kannst nur einmal an dieser Umfrage teilnehmen. Bitte bearbeite deine "
 "Wahl, indem du rechts auf den Bearbeiten-Button klickst."
 
-#: dudel/views.py:556
+#: dudel/views.py:584
 msgid "You need an invitation to vote on this poll."
 msgstr "Du benötigst eine Einladung, um an dieser Umfrage teilzunehmen."
 
-#: dudel/views.py:561
+#: dudel/views.py:589
 msgid ""
 "The poll owner has not yet created any choices. You cannot vote on the poll "
 "yet."
@@ -410,24 +422,24 @@ msgstr ""
 "Der Eigentümer dieser Umfrage hat noch keine Wahlmöglichkeiten hinzugefügt. "
 "Du kannst daher noch nicht an dieser Umfrage teilnehmen."
 
-#: dudel/views.py:603
+#: dudel/views.py:631
 msgid "You have voted."
 msgstr "Du hast abgestimmt."
 
-#: dudel/views.py:637
+#: dudel/views.py:665
 msgid "The user was not found, please try again."
 msgstr "Der Benutzer wurde nicht gefunden, bitte versuche es erneut."
 
-#: dudel/views.py:643
+#: dudel/views.py:671
 msgid "The user has already voted and cannot have multiple votes."
 msgstr "Der Benutzer hat bereits abgestimmt und darf nur eine Stimme abgeben."
 
-#: dudel/views.py:658
+#: dudel/views.py:686
 #, python-format
 msgid "You assigned this vote to %(user)s."
 msgstr "Du hast diese Stimme %(user)s zugewiesen."
 
-#: dudel/views.py:672
+#: dudel/views.py:700
 msgid ""
 "This vote was created by a logged in user. If that was you, please log in to "
 "edit the vote."
@@ -435,58 +447,58 @@ msgstr ""
 "Diese Stimme wurde von einen angemeldeten Benutzer abgegeben. Falls du das "
 "warst, melde dich an, um sie zu bearbeiten."
 
-#: dudel/views.py:676
+#: dudel/views.py:704
 msgid "This vote was created by someone else. You cannot edit their choices."
 msgstr ""
 "Diese Stimme wurde von einen anderen Benutzer abgegeben. Du kannst sie nicht "
 "bearbeiten."
 
-#: dudel/views.py:683
+#: dudel/views.py:711
 msgid "You need to login to edit votes on this poll."
 msgstr ""
 "Du musst dich anmelden, um Stimmen in dieser Umfrage bearbeiten zu können."
 
-#: dudel/views.py:688
+#: dudel/views.py:716
 msgid "You need an invitation to edit votes on this poll."
 msgstr ""
 "Du benötigst eine Einladung, um Stimmen in dieser Umfrage bearbeiten zu "
 "können."
 
-#: dudel/views.py:723
+#: dudel/views.py:751
 msgid "The vote is not considered \"assigned\" anymore, since you edited it."
 msgstr ""
 "Diese Stimme wird nicht mehr als \"nachträglich zugewiesen\" angezeigt, da "
 "du sie bearbeitet hast."
 
-#: dudel/views.py:726
+#: dudel/views.py:754
 msgid "The vote has been edited."
 msgstr "Die Stimme wurde bearbeitet."
 
-#: dudel/views.py:749
+#: dudel/views.py:777
 msgid "The vote has been deleted"
 msgstr "Die Stimme wurde gelöscht."
 
-#: dudel/views.py:817
+#: dudel/views.py:845
 msgid "The poll was copied."
 msgstr "Die Umfrage wurde kopiert."
 
-#: dudel/views.py:824
+#: dudel/views.py:852
 #, python-format
 msgid "%(count)d users could not be invited."
 msgstr "%(count)d Benutzer konnten nicht eingeladen werden."
 
-#: dudel/views.py:830
+#: dudel/views.py:858
 #, python-format
 msgid "Copy of %(title)s"
 msgstr "Kopie von %(title)s"
 
-#: dudel/views.py:838
+#: dudel/views.py:866
 msgid "This poll is expired. You cannot vote or edit your choice anymore."
 msgstr ""
 "Diese Umfrage ist abgelaufen. Du kannst nicht mehr abstimmen oder deine "
 "Stimme bearbeiten."
 
-#: dudel/views.py:844
+#: dudel/views.py:872
 #, python-format
 msgid ""
 "You do not have permission to %(action)s this poll. Please log in and try "
@@ -495,7 +507,7 @@ msgstr ""
 "Du kannst diese Umfrage nicht %(action)s. Bitte melde dich an und versuche "
 "es erneut."
 
-#: dudel/views.py:847
+#: dudel/views.py:875
 #, python-format
 msgid "You do not have permission to %(action)s this poll."
 msgstr "Du kannst diese Umfrage nicht %(action)s."
@@ -530,6 +542,14 @@ msgstr "Datum nicht erkannt."
 msgid "No date selected."
 msgstr "Kein Datum gewählt."
 
+#: dudel/templates/_create.html:5
+msgid "Create a poll"
+msgstr "Eine Umfrage erstellen"
+
+#: dudel/templates/_create.html:72
+msgid "Create"
+msgstr "Erstellen"
+
 #: dudel/templates/_macros.html:51
 #, python-format
 msgid ""
@@ -539,45 +559,11 @@ msgstr ""
 "Du kannst deinen Text in <a href=\"%(link)s\" target=\"_blank\">Markdown</a> "
 "formatieren."
 
-#: dudel/templates/base_poll.html:8
-msgid "Poll"
-msgstr "Umfrage"
-
-#: dudel/templates/base_poll.html:11 dudel/templates/poll_edit.html:3
-#: dudel/templates/poll_edit.html:14 dudel/templates/poll_invitations.html:3
-#: dudel/templates/poll_vote_assign.html:3
-#: dudel/templates/user_settings.html:3 dudel/templates/user_settings.html:59
-msgid "Settings"
-msgstr "Einstellungen"
-
-#: dudel/templates/base_poll.html:12 dudel/templates/poll_invitations.html:6
-msgid "Invitations"
-msgstr "Einladungen"
-
-#: dudel/templates/base_poll.html:13 dudel/templates/poll_edit_choices.html:3
-msgid "Choices"
-msgstr "Wahlmöglichkeiten"
-
-#: dudel/templates/index.html:9
-msgid "Create a poll"
-msgstr "Eine Umfrage erstellen"
-
-#: dudel/templates/index.html:33 dudel/templates/poll_copy.html:30
-msgid ""
-"This would be automatically generated for you if you had not blocked "
-"javascript."
-msgstr ""
-"Dieses Feld würde automatisch ausgefüllt, hättest du javascript aktiviert."
-
-#: dudel/templates/index.html:46
-msgid "Create"
-msgstr "Erstellen"
-
-#: dudel/templates/index.html:54
+#: dudel/templates/index.html:12
 msgid "My polls"
 msgstr "Eigene Umfragen"
 
-#: dudel/templates/index.html:58
+#: dudel/templates/index.html:16
 msgid ""
 "You can find a list of all the polls in which you have participated on your "
 "profile page."
@@ -585,129 +571,196 @@ msgstr ""
 "Du findest eine Liste mit allen Umfragen, an denen du teilgenommen hast, auf "
 "deiner Profilseite."
 
-#: dudel/templates/index.html:61
+#: dudel/templates/index.html:19
 msgid "Show my polls"
 msgstr "Meine Umfragen anzeigen"
 
-#: dudel/templates/index.html:67
+#: dudel/templates/index.html:25
 msgid "Public polls"
 msgstr "Öffentliche Umfragen"
 
-#: dudel/templates/index.html:79
+#: dudel/templates/index.html:37
 msgid "There are currently no public polls."
 msgstr "Es gibt zurzeit keine öffentlichen Umfragen."
 
-#: dudel/templates/index.html:82
+#: dudel/templates/index.html:40
 msgid "Dudel statistics"
 msgstr "Statistik"
 
-#: dudel/templates/index.html:85
+#: dudel/templates/index.html:43
 msgid "Polls created"
 msgstr "Erstellte Umfragen"
 
-#: dudel/templates/index.html:86 dudel/templates/poll_edit_choices.html:21
-#: dudel/templates/poll_edit_values.html:30
+#: dudel/templates/index.html:44 dudel/templates/poll/settings/choices.html:21
+#: dudel/templates/poll/settings/values.html:30
 msgid "Votes cast"
 msgstr "Abgegebene Stimmen"
 
-#: dudel/templates/index.html:87
+#: dudel/templates/index.html:45
 msgid "Users"
 msgstr "Benutzer"
 
-#: dudel/templates/login.html:5 dudel/templates/login.html:30
-msgid "Login"
-msgstr "Anmelden"
+#: dudel/templates/poll/BASE.html:8
+msgid "Poll"
+msgstr "Umfrage"
 
-#: dudel/templates/login.html:24
-msgid "Registration (external)"
-msgstr "Registrierung (extern)"
+#: dudel/templates/poll/BASE.html:11 dudel/templates/poll/settings/edit.html:3
+#: dudel/templates/poll/settings/edit.html:14
+#: dudel/templates/poll/vote/assign.html:3
+#: dudel/templates/user/settings.html:3 dudel/templates/user/settings.html:59
+msgid "Settings"
+msgstr "Einstellungen"
 
-#: dudel/templates/login.html:27 dudel/templates/register.html:5
-msgid "Register"
-msgstr "Registrieren"
+#: dudel/templates/poll/BASE.html:12
+#: dudel/templates/poll/settings/invitations.html:3
+#: dudel/templates/poll/settings/invitations.html:6
+msgid "Invitations"
+msgstr "Einladungen"
 
-#: dudel/templates/poll.html:15
-msgid "Created on"
-msgstr "Erstellt am"
+#: dudel/templates/poll/BASE.html:13
+#: dudel/templates/poll/settings/choices.html:3
+msgid "Choices"
+msgstr "Wahlmöglichkeiten"
 
-#: dudel/templates/poll.html:18
-msgid "Expires"
-msgstr "Läuft ab am"
-
-#: dudel/templates/poll.html:22
-msgid "you"
-msgstr "du"
-
-#: dudel/templates/poll.html:26
-msgid "Anonymous voting"
-msgstr "Anonym abstimmen"
-
-#: dudel/templates/poll.html:26
-msgid "anonymous voting allowed"
-msgstr "anonymes Abstimmen erlaubt"
-
-#: dudel/templates/poll.html:30
-msgid "Public listing"
-msgstr "Öffentlich sichtbar"
-
-#: dudel/templates/poll.html:30
-msgid "public"
-msgstr "öffentlich"
-
-#: dudel/templates/poll.html:34
-msgid "Invitation required"
-msgstr "Einladung erforderlich"
-
-#: dudel/templates/poll.html:36
-msgid "Login required"
-msgstr "Anmeldung erforderlich"
-
-#: dudel/templates/poll.html:36
-msgid "login required"
-msgstr "Anmeldung erforderlich"
-
-#: dudel/templates/poll.html:40 dudel/templates/user_settings.html:48
-msgid "Watching"
-msgstr "wird beobachtet"
-
-#: dudel/templates/poll.html:41
-msgid "watching"
-msgstr "wird beobachtet"
-
-#: dudel/templates/poll.html:41
-msgid "not watching"
-msgstr "wird nicht beobachtet"
-
-#: dudel/templates/poll.html:51 dudel/templates/poll.html:136
+#: dudel/templates/poll/_actions.html:5 dudel/templates/poll/_table.html:33
 msgid "Edit vote"
 msgstr "Stimme bearbeiten"
 
-#: dudel/templates/poll.html:53
+#: dudel/templates/poll/_actions.html:7
 msgid "Log in to vote"
 msgstr "Anmelden zum Abstimmen"
 
-#: dudel/templates/poll.html:55
+#: dudel/templates/poll/_actions.html:9
 msgid "Invitation required to vote"
 msgstr "Einladung zum Abstimmen voraussetzen"
 
-#: dudel/templates/poll.html:57 dudel/templates/poll.html:164
-#: dudel/templates/poll_edit_choices.html:100
+#: dudel/templates/poll/_actions.html:11 dudel/templates/poll/_table.html:61
+#: dudel/templates/poll/settings/choices.html:100
 msgid "Vote now"
 msgstr "Abstimmen"
 
-#: dudel/templates/poll.html:62
+#: dudel/templates/poll/_actions.html:16
 msgid "Unwatch poll"
 msgstr "Nicht mehr beobachten"
 
-#: dudel/templates/poll.html:64
+#: dudel/templates/poll/_actions.html:18
 msgid "Watch poll"
 msgstr "Umfrage beobachten"
 
-#: dudel/templates/poll.html:73
+#: dudel/templates/poll/_comments.html:6
+msgid "Comments"
+msgstr "Kommentare"
+
+#: dudel/templates/poll/_comments.html:16
+msgid "commented on"
+msgstr "kommentierte am"
+
+#: dudel/templates/poll/_comments.html:20
+msgid "delete comment"
+msgstr "Kommentar löschen"
+
+#: dudel/templates/poll/_comments.html:33
+msgid "Post a comment"
+msgstr "Schreibe einen Kommentar"
+
+#: dudel/templates/poll/_comments.html:60
+msgid "You can avoid this captcha if you login."
+msgstr "Du brauchst keinen Code eingeben, wenn du dich einloggst."
+
+#: dudel/templates/poll/_comments.html:65
+msgid "Post comment"
+msgstr "Kommentar abschicken"
+
+#: dudel/templates/poll/_filter.html:34
+msgid "Filter votes"
+msgstr "Stimmen filtern"
+
+#: dudel/templates/poll/_filter.html:67
+msgid "Use regular expressions to match multiple votes."
+msgstr "Benutze reguläre Ausdrücke, um mehrere Stimmen abzudecken"
+
+#: dudel/templates/poll/_properties.html:9
+msgid "Creation date"
+msgstr "Erstellungsdatum"
+
+#: dudel/templates/poll/_properties.html:12
+msgid "Expiration date"
+msgstr "Ablaufdatum"
+
+#: dudel/templates/poll/_properties.html:16
+msgid "you"
+msgstr "du"
+
+#: dudel/templates/poll/_properties.html:20
+msgid "Anonymous voting allowed"
+msgstr "Anonymes Abstimmen erlaubt"
+
+#: dudel/templates/poll/_properties.html:20
+msgid "anonymous voting"
+msgstr "anonymes Abstimmen"
+
+#: dudel/templates/poll/_properties.html:24
+msgid "Listed in public polls list"
+msgstr "In öffentlicher Umfragenliste angezeigt"
+
+#: dudel/templates/poll/_properties.html:24
+msgid "public"
+msgstr "öffentlich"
+
+#: dudel/templates/poll/_properties.html:28
+msgid "Invitation required"
+msgstr "Einladung erforderlich"
+
+#: dudel/templates/poll/_properties.html:30
+msgid "Login required"
+msgstr "Anmeldung erforderlich"
+
+#: dudel/templates/poll/_properties.html:30
+msgid "login required"
+msgstr "Anmeldung erforderlich"
+
+#: dudel/templates/poll/_properties.html:34
+msgid "Watching poll"
+msgstr "Beobachtet"
+
+#: dudel/templates/poll/_properties.html:35
+msgid "watching"
+msgstr "wird beobachtet"
+
+#: dudel/templates/poll/_properties.html:35
+msgid "not watching"
+msgstr "wird nicht beobachtet"
+
+#: dudel/templates/poll/_properties.html:42
 msgid "Poll Description"
 msgstr "Beschreibung"
 
-#: dudel/templates/poll.html:81
+#: dudel/templates/poll/_table.html:6
+#, python-format
+msgid "Assigned after voting by %(user)s"
+msgstr "Nachträglich zugewiesen von %(user)s"
+
+#: dudel/templates/poll/_table.html:36 dudel/templates/poll/vote/edit.html:122
+msgid "Delete vote"
+msgstr "Stimme löschen"
+
+#: dudel/templates/poll/_table.html:39
+msgid "Assign a user"
+msgstr "Einen Benutzer zuweisen"
+
+#: dudel/templates/poll/_table.html:48
+#, python-format
+msgid "This user was invited on %(date)s at %(time)s to vote in this poll."
+msgstr ""
+"Dieser Benutzer wurde am %(date)s um %(time)s eingeladen, an dieser "
+"Abstimmung teilzunehmen."
+
+#: dudel/templates/poll/_table.html:64
+#: dudel/templates/poll/settings/edit.html:121
+msgid "Manage invitations"
+msgstr "Einladungen verwalten"
+
+#: dudel/templates/poll/_table.html:76
 msgid ""
 "You as an admin of this poll will always see full results, no matter what "
 "you select under 'Results display'. Log out to see the poll as a normal "
@@ -717,54 +770,30 @@ msgstr ""
 "was du unter \"Anzeigen der Ergebnisse\" angegeben hast. Logge dich aus, um "
 "diese Umfrage als normaler Nutzer zu sehen."
 
-#: dudel/templates/poll.html:109
-#, python-format
-msgid "Assigned after voting by %(user)s"
-msgstr "Nachträglich zugewiesen von %(user)s"
-
-#: dudel/templates/poll.html:139 dudel/templates/vote.html:122
-msgid "Delete vote"
-msgstr "Stimme löschen"
-
-#: dudel/templates/poll.html:142
-msgid "Assign a user"
-msgstr "Einen Benutzer zuweisen"
-
-#: dudel/templates/poll.html:151
-#, python-format
-msgid "This user was invited on %(date)s at %(time)s to vote in this poll."
-msgstr ""
-"Dieser Benutzer wurde am %(date)s um %(time)s eingeladen, an dieser "
-"Abstimmung teilzunehmen."
-
-#: dudel/templates/poll.html:167 dudel/templates/poll_edit.html:121
-msgid "Manage invitations"
-msgstr "Einladungen verwalten"
-
-#: dudel/templates/poll.html:179
+#: dudel/templates/poll/_table.html:116
 #, python-format
 msgid "%(count)d votes are hidden from you."
 msgstr "%(count)d Stimmen sind vor dir versteckt"
 
-#: dudel/templates/poll.html:181
+#: dudel/templates/poll/_table.html:118
 msgid "Some votes may be hidden from you."
 msgstr "Einige Stimmen könnten vor dir versteckt sein."
 
-#: dudel/templates/poll.html:184
+#: dudel/templates/poll/_table.html:121
 #, python-format
 msgid "<a href=\"%(link)s\">Log in</a> to display your own vote.</a>"
 msgstr ""
 "<a href=\"%(link)s\">Logge dich ein</a>, um deine eigene Stimme zu sehen."
 
-#: dudel/templates/poll.html:197
+#: dudel/templates/poll/_table.html:134
 msgid "Percent"
 msgstr "Prozent"
 
-#: dudel/templates/poll.html:197 dudel/templates/poll.html:203
+#: dudel/templates/poll/_table.html:134 dudel/templates/poll/_table.html:140
 msgid "Score"
 msgstr "Gesamtwertung"
 
-#: dudel/templates/poll.html:223
+#: dudel/templates/poll/_table.html:160
 msgid ""
 "This poll does not have any choices, so no votes can be cast. If this is "
 "your poll, please fix that by clicking the 'choices' button on the top."
@@ -773,155 +802,20 @@ msgstr ""
 "werden. Falls dies deine Umfrage ist, kannst du das ändern, indem du oben "
 "auf 'Wahlmöglichkeiten' klickst."
 
-#: dudel/templates/poll.html:225
+#: dudel/templates/poll/_table.html:162
 msgid "The results of this poll are currently hidden."
 msgstr "Die Ergebnisse dieser Umfrage sind zurzeit nicht sichtbar."
 
-#: dudel/templates/poll.html:227
+#: dudel/templates/poll/_table.html:164
 msgid "No-one voted, and the poll expired."
 msgstr "Niemand hat abgestimmt und die Umfrage ist abgelaufen."
 
-#: dudel/templates/poll.html:230
+#: dudel/templates/poll/_table.html:167
 msgid "No-one voted yet. Be the first!"
 msgstr "Es hat noch niemand abgestimmt. Sei der erste!"
 
-#: dudel/templates/poll.html:240
-msgid "Comments"
-msgstr "Kommentare"
-
-#: dudel/templates/poll.html:250
-msgid "commented on"
-msgstr "kommentierte am"
-
-#: dudel/templates/poll.html:254
-msgid "delete comment"
-msgstr "Kommentar löschen"
-
-#: dudel/templates/poll.html:267
-msgid "Post a comment"
-msgstr "Schreibe einen Kommentar"
-
-#: dudel/templates/poll.html:294
-msgid "You can avoid this captcha if you login."
-msgstr "Du brauchst keinen Code eingeben, wenn du dich einloggst."
-
-#: dudel/templates/poll.html:299
-msgid "Post comment"
-msgstr "Kommentar abschicken"
-
-#: dudel/templates/poll_copy.html:3 dudel/templates/poll_copy.html:95
-msgid "Copy"
-msgstr "Kopieren"
-
-#: dudel/templates/poll_copy.html:6 dudel/templates/poll_edit.html:122
-msgid "Copy poll"
-msgstr "Umfrage kopieren"
-
-#: dudel/templates/poll_copy.html:39
-msgid "Settings to copy"
-msgstr "Zu kopierende Einstellungen"
-
-#: dudel/templates/poll_copy.html:81
-#, python-format
-msgid "Current Range: %(from)s - %(to)s"
-msgstr "Aktueller Bereich: %(from)s - %(to)s"
-
-#: dudel/templates/poll_copy.html:84
-#, python-format
-msgid "New Range: %(from)s - %(to)s"
-msgstr "Neuer Bereich: %(from)s - %(to)s"
-
-#: dudel/templates/poll_copy.html:94 dudel/templates/poll_edit.html:132
-#: dudel/templates/poll_invitations.html:63
-#: dudel/templates/poll_vote_assign.html:36
-msgid "Back to poll"
-msgstr "Zurück zur Umfrage"
-
-#: dudel/templates/poll_delete.html:3
-msgid "Delete poll"
-msgstr "Umfrage löschen"
-
-#: dudel/templates/poll_delete.html:7
-msgid "Warning!"
-msgstr "Warnung!"
-
-#: dudel/templates/poll_delete.html:8
-#, python-format
-msgid ""
-"You are about to permanently delete the poll <b>%(title)s</b>. Are you sure "
-"you want to continue?"
-msgstr ""
-"Du bist dabei, die Umfrage <b>%(title)s</b> permanent zu löschen. Bist du "
-"sicher, dass du fortfahren willst?"
-
-#: dudel/templates/poll_delete.html:10
-msgid "Back to safety"
-msgstr "Zurück in Sicherheit"
-
-#: dudel/templates/poll_delete.html:11
-msgid "Yes, delete it"
-msgstr "Ja, bitte löschen"
-
-#: dudel/templates/poll_edit.html:8
-msgid "Note:"
-msgstr "Hinweis:"
-
-#: dudel/templates/poll_edit.html:9
-#, python-format
-msgid ""
-"This poll is owned by %(owner)s, but you can edit it due to your "
-"administrator privileges."
-msgstr ""
-"Dise Umfrage gehört %(owner)s, aber du kannst sie editieren, da du "
-"Administrator bist."
-
-#: dudel/templates/poll_edit.html:36
-msgid "Owners of this poll and administrators will always see all votes."
-msgstr "Eigentümer und Administratoren sehen immer alle Stimmen."
-
-#: dudel/templates/poll_edit.html:64
-msgid "Additional settings"
-msgstr "Zusätzliche Einstellung"
-
-#: dudel/templates/poll_edit.html:102
-msgid ""
-"These settings are not retroactive, meaning that changing them will not "
-"modify votes/comments already created."
-msgstr ""
-"Diese Einstellungen sind nicht retroaktiv, also werden, solltest du sie "
-"verändern, keine Stimmen oder Kommentare geändert, die bereits abgegeben "
-"waren."
-
-#: dudel/templates/poll_edit.html:112
-msgid ""
-"Only the owner of a poll, or a member of the owner group, can edit the "
-"settings on this page. If you set this to \"Nobody\", then anyone may claim "
-"exclusive ownership. Most restrictive settings above are useless if you do "
-"not claim ownership of this poll."
-msgstr ""
-"Nur der Eigentümer, oder ein Mitglied der Eigentümer-Gruppe, kann diese "
-"Einstellungen verändern. Setzt du dies auf \"Niemand\", so kann jeder die "
-"Umfrage in Besitz nehmen. Die meisten einschränkenden Einstellungen oben "
-"sind nutzlos, bis du diese Umfrage in Besitz genommen hast."
-
-#: dudel/templates/poll_edit.html:118
-msgid "Very advanced stuff"
-msgstr "Sehr fortgeschrittene Einstellungen"
-
-#: dudel/templates/poll_edit.html:120
-msgid "Edit possible answer values"
-msgstr "Mögliche Antworten bearbeiten"
-
-#: dudel/templates/poll_edit.html:124
-msgid "Delete this poll"
-msgstr "Dies Umfrage löschen"
-
-#: dudel/templates/poll_edit.html:133
-msgid "Save settings"
-msgstr "Einstellungen speichern"
-
-#: dudel/templates/poll_edit_choices.html:12
-#: dudel/templates/poll_edit_choices.html:84
+#: dudel/templates/poll/settings/choices.html:12
+#: dudel/templates/poll/settings/choices.html:84
 msgid ""
 "Deleted choices will stay in this list, so votes that have already been made "
 "are not lost."
@@ -929,69 +823,69 @@ msgstr ""
 "Entfernte Antworten verbleiben in dieser Liste, so dass Stimmen, die bereits "
 "abgegeben wurden, nicht verloren gehen."
 
-#: dudel/templates/poll_edit_choices.html:22
-#: dudel/templates/poll_edit_values.html:31
+#: dudel/templates/poll/settings/choices.html:22
+#: dudel/templates/poll/settings/values.html:31
 msgid "Actions"
 msgstr "Aktionen"
 
-#: dudel/templates/poll_edit_choices.html:68
+#: dudel/templates/poll/settings/choices.html:68
 msgid "Add a choice"
 msgstr "Eine Wahlmöglichkeit hinzufügen"
 
-#: dudel/templates/poll_edit_choices.html:83
+#: dudel/templates/poll/settings/choices.html:83
 msgid "Deleted choices"
 msgstr "Gelöschte Wahlmöglichkeiten"
 
-#: dudel/templates/poll_edit_choices.html:86
+#: dudel/templates/poll/settings/choices.html:86
 msgid "Grouping"
 msgstr "Gruppieren"
 
-#: dudel/templates/poll_edit_choices.html:88
+#: dudel/templates/poll/settings/choices.html:88
 msgid "You can sort choices into groups by splitting them into parts with '/'."
 msgstr ""
 "Du kannst Wahlmöglichkeiten gruppieren, indem du sie mit '/' in Teile "
 "zerlegst."
 
-#: dudel/templates/poll_edit_choices.html:101
+#: dudel/templates/poll/settings/choices.html:101
 msgid "Done"
 msgstr "Fertig"
 
-#: dudel/templates/poll_edit_choices.html:109
-#: dudel/templates/poll_edit_choices.html:117
+#: dudel/templates/poll/settings/choices.html:109
+#: dudel/templates/poll/settings/choices.html:117
 msgid "Step 1"
 msgstr "Schritt 1"
 
-#: dudel/templates/poll_edit_choices.html:109
+#: dudel/templates/poll/settings/choices.html:109
 msgid "Days"
 msgstr "Tage"
 
-#: dudel/templates/poll_edit_choices.html:110
-#: dudel/templates/poll_edit_choices.html:118
+#: dudel/templates/poll/settings/choices.html:110
+#: dudel/templates/poll/settings/choices.html:118
 msgid "Step 2"
 msgstr "Schritt 2"
 
-#: dudel/templates/poll_edit_choices.html:111
-#: dudel/templates/poll_edit_choices.html:119
+#: dudel/templates/poll/settings/choices.html:111
+#: dudel/templates/poll/settings/choices.html:119
 msgid "Step 3"
 msgstr "Schritt 3"
 
-#: dudel/templates/poll_edit_choices.html:111
+#: dudel/templates/poll/settings/choices.html:111
 msgid "Combine"
 msgstr "Kombinationen"
 
-#: dudel/templates/poll_edit_choices.html:117
+#: dudel/templates/poll/settings/choices.html:117
 msgid "Select days"
 msgstr "Tage auswählen"
 
-#: dudel/templates/poll_edit_choices.html:118
+#: dudel/templates/poll/settings/choices.html:118
 msgid "Select time slots"
 msgstr "Zeiten auswählen"
 
-#: dudel/templates/poll_edit_choices.html:119
+#: dudel/templates/poll/settings/choices.html:119
 msgid "Choose combinations"
 msgstr "Kombinationen auswählen"
 
-#: dudel/templates/poll_edit_choices.html:128
+#: dudel/templates/poll/settings/choices.html:128
 msgid ""
 "It's a pity you don't have <b>JavaScript</b> turned on, so you'll have to "
 "type in comma separated values in the correct format yourself, no spaces "
@@ -1004,7 +898,7 @@ msgstr ""
 "und aktiviere JavaScript auf dieser Seite. Dann bekommst du ein hübsches "
 "Interface, um Daten und Uhrzeiten einzugeben..."
 
-#: dudel/templates/poll_edit_choices.html:147
+#: dudel/templates/poll/settings/choices.html:147
 msgid ""
 "Please select the days that you want to be able to choose. In the next step, "
 "you will select time slots."
@@ -1012,7 +906,7 @@ msgstr ""
 "Bitte wähle die Tage, über die abgestimmt werden soll. Im nächsten Schritt "
 "kannst du die Uhrzeiten hinzufügen."
 
-#: dudel/templates/poll_edit_choices.html:175
+#: dudel/templates/poll/settings/choices.html:175
 msgid ""
 "Please select the time slots that you want to be able to choose. In the next "
 "step, you will match them against the selected days."
@@ -1020,48 +914,221 @@ msgstr ""
 "Bitte wähle die Zeiten, über die abgestimmt werden soll. Im nächsten Schritt "
 "kannst du sie ausgewählten Tagen zuordnen."
 
-#: dudel/templates/poll_edit_choices.html:190
-#: dudel/templates/poll_edit_values.html:104
+#: dudel/templates/poll/settings/choices.html:190
+#: dudel/templates/poll/settings/values.html:104
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: dudel/templates/poll_edit_choices.html:201
-#: dudel/templates/poll_edit_choices.html:259
+#: dudel/templates/poll/settings/choices.html:201
+#: dudel/templates/poll/settings/choices.html:259
 msgid "Back"
 msgstr "Zurück"
 
-#: dudel/templates/poll_edit_choices.html:202
-#: dudel/templates/poll_edit_choices.html:260
+#: dudel/templates/poll/settings/choices.html:202
+#: dudel/templates/poll/settings/choices.html:260
 msgid "Next"
 msgstr "Weiter"
 
-#: dudel/templates/poll_edit_choices.html:207
+#: dudel/templates/poll/settings/choices.html:207
 msgid ""
 "Here you can select which day/time combinations are available for voting."
 msgstr ""
 "Hier kannst du auswählen, über welche Kombinationen aus Tag und Uhrzeit "
 "abgestimmt werden kann."
 
-#: dudel/templates/poll_edit_choices.html:236
-#: dudel/templates/poll_edit_choices.html:246 dudel/templates/vote.html:30
+#: dudel/templates/poll/settings/choices.html:236
+#: dudel/templates/poll/settings/choices.html:246
+#: dudel/templates/poll/vote/edit.html:30
 msgid "all"
 msgstr "alle"
 
-#: dudel/templates/poll_edit_choices.html:237
-#: dudel/templates/poll_edit_choices.html:247
+#: dudel/templates/poll/settings/choices.html:237
+#: dudel/templates/poll/settings/choices.html:247
 msgid "none"
 msgstr "keine"
 
-#: dudel/templates/poll_edit_choices.html:251
+#: dudel/templates/poll/settings/choices.html:251
 msgid "An Error occurred, you can try to go back to fix it."
 msgstr ""
 "Ein Fehler ist aufgetreten, du kannst zurückgehen und es erneut versuchen."
 
-#: dudel/templates/poll_edit_values.html:3
+#: dudel/templates/poll/settings/copy.html:3
+#: dudel/templates/poll/settings/copy.html:95
+msgid "Copy"
+msgstr "Kopieren"
+
+#: dudel/templates/poll/settings/copy.html:6
+#: dudel/templates/poll/settings/edit.html:122
+msgid "Copy poll"
+msgstr "Umfrage kopieren"
+
+#: dudel/templates/poll/settings/copy.html:30
+msgid ""
+"This would be automatically generated for you if you had not blocked "
+"javascript."
+msgstr ""
+"Dieses Feld würde automatisch ausgefüllt, hättest du javascript aktiviert."
+
+#: dudel/templates/poll/settings/copy.html:39
+msgid "Settings to copy"
+msgstr "Zu kopierende Einstellungen"
+
+#: dudel/templates/poll/settings/copy.html:81
+#, python-format
+msgid "Current Range: %(from)s - %(to)s"
+msgstr "Aktueller Bereich: %(from)s - %(to)s"
+
+#: dudel/templates/poll/settings/copy.html:84
+#, python-format
+msgid "New Range: %(from)s - %(to)s"
+msgstr "Neuer Bereich: %(from)s - %(to)s"
+
+#: dudel/templates/poll/settings/copy.html:94
+#: dudel/templates/poll/settings/edit.html:132
+#: dudel/templates/poll/settings/invitations.html:63
+#: dudel/templates/poll/vote/assign.html:36
+msgid "Back to poll"
+msgstr "Zurück zur Umfrage"
+
+#: dudel/templates/poll/settings/delete.html:3
+msgid "Delete poll"
+msgstr "Umfrage löschen"
+
+#: dudel/templates/poll/settings/delete.html:7
+msgid "Warning!"
+msgstr "Warnung!"
+
+#: dudel/templates/poll/settings/delete.html:8
+#, python-format
+msgid ""
+"You are about to permanently delete the poll <b>%(title)s</b>. Are you sure "
+"you want to continue?"
+msgstr ""
+"Du bist dabei, die Umfrage <b>%(title)s</b> permanent zu löschen. Bist du "
+"sicher, dass du fortfahren willst?"
+
+#: dudel/templates/poll/settings/delete.html:10
+msgid "Back to safety"
+msgstr "Zurück in Sicherheit"
+
+#: dudel/templates/poll/settings/delete.html:11
+msgid "Yes, delete it"
+msgstr "Ja, bitte löschen"
+
+#: dudel/templates/poll/settings/edit.html:8
+msgid "Note:"
+msgstr "Hinweis:"
+
+#: dudel/templates/poll/settings/edit.html:9
+#, python-format
+msgid ""
+"This poll is owned by %(owner)s, but you can edit it due to your "
+"administrator privileges."
+msgstr ""
+"Dise Umfrage gehört %(owner)s, aber du kannst sie editieren, da du "
+"Administrator bist."
+
+#: dudel/templates/poll/settings/edit.html:36
+msgid "Owners of this poll and administrators will always see all votes."
+msgstr "Eigentümer und Administratoren sehen immer alle Stimmen."
+
+#: dudel/templates/poll/settings/edit.html:64
+msgid "Additional settings"
+msgstr "Zusätzliche Einstellung"
+
+#: dudel/templates/poll/settings/edit.html:102
+msgid ""
+"These settings are not retroactive, meaning that changing them will not "
+"modify votes/comments already created."
+msgstr ""
+"Diese Einstellungen sind nicht retroaktiv, also werden, solltest du sie "
+"verändern, keine Stimmen oder Kommentare geändert, die bereits abgegeben "
+"waren."
+
+#: dudel/templates/poll/settings/edit.html:112
+msgid ""
+"Only the owner of a poll, or a member of the owner group, can edit the "
+"settings on this page. If you set this to \"Nobody\", then anyone may claim "
+"exclusive ownership. Most restrictive settings above are useless if you do "
+"not claim ownership of this poll."
+msgstr ""
+"Nur der Eigentümer, oder ein Mitglied der Eigentümer-Gruppe, kann diese "
+"Einstellungen verändern. Setzt du dies auf \"Niemand\", so kann jeder die "
+"Umfrage in Besitz nehmen. Die meisten einschränkenden Einstellungen oben "
+"sind nutzlos, bis du diese Umfrage in Besitz genommen hast."
+
+#: dudel/templates/poll/settings/edit.html:118
+msgid "Very advanced stuff"
+msgstr "Sehr fortgeschrittene Einstellungen"
+
+#: dudel/templates/poll/settings/edit.html:120
+msgid "Edit possible answer values"
+msgstr "Mögliche Antworten bearbeiten"
+
+#: dudel/templates/poll/settings/edit.html:124
+msgid "Delete this poll"
+msgstr "Dies Umfrage löschen"
+
+#: dudel/templates/poll/settings/edit.html:133
+msgid "Save settings"
+msgstr "Einstellungen speichern"
+
+#: dudel/templates/poll/settings/invitations.html:19
+#: dudel/templates/user/settings.html:39
+msgid "Voted"
+msgstr "Abgestimmt"
+
+#: dudel/templates/poll/settings/invitations.html:19
+msgid "Vote pending"
+msgstr "Stimme abgegeben"
+
+#: dudel/templates/poll/settings/invitations.html:29
+msgid "Resend invitation"
+msgstr "Einladung erneut senden"
+
+#: dudel/templates/poll/settings/invitations.html:30
+msgid "Remove invitation"
+msgstr "Einladung zurückziehen"
+
+#: dudel/templates/poll/settings/invitations.html:46
+msgid "Invite"
+msgstr "Einladen"
+
+#: dudel/templates/poll/settings/invitations.html:52
+msgid ""
+"Enter the username or group title of the user or group of users you want to "
+"invite."
+msgstr ""
+"Gib die Kennung eines Benutzers oder einen Gruppen-Titel ein, um den "
+"Benutzer oder alle Benutzer der Gruppe einzuladen."
+
+#: dudel/templates/poll/settings/invitations.html:53
+msgid "You can enter multiple users or groups."
+msgstr "Du kannst mehrere Benutzer oder Gruppen eingeben."
+
+#: dudel/templates/poll/settings/invitations.html:54
+msgid "Duplicates are ignored automatically."
+msgstr "Duplikate werden automatisch übersprungen."
+
+#: dudel/templates/poll/settings/invitations.html:55
+msgid ""
+"Group invitations are resolved immediately, so adding more members to a "
+"group later will not invite those new members, unless you re-invite the "
+"group."
+msgstr ""
+"Gruppeneinladungen werden sofort aufgelöst, also werden neue Mitglieder, die "
+"später der Gruppe beitreten, nicht automatisch eingeladen, außer du lädst "
+"die Gruppe erneut ein."
+
+#: dudel/templates/poll/settings/invitations.html:64
+msgid "Resend all invitations"
+msgstr "Alle Einladungen erneut senden"
+
+#: dudel/templates/poll/settings/values.html:3
 msgid "Values"
 msgstr "Antworten"
 
-#: dudel/templates/poll_edit_values.html:7
+#: dudel/templates/poll/settings/values.html:7
 msgid ""
 "Here you can edit which options the voters have for each choice you give "
 "them. By default, <b>yes</b>, <b>no</b> and <b>maybe</b> are always enabled, "
@@ -1074,7 +1141,7 @@ msgstr ""
 "davon bearbeiten oder deaktivieren. Es sollte mindestens eine Antwort in der "
 "Liste geben, damit die Abstimmung sinnvoll ist."
 
-#: dudel/templates/poll_edit_values.html:11
+#: dudel/templates/poll/settings/values.html:11
 msgid ""
 "Weights are factors on how the total score for a choice is calculated. These "
 "values are normally somewhere between 0 and 1. The total score is displayed "
@@ -1086,121 +1153,66 @@ msgstr ""
 "Gesamtwertung wird angezeigt als Summe und Anteil, also kannst du auch "
 "andere Werte verwenden."
 
-#: dudel/templates/poll_edit_values.html:24
+#: dudel/templates/poll/settings/values.html:24
 msgid "Available choices"
 msgstr "Mögliche Antworten"
 
-#: dudel/templates/poll_edit_values.html:28
+#: dudel/templates/poll/settings/values.html:28
 msgid "Color/Icon"
 msgstr "Farbe/Symbol"
 
-#: dudel/templates/poll_edit_values.html:50
+#: dudel/templates/poll/settings/values.html:50
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: dudel/templates/poll_edit_values.html:67
+#: dudel/templates/poll/settings/values.html:67
 #, python-format
 msgid "Edit choice value: %(title)s"
 msgstr "Antwort bearbeiten: %(title)s"
 
-#: dudel/templates/poll_edit_values.html:69
+#: dudel/templates/poll/settings/values.html:69
 msgid "Add a choice value"
 msgstr "Eine Antwort hinzufügen"
 
-#: dudel/templates/poll_edit_values.html:82
+#: dudel/templates/poll/settings/values.html:82
 msgid "(usually between 0 and 1)"
 msgstr "(normalerweise zwischen 0 und 1)"
 
-#: dudel/templates/poll_edit_values.html:96
+#: dudel/templates/poll/settings/values.html:96
 msgid "(any FontAwesome icon)"
 msgstr "(ein beliebiges FontAwesome-Icon)"
 
-#: dudel/templates/poll_edit_values.html:104
-#: dudel/templates/user_settings.html:122
+#: dudel/templates/poll/settings/values.html:104
+#: dudel/templates/user/settings.html:122
 msgid "Save"
 msgstr "Speichern"
 
-#: dudel/templates/poll_edit_values.html:107
+#: dudel/templates/poll/settings/values.html:107
 msgid "Available icons"
 msgstr "Verfügbare Symbole"
 
-#: dudel/templates/poll_edit_values.html:109
+#: dudel/templates/poll/settings/values.html:109
 msgid "Click icon to insert it into the form."
 msgstr "Klick auf ein Symbol, um es hinzuzufügen."
 
-#: dudel/templates/poll_invitations.html:19
-#: dudel/templates/user_settings.html:39
-msgid "Voted"
-msgstr "Abgestimmt"
-
-#: dudel/templates/poll_invitations.html:19
-msgid "Vote pending"
-msgstr "Stimme abgegeben"
-
-#: dudel/templates/poll_invitations.html:29
-msgid "Resend invitation"
-msgstr "Einladung erneut senden"
-
-#: dudel/templates/poll_invitations.html:30
-msgid "Remove invitation"
-msgstr "Einladung zurückziehen"
-
-#: dudel/templates/poll_invitations.html:46
-msgid "Invite"
-msgstr "Einladen"
-
-#: dudel/templates/poll_invitations.html:52
-msgid ""
-"Enter the username or group title of the user or group of users you want to "
-"invite."
-msgstr ""
-"Gib die Kennung eines Benutzers oder einen Gruppen-Titel ein, um den "
-"Benutzer oder alle Benutzer der Gruppe einzuladen."
-
-#: dudel/templates/poll_invitations.html:53
-msgid "You can enter multiple users or groups."
-msgstr "Du kannst mehrere Benutzer oder Gruppen eingeben."
-
-#: dudel/templates/poll_invitations.html:54
-msgid "Duplicates are ignored automatically."
-msgstr "Duplikate werden automatisch übersprungen."
-
-#: dudel/templates/poll_invitations.html:55
-msgid ""
-"Group invitations are resolved immediately, so adding more members to a "
-"group later will not invite those new members, unless you re-invite the "
-"group."
-msgstr ""
-"Gruppeneinladungen werden sofort aufgelöst, also werden neue Mitglieder, die "
-"später der Gruppe beitreten, nicht automatisch eingeladen, außer du lädst "
-"die Gruppe erneut ein."
-
-#: dudel/templates/poll_invitations.html:64
-msgid "Resend all invitations"
-msgstr "Alle Einladungen erneut senden"
-
-#: dudel/templates/poll_password.html:7
-msgid "Please insert the poll password to continue:"
-msgstr "Bitte gibt das Passwort der Umfrage ein:"
-
-#: dudel/templates/poll_vote_assign.html:6
+#: dudel/templates/poll/vote/assign.html:6
 msgid "Assign a vote to a user"
 msgstr "Eine Stimme einem Benutzer zuweisen"
 
-#: dudel/templates/poll_vote_assign.html:21
+#: dudel/templates/poll/vote/assign.html:21
 msgid "Assign"
 msgstr "Zuweisen"
 
-#: dudel/templates/poll_vote_assign.html:27
+#: dudel/templates/poll/vote/assign.html:27
 msgid "Only that user will be able to edit or delete the vote."
 msgstr "Nur dieser Benutzer wird die Stimme bearbeiten oder löschen dürfen."
 
-#: dudel/templates/poll_vote_assign.html:28
+#: dudel/templates/poll/vote/assign.html:28
 msgid "If the user has been invited, their invitation will be fulfilled."
 msgstr ""
 "War der Benutzer eingeladen, wird seine Einladung als erfüllt markiert."
 
-#: dudel/templates/poll_vote_assign.html:29
+#: dudel/templates/poll/vote/assign.html:29
 msgid ""
 "If multiple votes are disabled, you cannot assign a user who has already "
 "voted."
@@ -1208,79 +1220,28 @@ msgstr ""
 "Wenn Mehrfachabstimmungen verboten sind, kannst du keinen Benutzer zuweisen, "
 "der bereits abgestimmt hat."
 
-#: dudel/templates/poll_vote_assign.html:30
+#: dudel/templates/poll/vote/assign.html:30
 msgid "The name next to the vote will be updated."
 msgstr "Der Anzeigename neben der Stimme wird überschrieben."
 
-#: dudel/templates/poll_vote_assign.html:31
+#: dudel/templates/poll/vote/assign.html:31
 msgid ""
 "The vote will be marked as 'assign after voting', so that everyone knows."
 msgstr "Die Stimme wird als \"nachträglich zugewiesen\" markiert."
 
-#: dudel/templates/poll_vote_assign.html:32
+#: dudel/templates/poll/vote/assign.html:32
 msgid "You cannot undo your assignment."
 msgstr "Du kannst die Zuweisung nicht widerrufen."
 
-#: dudel/templates/register.html:59
-msgid "Back to Login"
-msgstr "Zurück zum Login"
-
-#: dudel/templates/register.html:60
-msgid "Register now"
-msgstr "Jetzt registrieren"
-
-#: dudel/templates/user_settings.html:9
-msgid "Poll overview"
-msgstr "Übersicht deiner Umfragen"
-
-#: dudel/templates/user_settings.html:12
-msgid ""
-"This list shows all the polls you have participated in, either by owning "
-"them, voting on them, being invited, or watching."
-msgstr ""
-"Diese Liste zeigt alle Umfragen, an denen du teilgenommen hast, entweder "
-"indem du sie besitzt, darin abgestimmt hast, eingeladen bist, oder sie "
-"beobachtest."
-
-#: dudel/templates/user_settings.html:30
-msgid "Owner"
-msgstr "Besitzer"
-
-#: dudel/templates/user_settings.html:32
-msgid "Owner (group)"
-msgstr "Besitzer (Gruppe)"
-
-#: dudel/templates/user_settings.html:34
-msgid "Not owner"
-msgstr "Nicht Besitzer"
-
-#: dudel/templates/user_settings.html:41
-msgid "Invited"
-msgstr "Eingeladen"
-
-#: dudel/templates/user_settings.html:43
-msgid "Not voted"
-msgstr "Nicht abgestimmt"
-
-#: dudel/templates/user_settings.html:50
-msgid "Not watching"
-msgstr "Nicht beobachten"
-
-#: dudel/templates/user_settings.html:99
-msgid "You can edit your account settings in the centralized accounts page."
-msgstr ""
-"Du kannst deine Benutzereinstellungen auf der zentralen Account-Seite "
-"verwalten."
-
-#: dudel/templates/vote.html:3
+#: dudel/templates/poll/vote/edit.html:3
 msgid "Edit Vote"
 msgstr "Stimme bearbeiten"
 
-#: dudel/templates/vote.html:3
+#: dudel/templates/poll/vote/edit.html:3
 msgid "Vote"
 msgstr "Abstimmung"
 
-#: dudel/templates/vote.html:7
+#: dudel/templates/poll/vote/edit.html:7
 msgid ""
 "You have already voted on this poll. Maybe instead of voting again you'd "
 "rather edit your choices?"
@@ -1288,29 +1249,29 @@ msgstr ""
 "Du hast bereits für diese Umfrage abgestimmt. Vielleicht möchtest du lieber "
 "deine Stimme bearbeiten, statt noch einmal abzustimmen?"
 
-#: dudel/templates/vote.html:11
+#: dudel/templates/poll/vote/edit.html:11
 msgid "You are editing a vote, not casting a new one."
 msgstr "Du beabeitest gerade eine Stimme und gibst keine neue ab."
 
-#: dudel/templates/vote.html:15
+#: dudel/templates/poll/vote/edit.html:15
 msgid "Hold left mouse button and drag mouse to select multiple vote choices."
 msgstr ""
 "Halte die linke Maustaste gedrückt und ziehe den Cursor über die "
 "Antwortfelder, um mehrere auf einmal auszuwählen."
 
-#: dudel/templates/vote.html:34
+#: dudel/templates/poll/vote/edit.html:34
 msgid "Show all comment fields"
 msgstr "Alle Kommentarfelder anzeigen"
 
-#: dudel/templates/vote.html:66
+#: dudel/templates/poll/vote/edit.html:66
 msgid "Add a comment"
 msgstr "Füge einen Kommentar hinzu"
 
-#: dudel/templates/vote.html:107
+#: dudel/templates/poll/vote/edit.html:107
 msgid "Save vote"
 msgstr "Stimme speichern"
 
-#: dudel/templates/vote.html:119
+#: dudel/templates/poll/vote/edit.html:119
 msgid ""
 "You can delete this vote if it has been cast accidentally. Please do not "
 "abuse this feature, else we'll have to remove it again. Also, we log who "
@@ -1319,6 +1280,73 @@ msgstr ""
 "Du kannst diese Stimme löschen, solltest du sie aus Versehen abgegeben "
 "haben. Bitte missbrauche dieses Feature nicht, ansonsten müssen wir es "
 "wieder entfernen. Außerdem loggen wir, wer es benutzt, nur um sicherzugehen."
+
+#: dudel/templates/user/login.html:5 dudel/templates/user/login.html:30
+msgid "Login"
+msgstr "Anmelden"
+
+#: dudel/templates/user/login.html:24
+msgid "Registration (external)"
+msgstr "Registrierung (extern)"
+
+#: dudel/templates/user/login.html:27 dudel/templates/user/register.html:5
+msgid "Register"
+msgstr "Registrieren"
+
+#: dudel/templates/user/register.html:59
+msgid "Back to Login"
+msgstr "Zurück zum Login"
+
+#: dudel/templates/user/register.html:60
+msgid "Register now"
+msgstr "Jetzt registrieren"
+
+#: dudel/templates/user/settings.html:9
+msgid "Poll overview"
+msgstr "Übersicht deiner Umfragen"
+
+#: dudel/templates/user/settings.html:12
+msgid ""
+"This list shows all the polls you have participated in, either by owning "
+"them, voting on them, being invited, or watching."
+msgstr ""
+"Diese Liste zeigt alle Umfragen, an denen du teilgenommen hast, entweder "
+"indem du sie besitzt, darin abgestimmt hast, eingeladen bist, oder sie "
+"beobachtest."
+
+#: dudel/templates/user/settings.html:30
+msgid "Owner"
+msgstr "Besitzer"
+
+#: dudel/templates/user/settings.html:32
+msgid "Owner (group)"
+msgstr "Besitzer (Gruppe)"
+
+#: dudel/templates/user/settings.html:34
+msgid "Not owner"
+msgstr "Nicht Besitzer"
+
+#: dudel/templates/user/settings.html:41
+msgid "Invited"
+msgstr "Eingeladen"
+
+#: dudel/templates/user/settings.html:43
+msgid "Not voted"
+msgstr "Nicht abgestimmt"
+
+#: dudel/templates/user/settings.html:48
+msgid "Watching"
+msgstr "wird beobachtet"
+
+#: dudel/templates/user/settings.html:50
+msgid "Not watching"
+msgstr "Nicht beobachten"
+
+#: dudel/templates/user/settings.html:99
+msgid "You can edit your account settings in the centralized accounts page."
+msgstr ""
+"Du kannst deine Benutzereinstellungen auf der zentralen Account-Seite "
+"verwalten."
 
 #~ msgid "Logged in as %(name)s"
 #~ msgstr "Angemeldet als %(name)s"
@@ -1382,3 +1410,15 @@ msgstr ""
 
 #~ msgid "Invites"
 #~ msgstr "Einladungen"
+
+#~ msgid "Created on"
+#~ msgstr "Erstellt am"
+
+#~ msgid "Expires"
+#~ msgstr "Läuft ab am"
+
+#~ msgid "Public listing"
+#~ msgstr "Öffentlich sichtbar"
+
+#~ msgid "Please insert the poll password to continue:"
+#~ msgstr "Bitte gibt das Passwort der Umfrage ein:"
