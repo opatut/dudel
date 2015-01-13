@@ -1,7 +1,8 @@
-from dudel import app, db, gravatar
+from dudel import app, db, gravatar, default_timezone
 from flask import abort
 import scrypt
 import random
+import pytz
 from .member import Member
 from .invitation import Invitation
 from .vote import Vote
@@ -43,6 +44,7 @@ class User(Member):
     preferred_language = db.Column(db.String(80))
     autowatch = db.Column(db.Boolean, default=False)
     allow_invitation_mails = db.Column(db.Boolean, default=True)
+    timezone_name = db.Column(db.String(40))
 
     # relationships
     watches = db.relationship("PollWatch", backref="user", cascade="all, delete-orphan", lazy="dynamic")
@@ -64,6 +66,10 @@ class User(Member):
             "username": self.username,
             "email": self.email
             })
+
+    @property
+    def timezone(self):
+        return pytz.timezone(self.timezone_name) if self.timezone_name else default_timezone
 
     # login stuff
     def get_id(self):

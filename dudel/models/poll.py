@@ -1,4 +1,4 @@
-from dudel import db, mail
+from dudel import db, mail, default_timezone
 from dudel.models.choice import Choice
 from dudel.models.choicevalue import ChoiceValue
 from dudel.models.comment import Comment
@@ -6,12 +6,13 @@ from dudel.models.pollwatch import PollWatch
 from dudel.models.vote import Vote
 from dudel.models.invitation import Invitation
 from dudel.models.votechoice import VoteChoice
-from dudel.util import PollExpiredException, PollActionException
+from dudel.util import PollExpiredException, PollActionException, LocalizationContext
 from datetime import datetime, timedelta
 from flask import url_for, render_template
 from flask.ext.babel import lazy_gettext
 from flask.ext.login import current_user
 from flask.ext.mail import Message
+from pytz import timezone
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -34,6 +35,7 @@ class Poll(db.Model):
     allow_comments = db.Column(db.Boolean, default=True)
     deleted = db.Column(db.Boolean, default=False)
     show_invitations = db.Column(db.Boolean, default=True)
+    timezone_name = db.Column(db.String(40))
 
     RESERVED_NAMES = ["login", "logout", "index", "user", "admin", "api", "register", "static"]
 
@@ -313,6 +315,14 @@ class Poll(db.Model):
             dates.append(comment.created)
 
         return max(dates)
+
+    @property
+    def timezone(self):
+        return timezone(self.timezone_name) if self.timezone_name else None
+
+    @property
+    def localization_context(self):
+        return LocalizationContext(current_user, self)
 
     @property
     def should_auto_delete(self):

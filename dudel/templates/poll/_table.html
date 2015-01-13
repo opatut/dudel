@@ -69,12 +69,19 @@
 
 {# START CONTENT #}
 
-
 {% set show_votes = poll.show_votes(current_user) %}
 {% set show_summary = poll.show_summary(current_user) %}
+
 {% if poll.show_results != "complete" and poll.user_can_administrate(current_user) %}
     {{ alert("info", _("You as an admin of this poll will always see full results, no matter what you select under 'Results display'. Log out to see the poll as a normal visitor.")) }}
 {% endif %}
+
+{% if not poll.timezone %}
+    {{ alert("info", _("This poll is using coordinated time, which means the choices are displayed as your profile timezone (%(userzone)s), and may be different for other users.", userzone=current_timezone)) }}
+{% elif poll.timezone != current_timezone %}
+    {{ alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone)) }}
+{% endif %}
+
 {% if (poll.votes and poll.has_choices) and (show_votes or show_summary or poll.get_user_votes(current_user)) %}
     <div class="table-padding">
         {% set choices = poll.get_choices() %}
@@ -89,7 +96,7 @@
                             <th></th>
                             {% for item in row if item[0] != None %}
                                 <th colspan="{{ item[2] }}" rowspan="{{ item[1] }}" class="choice-group">
-                                    {{ item[0]|group_title }}
+                                    {{ item[0]|group_title(poll) }}
                                 </th>
                             {% endfor %}
                             <th class="noprint"></th>

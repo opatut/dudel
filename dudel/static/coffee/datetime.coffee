@@ -5,6 +5,8 @@ i18n.ready (gettext) ->
         hidden.attr "type", "hidden"
         defaultValue  = hidden.val()
 
+        timezone = hidden.attr "data-timezone"
+
         # Create the new input
         input = $ '<input type="text" />'
         input.addClass "form-control"
@@ -14,13 +16,16 @@ i18n.ready (gettext) ->
         input.insertAfter hidden
 
         # Get translations and build template
-        success = gettext('Interpreted as %(date)s at %(time)s.')
-        failure = gettext('Could not parse date.')
-        empty = gettext('No date selected.')
+        success          = if timezone \
+            then gettext('Interpreted as %(date)s at %(time)s in timezone %(timezone)s.') \
+            else gettext('Interpreted as %(date)s at %(time)s.')
+        failure          = gettext('Could not parse date.')
+        empty            = gettext('No date selected.')
 
         # Insert html stuff
         success = success.replace('%(date)s', '<span class="date"></span>')
         success = success.replace('%(time)s', '<span class="time"></span>')
+        success = success.replace('%(timezone)s', '<span class="timezone"></span>')
 
         # Create the suggestion display
         display = $ "
@@ -30,8 +35,10 @@ i18n.ready (gettext) ->
             <div class='empty'>#{empty}</div>
         </div>"
         display.insertAfter input
-        displayDate = display.find ".date"
-        displayTime = display.find ".time"
+
+        displayDate     = display.find ".date"
+        displayTime     = display.find ".time"
+        displayTimezone = display.find ".timezone"
 
         # Hook up date.js
         update = ->
@@ -46,6 +53,7 @@ i18n.ready (gettext) ->
             if date instanceof Date and isFinite(date)
                 displayDate.text date.format '{Weekday}, {d} {Month}, {yyyy}'
                 displayTime.text date.format '{24hr}:{mm}'
+                displayTimezone.text timezone if timezone
                 display.find("div").hide()
                 display.find(".success").show()
                 hidden.val date.format '{yyyy}-{MM}-{dd} {HH}:{mm}'

@@ -14,14 +14,14 @@
             <div class="meta">
                 <div class="author">{{ comment.name or comment.user.displayname }}</div>
                 {{ _("commented on") }}
-                <div class="date">{{ comment.created | date }} at {{ comment.created | time }}</div>
+                <div class="date">{{ comment.created|datetime }}</div>
                 {% if comment.user_can_edit(current_user) %}
                 <div class="edit">
                     <a href="{{ url_for('poll_delete_comment', slug=poll.slug, id=comment.id) }}" title="{{ _('delete comment') }}" class="btn btn-default btn-xs"><i class="fa fa-trash-o"></i></a>
                 </div>
                 {% endif %}
             </div>
-            <div class="text">{{ comment.text | markdown }}</div>
+            <div class="text">{{ comment.text|markdown }}</div>
         </div>
     {% endfor %}
     </div>

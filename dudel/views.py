@@ -3,14 +3,14 @@ from dudel import app, db, babel, supported_languages
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
 from dudel.login import get_user
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, PollInviteForm, VoteAssignForm, CopyPollForm
-from dudel.util import PollExpiredException, PollActionException, random_string, get_slug
+from dudel.util import PollExpiredException, PollActionException, random_string, get_slug, DateTimePart, PartialDateTime, LocalizationContext
 import dudel.login
 from flask import redirect, abort, request, render_template, flash, url_for, g, Response
 from flask.ext.babel import gettext
 from flask.ext.login import current_user, login_required
 from dateutil import parser
 from datetime import datetime, timedelta
-import json, re
+import json, re, pytz
 from sqlalchemy import func
 
 def get_poll(slug):
@@ -75,7 +75,15 @@ def index():
     if form.validate_on_submit():
         poll = Poll()
         form.populate_obj(poll)
-        form.public_listing = (form.visibility.data == "public")
+        poll.public_listing = (form.visibility.data == "public")
+
+        if current_user.is_authenticated():
+            poll.timezone_name = current_user.timezone_name
+
+        if poll.due_date:
+            localization_context = LocalizationContext(current_user, None)
+            poll.due_date = localization_context.local_to_utc(poll.due_date)
+
 
         success = True
         if not app.config["ALLOW_CUSTOM_SLUGS"] or not form.slug.data:
@@ -229,6 +237,8 @@ def poll_edit(slug):
     poll.check_edit_permission()
     form = EditPollForm(obj=poll)
 
+    localization_context = LocalizationContext(current_user, None)
+
     if current_user.is_authenticated():
         form.owner_id.choices = [(0, gettext("Nobody")),
             (current_user.id, current_user.displayname)]
@@ -242,15 +252,25 @@ def poll_edit(slug):
 
     if form.validate_on_submit():
         form.populate_obj(poll)
+
+        # post process owner
+        if not form.owner_id.data:
+            poll.owner_id = None
+
+        # post process due date
+        if form.due_date.data:
+            poll.due_date = localization_context.local_to_utc(form.due_date.data)
+
         db.session.commit()
         flash(gettext("Poll settings have been saved."), "success")
         #return redirect(poll.get_url())
         return redirect(url_for("poll_edit", slug=poll.slug))
     else:
         form.owner_id.data = poll.owner_id
+        form.due_date.data = localization_context.utc_to_local(poll.due_date)
 
 
-    return render_template("poll/settings/edit.html", poll=poll, form=form)
+    return render_template("poll/settings/edit.html", poll=poll, form=form, localization_context=localization_context)
 
 @app.route("/<slug>/invitations/", methods=("POST", "GET"))
 def poll_invitations(slug):
@@ -358,23 +378,32 @@ def poll_edit_choices(slug, step=1):
     poll.check_edit_permission()
     args = {}
 
+    localization_context = poll.localization_context
+
     if poll.type == "date":
         form = DateTimeSelectForm()
         args["form"] = form
 
         if step == 1:
-            form.dates.data = ",".join(set(choice.date.strftime("%Y-%m-%d") for choice in poll.choices if not choice.deleted))
-            form.times.data = ",".join(set(choice.date.strftime("%H:%M") for choice in poll.choices if not choice.deleted))
+            datetimes = [choice.date for choice in poll.choices if not choice.deleted]
+            # convert UTC to poll time
+            datetimes = [localization_context.utc_to_local(datetime) for datetime in datetimes]
+
+            form.dates.data = ",".join(set(date.strftime("%Y-%m-%d") for date in datetimes))
+            form.times.data = ",".join(set(date.strftime("%H:%M") for date in datetimes))
 
         if step in (2, 3, 4) and form.validate_on_submit():
             dates = form.dates.data.split(",")
             times = form.times.data.split(",")
-            args["dates"] = sorted(list(set(parser.parse(data, fuzzy=True).date() for data in dates)))
-            args["times"] = sorted(list(set(parser.parse("1970-01-01 %s" % data, fuzzy=True).time() for data in times)))
+            args["dates"] = sorted(list(set(parser.parse(data, fuzzy=True) for data in dates)))
+            args["times"] = sorted(list(set(parser.parse("1970-01-01 %s" % data, fuzzy=True) for data in times)))
 
         if step == 4 and form.validate_on_submit():
             # list all date/time combinations
             datetimes = [parser.parse(data) for data in request.form.getlist("datetimes[]")]
+
+            # convert all datetimes back to UTC
+            datetimes = [lc.local_to_utc(datetime) for datetime in datetimes]
 
             if not datetimes:
                 flash(gettext("Please select at least one combination."), "error")
@@ -402,7 +431,7 @@ def poll_edit_choices(slug, step=1):
 
         if form.validate_on_submit():
             dates = form.dates.data.split(",")
-            dates = sorted(list(set(parser.parse(data, fuzzy=True).date() for data in dates)))
+            dates = sorted(list(set(PartialDateTime(parser.parse(data, fuzzy=True), DateTimePart.date, localization_context) for data in dates)))
 
             if not dates:
                 flash(gettext("Please select at least one date."), "error")

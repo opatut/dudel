@@ -42,7 +42,7 @@
                 <tr data-vote-choice="{{ choice.id }}">
                     {% for item in row if item[0] != None %}
                     <td class="choice-group" colspan="{{ item[1] }}" rowspan="{{ item[2] }}">
-                        {{ item[0]|group_title }}
+                        {{ item[0]|group_title(poll) }}
                     </td>
                     {% endfor %}
                     <td>

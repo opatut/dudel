@@ -43,6 +43,22 @@ then copy/edit translations files (in `dudel/translations`), then compile them w
 
     make i18n-compile
 
+## Times
+
+- ALL database times are UTC
+- generated times are simply using datetime.utcnow()
+- user-entered times are always converted from the user's Timezone
+- Polls save the timezone of the user that created it
+- Poll timezone can be changed, or set to "Transform to user's timezone"
+- Poll view uses poll timezone, if it differs from user timezone, a warning is displayed
+- Editing the poll's times uses the poll timezone, NOT the user's timezone
+
+### Migration
+
+- Convert user-entered times (due date, poll times) to UTC, assume they were default timezone
+- Add timezone field to poll
+- Add timezone field to user
+
 ## License
 
     Copyright (C) 2013 - 2015

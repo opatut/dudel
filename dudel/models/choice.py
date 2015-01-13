@@ -1,4 +1,5 @@
 from dudel import db
+from dudel.util import PartialDateTime, DateTimePart
 
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -22,7 +23,8 @@ class Choice(db.Model):
 
     def get_hierarchy(self):
         if self.date:
-            return [self.date.date(), self.date.time()]
+            return [PartialDateTime(self.date, DateTimePart.date, self.poll.localization_context),
+                PartialDateTime(self.date, DateTimePart.time, self.poll.localization_context)]
         else:
             return [part.strip() for part in self.text.split("/") if part]
 
@@ -37,9 +39,9 @@ class Choice(db.Model):
         from dudel.filters import date, datetime
         poll_type = self.poll.type
         if poll_type == "day":
-            return date(self.date, rebase=False)
+            return date(self.date, ref=self.poll)
         elif poll_type == "date":
-            return datetime(self.date, rebase=False)
+            return datetime(self.date, ref=self.poll)
         else:
             return '<i class="fa fa-chevron-right choice-separator"></i>'.join(self.get_hierarchy())
             # return self.text
@@ -48,7 +50,7 @@ class Choice(db.Model):
     def value(self):
         poll_type = self.poll.type
         if poll_type == "day":
-            return self.date.date()
+            return PartialDateTime(self.date, DateTimePart.date, self.poll.localization_context)
         elif poll_type == "date":
             return self.date
         else:

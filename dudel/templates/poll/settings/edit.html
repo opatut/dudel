@@ -24,7 +24,7 @@
                 </div>
                 <div class="form-group">
                     {{ form.due_date.label }}
-                    {{ form.due_date(class="form-control datetime-input") }}
+                    {{ form.due_date(class="form-control datetime-input", **{"data-timezone": localization_context.timezone if true or localization_context.timezone != current_timezone else ''}) }}
                     {{ field_error(form.due_date) }}
                 </div>
                 <div class="form-group">
@@ -35,6 +35,11 @@
                     <div class="help-block">
                         {{ _("Owners of this poll and administrators will always see all votes.") }}
                     </div>
+                </div>
+                <div class="form-group">
+                    {{ form.timezone_name.label }}
+                    {{ form.timezone_name(class="form-control") }}
+                    {{ field_error(form.timezone_name) }}
                 </div>
                 <div class="form-group">
                     {{ form.description.label }}

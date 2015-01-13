@@ -1,19 +1,19 @@
-{% macro property(title, content, icon) %}
-    <li title="{{ title }}">
+{% macro property(title, content, icon, hover=None) %}
+    <li title="{{ title }}{% if hover %}: {{ hover }}{% endif %}">
         <i class="fa fa-{{ icon }}"></i>
         <span class="content">{{ content }}</span>
     </li>
 {% endmacro %}
 
 <ul class="poll-details">
-    {{ property(_("Creation date"), poll.created|date, "calendar") }}
+    {{ property(_("Creation date"), poll.created|date, "calendar", poll.created|datetime) }}
 
     {% if poll.due_date %}
-        {{ property(_("Expiration date"), poll.due_date|date, "clock-o") }}
+        {{ property(_("Expiration date"), poll.due_date|date, "clock-o", poll.due_date|datetime) }}
     {% endif %}
 
     {% if poll.owner %}
-        {{ property(_("Ownership"), _("you") if poll.owner == current_user else poll.owner.displayname, "briefcase") }}
+        {{ property(_("Ownership"), _("you") if poll.owner == current_user else poll.owner.displayname, "briefcase", poll.owner.displayname) }}
     {% endif %}
 
     {% if poll.anonymous_allowed %}

@@ -58,7 +58,7 @@ def upgrade():
     op.execute("INSERT INTO member (id, source, type) (SELECT id, 'ldap', 'user' FROM \"user\");")
 
     # Rename author_id to owner_id, update the foreign key constraint
-    op.alter_column(u'poll', u'author_id', new_column_name=u'owner_id')
+    op.alter_column(u'poll', u'author_id', new_column_name=u'owner_id', nullable=True)
     op.drop_constraint("poll_author_id_fkey", "poll")
     op.create_foreign_key("poll_owner_id_fkey", "poll", "user", ["owner_id"], ["id"])
 

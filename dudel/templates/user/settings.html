@@ -104,6 +104,11 @@
                     {{ form.preferred_language(class="form-control", **{'data-slug-field':"#slug"}) }}
                     {{ field_error(form.preferred_language) }}
                 </div>
+                <div class="form-group">
+                    {{ form.timezone_name.label }}
+                    {{ form.timezone_name(class="form-control") }}
+                    {{ field_error(form.timezone_name) }}
+                </div>
 
                 <label>Various</label>
                 <div class="checkbox">

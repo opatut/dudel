@@ -12,5 +12,7 @@ flask-wtf
 psycopg2
 python-dateutil
 python-ldap
+pytz
 raven
 scrypt
+enum34

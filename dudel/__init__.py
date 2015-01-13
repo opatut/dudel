@@ -8,6 +8,7 @@ from flask.ext.gravatar import Gravatar
 from flask.ext.migrate import Migrate, MigrateCommand
 from flask.ext.script import Manager, Command
 from flask.ext.mail import Mail
+import pytz
 
 app = Flask(__name__)
 app.config.from_pyfile("../config.py.example", silent=True)
@@ -23,6 +24,7 @@ supported_languages = ['en', 'de']
 migrate = Migrate(app, db)
 manager.add_command("db", MigrateCommand)
 mail = Mail(app)
+default_timezone = pytz.timezone(app.config["DEFAULT_TIMEZONE"])
 
 from dudel.util import load_icons
 ICONS = load_icons("dudel/icons.txt")

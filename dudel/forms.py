@@ -1,4 +1,4 @@
-from dudel import app
+from dudel import app, default_timezone
 from flask import request, Markup
 from flask.ext.babel import gettext, lazy_gettext
 from flask.ext.wtf import Form, RecaptchaField
@@ -13,6 +13,7 @@ from dudel.login import try_login
 import ldap
 from ldap.dn import escape_dn_chars
 from datetime import datetime
+from pytz import common_timezones
 
 LANGUAGES = [('en', 'English'), ('de', 'Deutsch')]
 
@@ -137,6 +138,8 @@ class RegisterForm(MultiForm):
 
 class SettingsForm(MultiForm):
     preferred_language = SelectField(lazy_gettext("Language"), choices=LANGUAGES)
+    timezone_name = SelectField(lazy_gettext("Timezone"),
+        choices=[("", lazy_gettext("Server default (%(timezone)s)", timezone=default_timezone))]+[(c,c) for c in common_timezones])
     autowatch = BooleanField(lazy_gettext("Auto-watch polls"))
     allow_invitation_mails = BooleanField(lazy_gettext("Allow to receive emails for poll invitations"))
 
@@ -161,7 +164,9 @@ class EditPollForm(Form):
     one_vote_per_user = BooleanField(lazy_gettext("One vote per user (only effective with login)"))
     allow_comments = BooleanField(lazy_gettext("Allow comments"))
     show_invitations = BooleanField(lazy_gettext("Show invitations as empty votes"))
-    owner_id = SelectField(lazy_gettext("Ownership"), choices=[(0, "Nobody")], coerce=int)
+    owner_id = SelectField(lazy_gettext("Ownership"), choices=[(None, "Nobody")], coerce=int)
+    timezone_name = SelectField(lazy_gettext("Timezone"),
+        choices=[("", lazy_gettext("Coordinated time"))]+[(c,c) for c in common_timezones])
     # password = TextField("Password")
     # password_level = SelectField("Password mode", choices=[
     #     (0, "Do not use password"),
