@@ -41,7 +41,7 @@ class Choice(db.Model):
         if poll_type == "day":
             return date(self.date, ref=self.poll)
         elif poll_type == "date":
-            return datetime(self.date, ref=self.poll)
+            return datetime(self.date, ref=self.poll.localization_context)
         else:
             return '<i class="fa fa-chevron-right choice-separator"></i>'.join(self.get_hierarchy())
             # return self.text

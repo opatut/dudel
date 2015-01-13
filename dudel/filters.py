@@ -11,21 +11,18 @@ import pytz
 
 date_formats = {'de': 'EEE, dd. MMM'}
 
+def get_timezone(ref):
+    if isinstance(ref, dt.tzinfo):
+        return ref
+    elif hasattr(ref, "timezone"):
+        return ref.timezone
+    elif ref == current_user:
+        return default_timezone
+    return None
+
 @app.template_filter()
 def in_timezone_of(datetime, ref):
-    """Transforms a datetime to the timezone that is returned by the property `timezone`
-    of the reference object."""
-
-    timezone = None
-    if isinstance(ref, dt.tzinfo):
-        timezone = ref
-    elif isinstance(ref, User) and ref.is_authenticated():
-        timezone = ref.timezone
-    elif ref == current_user:
-        timezone = default_timezone
-    elif hasattr(ref, "timezone"):
-        timezone = ref.timezone
-
+    timezone = get_timezone(ref)
     return pytz.utc.localize(datetime).astimezone(timezone) if timezone else datetime
 
 @app.template_filter()
