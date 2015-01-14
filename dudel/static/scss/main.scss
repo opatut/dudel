@@ -238,6 +238,11 @@ footer .btn-link:active {
 
 .navbar {
     border-radius: 0;
+    border: 0;
+
+    .navbar-brand {
+        color: rgba(255, 255, 255, 0.5);
+    }
 }
 
 .print-only {

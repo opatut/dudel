@@ -3,6 +3,8 @@ SQLALCHEMY_DATABASE_URI = "sqlite:///tmp/dudel.db" # DO NOT USE RELATIVE PATHS I
 SQLALCHEMY_ECHO = False
 
 # Home button in menu bar
+BRAND_TEXT = "Dudel"
+BRAND_COLOR = None
 HOME_URL = "https://example.com/"
 HOME_TEXT = "Home"
 
@@ -47,6 +49,16 @@ LDAP = dict(
 
 # Sentry settings
 # SENTRY_DSN = "https://user:password@sentry.host.tld/X"
+
+MAIL_SERVER = None
+MAIL_PORT = None
+MAIL_USE_TLS = False
+MAIL_USE_SSL = False
+MAIL_DEBUG = True
+MAIL_USERNAME = None
+MAIL_PASSWORD = None
+MAIL_DEFAULT_SENDER = "Dudel <dudel@%s>" % MAIL_SERVER
+TESTING = True
 
 # How user's display name is created
 # May contain fields: firstname, lastname, username, email

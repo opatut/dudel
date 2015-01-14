@@ -172,7 +172,7 @@ class EditPollForm(Form):
     one_vote_per_user = BooleanField(lazy_gettext("One vote per user (only effective with login)"))
     allow_comments = BooleanField(lazy_gettext("Allow comments"))
     show_invitations = BooleanField(lazy_gettext("Show invitations as empty votes"))
-    owner_id = SelectField(lazy_gettext("Ownership"), choices=[(None, "Nobody")], coerce=int)
+    owner_id = SelectField(lazy_gettext("Ownership"), choices=[(0, "Nobody")], coerce=int)
     timezone_name = SelectField(lazy_gettext("Timezone"),
         choices=[("", lazy_gettext("Coordinated time"))]+[(c,c) for c in common_timezones])
     # password = TextField("Password")

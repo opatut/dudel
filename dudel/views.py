@@ -4,7 +4,7 @@ from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comm
 from dudel.login import get_user
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, \
     EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, \
-    PollInviteForm, VoteAssignForm, CopyPollForm, CreateGroupForm, GroupAddMemberForm
+    PollInviteForm, VoteAssignForm, CopyPollForm, CreateGroupForm, GroupAddMemberForm, RegisterForm
 from dudel.util import PollExpiredException, PollActionException, random_string, get_slug, DateTimePart, PartialDateTime, LocalizationContext
 import dudel.login
 from flask import redirect, abort, request, render_template, flash, url_for, g, Response
@@ -1023,6 +1023,11 @@ def root(locale):
         abort(404)
     return open('dudel/translations/%s/LC_MESSAGES/messages.po' % locale).read()
 
+@app.errorhandler(501)
+@app.errorhandler(500)
 @app.errorhandler(404)
+@app.errorhandler(403)
+@app.errorhandler(401)
+@app.errorhandler(400)
 def error(err):
     return render_template("error.html", error=err), err.code

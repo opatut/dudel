@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>{% block title %}dudel{% endblock %}</title>
+        <title>{% block title %}{{ config.BRAND_TEXT }}{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         {% assets "css_all" -%}
@@ -17,7 +17,7 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-default navbar-inverse" role="navigation">
+        <nav class="navbar navbar-default navbar-inverse" role="navigation"{% if config.BRAND_COLOR %} style="background: {{ config.BRAND_COLOR }};"{% endif %}>
             <div class="container">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
@@ -26,7 +26,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a href="/" class="navbar-brand">Dudel</a>
+                    <a href="/" class="navbar-brand">{{ config.BRAND_TEXT }}</a>
 
                     <div class="navbar-left visible-sm visible-xs">
                         {% if config.HOME_URL %}
@@ -61,6 +61,10 @@
                         </div>
                         {{ login_form.hidden_tag() }}
                         <input type="submit" class="btn navbar-btn btn-primary" value="{{ _('Login') }}" />
+
+                        {% if config.REGISTRATIONS_ENABLED %}
+                        <a href="{{ url_for('register') }}" class="btn btn-default">{{ _('Register') }}</a>
+                        {% endif %}
                     </form>
                     {% else %}
                     <div class="navbar-right">
