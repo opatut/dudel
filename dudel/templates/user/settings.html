@@ -18,13 +18,13 @@
             <table class="table table-condensed table-striped">
                 <tr>
                     <th>Poll title</th>
-                    <th>Created</th>
+                    <th>Last changed</th>
                     <th colspan="3">Tags</th>
                 </tr>
                 {% for poll in polls %}
                     <tr>
                         <td><a href="{{ poll.get_url() }}">{{ poll.title }}</a></td>
-                        <td>{{ poll.created|date(year=True) }}</td>
+                        <td>{{ poll.last_changed|date(year=True) }}</td>
                         <td width="10">
                             {% if poll.owner == current_user %}
                                 <span class="label label-danger"><i class="fa fa-pencil"></i> {{ _("Owner") }}</span>

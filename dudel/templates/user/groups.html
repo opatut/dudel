@@ -1,0 +1,37 @@
+{% extends "BASE.html" %}
+
+{% block title %}{{ _("Groups") }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            <h1>{{ _("My groups") }}</h1>
+
+            <ul class="list-unstyled">
+            {% for group in current_user.groups %}
+                <li><a href="{{ url_for('group', id=group.id) }}">{{ group.name }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            {% if config.GROUPS_ENABLED %}
+            <h1>{{ _("Create a group") }}</h1>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {{ field_error(form.hidden_tag) }}
+
+                <div class="form-group">
+                    {{ form.name.label }}
+                    {{ form.name(class="form-control") }}
+                    {{ field_error(form.name) }}
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="{{ _('Create group') }}" class="btn btn-primary"/>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

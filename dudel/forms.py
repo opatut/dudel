@@ -9,6 +9,7 @@ from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, Fi
 from wtforms.ext.dateutil.fields import DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, EqualTo, Email
 from dudel.models.poll import Poll
+from dudel.models.group import Group
 from dudel.login import try_login
 import ldap
 from ldap.dn import escape_dn_chars
@@ -33,7 +34,7 @@ class MultiForm(Form):
         return Form.hidden_tag(self, *args, **kwargs)
 
 class UniqueObject(object):
-    def __init__(self, type, column, constraint, message = lazy_gettext("This entry already exists.")):
+    def __init__(self, type, column, constraint={}, message = lazy_gettext("This entry already exists.")):
         self.type = type
         self.column = column
         self.message = message
@@ -99,6 +100,13 @@ class PollForm(Form):
 class CreatePollForm(PollForm):
     type = SelectField(lazy_gettext("Type"), choices=[("date", lazy_gettext("Date and Time")), ("day", lazy_gettext("Date")),  ("normal", lazy_gettext("Normal poll"))])
     visibility = SelectField(lazy_gettext("Visibility"), choices=[("public", lazy_gettext("Public")), ("hidden", lazy_gettext("Hidden"))], default="hidden")
+
+class CreateGroupForm(Form):
+    name = TextField(lazy_gettext("Name"), validators=[
+        Required(),
+        Length(min=3, max=80),
+        UniqueObject(Group, "name", message=lazy_gettext("A group with this name already exists."))
+    ])
 
 class CopyPollForm(PollForm):
     copy_choices = BooleanField(lazy_gettext("Copy choices"), default=True)
@@ -212,6 +220,9 @@ class LanguageForm(Form):
 
 class PollInviteForm(Form):
     member = TextField(lazy_gettext("Group or User"))
+
+class GroupAddMemberForm(Form):
+    member = TextField(lazy_gettext("User"))
 
 class VoteAssignForm(Form):
     user = TextField(lazy_gettext("New vote owner"))

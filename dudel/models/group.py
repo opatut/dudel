@@ -11,6 +11,7 @@ class Group(Member):
     id = db.Column(db.Integer, db.ForeignKey("member.id"), primary_key=True)
     name = db.Column(db.String(80))
     identifier = db.Column(db.String(80))
+    admin_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     # relationships
     users = db.relationship("User", backref="groups", lazy="dynamic", secondary="group_users")
@@ -22,6 +23,10 @@ class Group(Member):
     @property
     def displayname(self):
         return self.name
+
+    @property
+    def changeable(self):
+        return self.source == "manual"
 
     # This would be required for recursive groups.
     # @property

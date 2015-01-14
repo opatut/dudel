@@ -1,0 +1,96 @@
+{% extends "BASE.html" %}
+
+{% block title %}{{ _("Group") }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ group.name }}</h1>
+</div>
+
+{% if not group.changeable %}
+    {{ alert("warning", _("This group is imported from an external source and cannot be edited from this application.")) }}
+{% endif %}
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>{{ _("Members") }}</h2>
+        <table class="table table-condensed table-striped">
+            <tr>
+                <th>User</th>
+                <th>Role</th>
+                {% if group.changeable %}
+                <th>Actions</th>
+                {% endif %}
+            </tr>
+            {% for user in group.users %}
+            <tr>
+                <td>{{ user.displayname }}</td>
+                <td>
+                    {% if user == group.admin %}
+                        <span class="label-danger label">{{ _("Admin") }}</span>
+                    {% else %}
+                        <span class="label-default label">{{ _("Member") }}</span>
+                    {% endif %}
+                </td>
+                {% if group.changeable %}
+                <td>
+                    {% if current_user == group.admin %}
+                        {% if user != current_user %}
+                            <a class="btn btn-default btn-xs" href="{{ url_for('group_leave', id=group.id, user_id=user.id) }}">Kick</a>
+                            <a class="btn btn-danger btn-xs" href="{{ url_for('group_make_admin', id=group.id, user_id=user.id) }}">Make admin</a>
+                        {% else %}
+                            <a class="btn btn-danger btn-xs" href="{{ url_for('group_disband', id=group.id) }}">Disband group</a>
+                        {% endif %}
+                    {% else %}
+                        {% if user == current_user %}
+                            <a class="btn btn-danger btn-xs" href="{{ url_for('group_leave', id=group.id, user_id=user.id) }}">Leave</a>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% if form and current_user == group.admin %}
+        <h2>{{ _("Add a member") }}</h2>
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ field_error(form.hidden_tag) }}
+
+            <div class="form-group">
+                {{ form.member.label }}
+                {{ form.member(class="form-control") }}
+                {{ field_error(form.member) }}
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="{{ _('Add to group') }}" class="btn btn-primary"/>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <h2>{{ _("Group owned polls") }}</h2>
+
+        <table class="table table-condensed table-striped">
+            <tr>
+                <th>Poll title</th>
+                <th>Last changed</th>
+            </tr>
+
+            {% for poll in group.polls %}
+            <tr>
+                <td><a href="{{ poll.get_url() }}">{{ poll.title }}</a></td>
+                <td>{{ poll.last_changed|date(year=True) }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">none</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

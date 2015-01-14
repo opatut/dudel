@@ -5,6 +5,7 @@ import random
 import pytz
 from .member import Member
 from .invitation import Invitation
+from .group import Group
 from .vote import Vote
 from dudel.login import login_provider
 
@@ -48,6 +49,7 @@ class User(Member):
 
     # relationships
     watches = db.relationship("PollWatch", backref="user", cascade="all, delete-orphan", lazy="dynamic")
+    groups_admin = db.relationship("Group", backref="admin", lazy="dynamic", foreign_keys=[Group.admin_id])
     comments = db.relationship("Comment", backref="user", lazy="dynamic")
     invitations = db.relationship("Invitation", backref="user", lazy="dynamic", foreign_keys=[Invitation.user_id])
     invitations_created = db.relationship("Invitation", backref="creator", lazy="dynamic", foreign_keys=[Invitation.creator_id])

@@ -2,7 +2,9 @@
 from dudel import app, db, babel, supported_languages
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
 from dudel.login import get_user
-from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, PollInviteForm, VoteAssignForm, CopyPollForm
+from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, \
+    EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, \
+    PollInviteForm, VoteAssignForm, CopyPollForm, CreateGroupForm, GroupAddMemberForm
 from dudel.util import PollExpiredException, PollActionException, random_string, get_slug, DateTimePart, PartialDateTime, LocalizationContext
 import dudel.login
 from flask import redirect, abort, request, render_template, flash, url_for, g, Response
@@ -103,7 +105,9 @@ def index():
             flash(gettext("Poll created"))
             return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
-    polls = Poll.query.filter_by(deleted=False, public_listing=True).filter(not Poll.due_date or Poll.due_date >= datetime.utcnow()).order_by(db.desc(Poll.created)).all()
+    polls = Poll.query.filter_by(deleted=False, public_listing=True) \
+        .filter(not Poll.due_date or Poll.due_date >= datetime.utcnow()) \
+        .order_by(db.desc(Poll.created)).all()
 
     poll_count = Poll.query.count()
     vote_count = Vote.query.count()
@@ -167,6 +171,114 @@ def user_change_language():
             else:
                 response.set_cookie("lang", lang)
     return response
+
+@app.route("/groups", methods=("GET", "POST"))
+@login_required
+def groups():
+    form = None
+
+    if not app.config["GROUPS_ENABLED"] and not current_user.groups:
+        abort(404)
+
+    if app.config["GROUPS_ENABLED"]:
+        form = CreateGroupForm()
+        if form.validate_on_submit():
+            group = Group()
+            group.source = "manual"
+            group.admin = current_user
+            group.users.append(current_user)
+            form.populate_obj(group)
+
+            db.session.add(group)
+            db.session.commit()
+
+            flash(gettext("The group was created."), "success")
+            return redirect(url_for('group', id=group.id))
+
+    return render_template("user/groups.html", form=form)
+
+@app.route("/groups/<int:id>", methods=("GET", "POST"))
+@login_required
+def group(id):
+    group = Group.query.filter_by(id=id).first_or_404()
+    if not current_user in group.users: abort(404)
+
+    form = None
+    if group.changeable:
+        form = GroupAddMemberForm()
+        if current_user == group.admin and form.validate_on_submit():
+            user = User.query.filter(func.lower(User.username) == func.lower(form.member.data)).first()
+
+            if not user:
+                flash(gettext("User not found."), "error")
+                return redirect(url_for("group", id=group.id))
+
+            if user in group.users:
+                flash(gettext("User is already a member of the group."), "info")
+                return redirect(url_for("group", id=group.id))
+
+            group.users.append(user)
+            db.session.commit()
+            flash(gettext("The user was added to the group."), "success")
+            return redirect(url_for("group", id=group.id))
+
+    return render_template("user/group.html", group=group, form=form)
+
+@app.route("/groups/<int:id>/disband")
+@login_required
+def group_disband(id):
+    group = Group.query.filter_by(id=id).first_or_404()
+    if not group.changeable: abort(404)
+    if not current_user == group.admin: abort(404)
+
+    if group.polls.count():
+        flash(gettext("You cannot disband the group while it owns polls."), "error")
+        return redirect(url_for("group", id=group.id))
+
+    db.session.delete(group)
+    db.session.commit()
+    flash(gettext("You have disbanded the group."), "success")
+    return redirect(url_for("groups"))
+
+@app.route("/groups/<int:id>/make-admin/<int:user_id>")
+@login_required
+def group_make_admin(id, user_id):
+    group = Group.query.filter_by(id=id).first_or_404()
+    if not group.changeable: abort(404)
+    if not current_user == group.admin: abort(404)
+
+    user = User.query.filter_by(id=user_id).first_or_404()
+    if not user in group.users: abort(404)
+
+    group.admin = user
+    db.session.commit()
+    flash(gettext("You have transferred the admin rights for this group to %(user)s.", user=user.displayname), "success")
+    return redirect(url_for("group", id=group.id))
+
+@app.route("/groups/<int:id>/leave/<int:user_id>")
+@login_required
+def group_leave(id, user_id):
+    group = Group.query.filter_by(id=id).first_or_404()
+    if not group.changeable: abort(404)
+    user = User.query.filter_by(id=user_id).first_or_404()
+
+    if not (current_user == group.admin or current_user == user):
+        abort(404)
+
+    if user == group.admin:
+        flash(gettext("You cannot make the admin leave."), "error")
+        return redirect(url_for("group", id=group.id))
+
+    group.users.remove(user)
+    db.session.commit()
+
+    if current_user != user:
+        flash(gettext("You kicked %(user)s from the group.", user=user.displayname), "success")
+        return redirect(url_for("group", id=group.id))
+    else:
+        flash(gettext("You left the group."), "success")
+        return redirect(url_for("groups"))
+
 
 @app.route("/user/settings", methods=("GET", "POST"))
 @login_required
@@ -307,7 +419,8 @@ def poll_invitations(slug):
         if found:
             flash(gettext("You have invited %(count)d users.", count=len(found)), "success")
         if alreadyInvitedOrVoted:
-            flash(gettext("%(count)d users were skipped, since they either are already invited or have already voted.", count=len(alreadyInvitedOrVoted)), "info")
+            flash(gettext("%(count)d users were skipped, since they either are already invited or have already voted.",
+                count=len(alreadyInvitedOrVoted)), "info")
 
         #return redirect(poll.get_url())
         return redirect(url_for("poll_invitations", slug=poll.slug))

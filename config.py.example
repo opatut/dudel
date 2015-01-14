@@ -18,6 +18,9 @@ LOGIN_PROVIDERS = ["password", "ldap"]
 # Used only if "password" in LOGIN_PROVIDERS
 REGISTRATIONS_ENABLED = True
 
+# Enable group features (create/edit)
+GROUPS_ENABLED = True
+
 # Used only if "ldap" in LOGIN_PROVIDERS
 LDAP = dict(
     HOST = 'ldap://localhost',
