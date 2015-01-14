@@ -37,7 +37,7 @@
                                             </div>
                                         </form>
                                     {% else %}
-                                        {{ choice.text }}
+                                        {{ choice.title|safe }}
                                     {% endif %}
                                 </td>
                                 {% set vote_count = choice.vote_choices.count() %}

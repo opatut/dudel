@@ -36,109 +36,6 @@
     margin: -1em 0.2em -0.9em 0;
 }
 
-form.navbar-form {
-    margin: 0;
-}
-
-.form-errors {
-    margin: 0.5em 0;
-}
-
-.poll, .vote {
-    font-size: 9pt;
-}
-
-table.vote label {
-    margin-top: 8px;
-}
-
-.table {
-    margin-bottom: 0;
-}
-
-.poll .choice-text,
-.poll .choice-sum,
-.vote .choice-text {
-    white-space: nowrap;
-    font-weight: bold;
-    background: #EEE;
-}
-
-.poll .choice-sum {
-    white-space: nowrap !important;
-}
-
-.vote .choice-text {
-    text-align: right;
-}
-
-.poll .choice-group,
-.poll .author,
-.poll .vote-actions,
-.vote .choice-group {
-    font-weight: bold;
-    white-space: nowrap;
-    background: #EEE;
-    vertical-align: middle;
-}
-
-.poll .info {
-    background: #EEE;
-    text-align: center;
-}
-
-.poll .mine .author {
-    background: #444;
-    color: #FFF;
-}
-
-.poll .author {
-    padding: 0 2em;
-    text-align: right;
-}
-
-.poll .choice-group,
-.poll .choice-sum,
-.poll .choice-text {
-    text-align: center;
-    white-space: inherit;
-    max-width: 10em;
-}
-
-.vote .choice-group {
-    text-align: right;
-}
-
-.poll .choice-sum.maximum {
-    background: #AAA;
-    color: #FFF;
-}
-
-.choice-sum-value-label {
-    display: inline-block;
-    width: 24px;
-    margin-right: 4px;
-    text-align: center;
-    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7);
-
-    &.large {
-        font-size: inherit;
-        width: 48px;
-        height: 32px;
-        line-height: 32px;
-        padding: 0;
-    }
-}
-
-.vote-choice {
-    /*border: 5px solid white;*/
-    color: white;
-    font-size: 16px;
-    min-width: 4em;
-    max-width: 10em;
-    text-align: center;
-}
-
 .popover-title {
     font-weight: bold;
 }
@@ -152,25 +49,11 @@ table.vote label {
 }
 
 .choice-separator {
-    font-size: 0.7em;
+    font-size: 0.8em;
     color: #888;
     margin: 0 0.4em;
 }
 
-.datetime-input-suggest {
-    font-size: 0.8em;
-    .date, .time {
-        font-weight: bold;
-    }
-}
-
-.vote .vote-choice {
-    width: 4em !important;
-}
-
-.vote-choice.comment {
-    background-image: url("../gfx/comment-background.png");
-}
 
 .auto-width {
     width: auto;
@@ -197,94 +80,19 @@ h1 small { font-size: 0.6em; margin-left: 1em; }
     margin: 20px 0;
 }
 
-table.poll td, table.poll th, table.poll tr {
-    border: none !important;
-}
-
-table.poll {
-    border-collapse: separate !important;
-    border-spacing: 3px !important;
-}
-
 .input-group {
     border-spacing: 0 !important;
 }
 
-/*
-table.poll tr td:nth-of-type(1) {
-    width: 1px;
-    white-space: nowrap;
+.table {
+    margin-bottom: 0;
+    overflow: visible;
 }
-*/
+
 .table-padding {
     padding: 0 10px;
 }
 
-.table {
-    overflow: visible;
-}
-
-.no { background: #F96; }
-.yes { background: #9C6; }
-.maybe { background: #FF6; }
-
-.yes, .no, .maybe,
-td.vote-choice span,
-td.control {
-    text-shadow: 0px 1px 6px rgba(0, 0, 0, 0.7);
-}
-
-.vote-choice-radio {
-    padding: 0;
-    list-style: none;
-}
-
-.vote-choice-radio li {
-    display: inline;
-    padding: 0;
-    margin-right: 1em;
-}
-
-td.off {
-    background-color: #D6D6D6 !important;
-}
-
-td.off, td.none {
-    text-shadow: none;
-}
-
-table.poll td.none {
-    border: 1px solid #DDD !important;
-    color: #DDD;
-}
-
-.help-inline {
-    color: #737373;
-}
-
-label + .help-inline {
-    margin-left: 1em;
-}
-
-ul.help-list {
-    color: #737373;
-    font-size: 0.8em;
-    margin: 0.5em 0;
-    padding: 0;
-
-    li {
-        margin-left: 1.2em;
-        list-style: none;
-
-        &:before {
-            content: "✓";
-            margin-left: -1.2em;
-            width: 1.2em;
-            display: inline-block;
-            font-family: "entypo";
-        }
-    }
-}
 
 
 .checkbox-cell {
@@ -314,51 +122,6 @@ td.vote-comment {
     outline: none;
 }
 
-.vote-comment span:hover {
-    color: black;
-}
-
-.vote-comment input {
-    width: 30em;
-    vertical-align: center;
-}
-
-/* Calendar stuff */
-.calendar, .calendar table {
-    margin: 0.5em;
-    display: inline-block;
-}
-
-.calendar table tr:first-child {
-    background: #F6F6F6;
-}
-
-.calendar table tr:nth-child(2) {
-    font-size: 0.8em;
-}
-
-.calendar table td {
-    text-align: center;
-    padding: 4pt !important;
-}
-
-.calendar table td.left {
-    border-right: 1px solid #DDD;
-    border-bottom: 0;
-    border-top: 0;
-}
-
-
-.time-buttons .btn,
-.calendar table td .btn {
-    display: inline-block;
-    width: 2.5em;
-    text-align: center;
-}
-
-.calendar .title {
-    text-align: center;
-}
 
 .script-only {
     display: none;
@@ -370,10 +133,6 @@ footer {
     text-align: center;
 }
 
-form.form-inline {
-    display: inline-block;
-}
-
 footer .btn-link,
 footer .btn-link:focus,
 footer .btn-link:hover,
@@ -382,163 +141,18 @@ footer .btn-link:active {
     padding: 0;
 }
 
-.form-actions {
-    padding: 20px;
-    background: #EEE;
-    border-top: 1px solid #CCC;
-    text-align: right;
-}
-
-.choice.deleted,
-.choice.deleted .color {
-    color: #AAA;
-    text-decoration: line-through;
-}
-
-tr.choice td {
-    vertical-align: middle !important;
-}
-
-.color.red { color: red; }
-.color.orange { color: #F90; }
-.color.green { color: #0A0; }
-
-
-.form.login {
-    max-width: 400px;
-}
-
-.poll-details {
-    list-style: none;
-    margin: 0;
-    margin-bottom: 8px;
-    padding: 4px;
-    background: #F6F6F6;
-
-    li {
-        display: block;
-        color: #666;
-        padding: 4px 8px;
-
-        .title {
-            display: inline-block;
-        }
-
-        .content {
-            font-weight: bold;
-        }
-
-        i {
-            display: inline-block;
-            width: 16px;
-            text-align: center;
-        }
+.color {
+    &.red {
+        color: red;
     }
-}
 
-@media(min-width: 786px) {
-    .poll-details li {
-        display: inline-block;
+    &.orange {
+        color: #F90;
     }
-}
 
-.time-input {
-    margin: 20px;
-    text-align: center;
-    width: 400px;
-    display: inline-block;
-}
-
-#time-slider {
-    background: url("../gfx/time-slider.png");
-    height: 50px;
-    width: 400px;
-    position: relative;
-    margin: 0 auto;
-    margin-bottom: 30px;
-}
-
-#time-slider-knob {
-    position: absolute;
-    top: 16px;
-    width: 4px;
-    height: 20px;
-    background: #000;
-    margin-left: -2px;
-}
-
-.time-slider-display {
-    display: inline-block;
-    position: relative;
-    background: url("../gfx/clock-background.png");
-    vertical-align: middle;
-}
-
-.time-slider-display,
-.time-slider-display .minute,
-.time-slider-display .hour {
-    height: 64px;
-    width: 64px;
-}
-
-.time-slider-display .minute,
-.time-slider-display .hour {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-}
-
-.time-slider-display .minute.animated,
-.time-slider-display .hour.animated {
-    transition: transform 0.5s;
-}
-
-.time-slider-display .hour {
-    background: url("../gfx/clock-hand-hour.png");
-}
-
-.time-slider-display .minute {
-    background: url("../gfx/clock-hand-minute.png");
-}
-
-#time-slider-form {
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 20px;
-}
-
-#time-slider-form input[type="text"] {
-    width: 2em;
-    padding: 0;
-    display: inline-block;
-    text-align: center;
-    font-size: 2em;
-    height: 1.7em;
-}
-
-#ui-datepicker-div {
-    z-index: 2 !important;
-}
-
-.calendar-list {
-    display: inline-block;
-    padding: 1em 0;
-    vertical-align: top;
-    white-space: normal;
-}
-
-.calendar-list ul {
-    padding: 0;
-    list-style: none;
-}
-
-.calendar-list ul li {
-    display: block;
-    margin-bottom: 4px;
-}
-
-.poll-tabs {
-    margin-bottom: 8px;
+    &.green {
+        color: #0A0;
+    }
 }
 
 @media(max-width: 785px) {
@@ -566,66 +180,6 @@ tr.choice td {
         float: right;
     }
 }
-.special-button {
-   padding: 0;
-   width: 32px;
-   text-align: center;
-}
-
-.special-button > * {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    vertical-align: -2px;
-}
-
-.special-button > span.color {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    background: #FFF;
-}
-
-.icon-preview {
-    list-style: none;
-    padding: 0;
-}
-
-.icon-preview li {
-    display: inline-block;
-}
-
-.icon-preview li button {
-    background: none;
-    border: none;
-    display: inline-block;
-    width: 120px;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: 0.8em;
-    border-radius: 4px;
-    padding: 4px;
-    padding-bottom: 2px;
-    margin-bottom: 2px;
-    text-align: left;
-    outline: none;
-}
-
-.icon-preview li button:hover {
-    background: #EEE;
-}
-
-.icon-preview li i {
-    vertical-align: middle;
-    margin-right: 4px;
-    width: 20px;
-}
-
-// .table-scroll-x {
-//     overflow-x: auto;
-// }
-
-// .table-noscroll-y {
-//     overflow-y: auto;
-// }
 
 .table-padding, .table-scroll-x, .table-noscroll-y {
     overflow: visible !important;
@@ -634,7 +188,6 @@ tr.choice td {
 .table-padding, .table-scroll-x, .table-noscroll-y {
     overflow-x: auto !important;
 }
-
 
 .steps {
     width: 100%;
@@ -682,59 +235,6 @@ tr.choice td {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-.comments {
-    .comment {
-        padding: 10px;
-        min-height: 68px;
-        border: 1px solid #F6F6F6;
-        border-width: 0 2px;
-
-        &:nth-child(2n+1) {
-            background-color: #F6F6F6;
-        }
-
-        &:nth-child(2n):last-child {
-            border-bottom-width: 2px;
-        }
-
-        .meta {
-            font-size: 0.8em;
-
-            > div {
-                display: inline;
-            }
-
-            .author {
-                font-weight: bold;
-            }
-
-            .edit {
-                float: right;
-            }
-        }
-
-        .text > *:last-child {
-            margin-bottom: 0;
-        }
-
-        .avatar {
-            float: left;
-
-            img {
-                border: 1px solid #DDD;
-                padding: 2px;
-                background: #FFF;
-                width: 48px;
-                height: 48px;
-            }
-        }
-
-        .meta,
-        .text {
-            margin-left: 58px;
-        }
-    }
-}
 
 .navbar {
     border-radius: 0;
@@ -777,13 +277,6 @@ tr.choice td {
     }
 }
 
-.create-poll {
-    background: #F6F6F6;
-    padding: 0 16px;
-    box-sizing: border-box;
-    border: 1px solid #DDD;
-}
-
 .red {
     color: red;
 }
@@ -808,11 +301,3 @@ tr.choice td {
     white-space: nowrap;
 }
 
-#dateoffset-preview {
-    color: #888 !important;
-
-    .from, .to {
-        display: inline;
-        font-weight: bold;
-    }
-}

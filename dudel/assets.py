@@ -4,9 +4,15 @@ from flask.ext.assets import Environment, Bundle
 assets = Environment(app)
 
 # SCSS
-scss = Bundle('scss/*.scss',
+scss = Bundle(
+    'scss/main.scss',
+    'scss/poll.scss',
+    'scss/form.scss',
+    'scss/calendar.scss',
+    'scss/iconpreview.scss',
+    'scss/timeinput.scss',
     filters='scss',
-    output='gen/main.css')
+    output='gen/scss.css')
 assets.register('scss', scss)
 
 # CSS
