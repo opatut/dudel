@@ -29,6 +29,29 @@
                         </div>
                     </div>
                 </div>
+
+                <hr />
+
+                <div class="row">
+                    <div class="col-sm-9">
+                        <label>{{ _("All users matching ...") }}</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>{{ _("voted") }}</label>
+                    </div>
+                </div>
+
+                {% for choice_value in poll.choice_values %}
+                <div class="form-group"><div class="row">
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control filter-choice-values" data-choice-value="{{ choice_value.id }}" />
+                    </div>
+                    <div class="col-sm-3">
+                        <span class="label large choice-sum-value-label" style="background-color: #{{ choice_value.color }};" title="{{ choice_value.title }}"><span class="fa fa-{{ choice_value.icon }}"></span></span>
+                    </div>
+                </div></div>
+                {% endfor %}
+
                 <hr />
                 <div class="form-group">
                     <label>{{ _("Filter votes") }}</label>

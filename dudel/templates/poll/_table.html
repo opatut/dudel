@@ -19,7 +19,7 @@
             {% for choice in choices %}
                 {% set vote_choice = poll.get_vote_choice(vote, choice) %}
                 {% if vote_choice and not vote_choice.value.deleted %}
-                <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}" data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{{ vote.displayname }}{% if vote_choice.comment %}<div class='comment'>{{ vote_choice.comment }}</div>{% endif %}" data-placement="bottom">
+                <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}" data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{{ vote.displayname }}{% if vote_choice.comment %}<div class='comment'>{{ vote_choice.comment }}</div>{% endif %}" data-placement="bottom" data-choice-value="{{ vote_choice.value_id }}">
                     <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
                 </td>
                 {% else %}

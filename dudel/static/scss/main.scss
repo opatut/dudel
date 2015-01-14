@@ -15,7 +15,7 @@
 .or {
     $size: 32px;
     display: block;
-    width: $size * 2;
+    width: $size;
     height: $size;
     line-height: $size - 2px;
     background: #EEE;
@@ -23,6 +23,7 @@
     border: 1px solid #DDD;
     border-radius: 100px !important;
     color: #AAA;
+    text-align: center;
 }
 
 .alert {
@@ -119,6 +120,14 @@ table.vote label {
     margin-right: 4px;
     text-align: center;
     text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7);
+
+    &.large {
+        font-size: inherit;
+        width: 48px;
+        height: 32px;
+        line-height: 32px;
+        padding: 0;
+    }
 }
 
 .vote-choice {

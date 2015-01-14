@@ -26,6 +26,7 @@ i18n.ready (gettext) ->
     $table            = $ "#poll"
     $hideVotes        = $ "#filter-hide-votes input[type='radio']"
     $hideVotesFilter  = $ "#filter-hide-votes-filter"
+    $choiceValues     = $ ".filter-choice-values"
 
     return if $filterButton.length == 0
 
@@ -64,6 +65,31 @@ i18n.ready (gettext) ->
         for i in [0...scores.length]
             columns.push(columnsThreshold[i])
         columns.push(true)
+
+        $votes = $table.find("tr.vote")
+        $choiceValues.each ->
+            $in           = $ this
+            $in.closest(".form-group").removeClass("has-error")
+            choiceValueId = $in.attr "data-choice-value"
+
+            value = $in.val()
+            return if not value
+
+            regex = null
+            try
+                regex = new RegExp($in.val(), "i")
+            catch e
+                $in.closest(".form-group").addClass("has-error")
+                return
+
+            $votes.each ->
+                $vote = $ this
+                author = $vote.data "author"
+                return if not regex.test(author)
+                for i in [0...scores.length]
+                    value = $vote.find("td.vote-choice").eq(i).attr "data-choice-value"
+                    if value != choiceValueId
+                        columns[i+1] = false
 
         # Remove old filter, apply new filter
         $table.find("[data-original-colspan]").each ->
@@ -137,6 +163,7 @@ i18n.ready (gettext) ->
     $thresholdCount.on   "keyup", updateCount
     $hideVotes.on        "click", update
     $hideVotesFilter.on  "keyup", update
+    $choiceValues.on     "keyup", update
     $btnApply.on         "click", update
     $btnReset.on         "click", reset
 
