@@ -1,0 +1,13 @@
+{% extends "BASE.html" %}
+
+{% block title %}{{ error }}{% endblock %}
+
+{% block content %}
+
+<div id="error-page">
+    <i class="fa fa-fire"></i>
+    <h1>{{ error }}</h1>
+    <p>{{ error.description }}</p>
+</div>
+
+{% endblock %}

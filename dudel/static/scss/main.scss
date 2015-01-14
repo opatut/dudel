@@ -301,3 +301,21 @@ footer .btn-link:active {
     white-space: nowrap;
 }
 
+
+#error-page {
+    max-width: 300px;
+    text-align: center;
+    margin: 100px auto;
+
+    .fa {
+        font-size: 100px;
+    }
+
+    h1 {
+
+    }
+
+    p {
+        color: #777;
+    }
+}

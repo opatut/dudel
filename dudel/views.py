@@ -1022,3 +1022,7 @@ def root(locale):
     if locale not in ("de",):
         abort(404)
     return open('dudel/translations/%s/LC_MESSAGES/messages.po' % locale).read()
+
+@app.errorhandler(404)
+def error(err):
+    return render_template("error.html", error=err), err.code
