@@ -98,7 +98,7 @@ class PollForm(Form):
 
 class CreatePollForm(PollForm):
     type = SelectField(lazy_gettext("Type"), choices=[("date", lazy_gettext("Date and Time")), ("day", lazy_gettext("Date")),  ("normal", lazy_gettext("Normal poll"))])
-    visibility = SelectField(lazy_gettext("Visibility"), choices=[("public", lazy_gettext("Public")), ("hidden", lazy_gettext("Hidden"))], default="private")
+    visibility = SelectField(lazy_gettext("Visibility"), choices=[("public", lazy_gettext("Public")), ("hidden", lazy_gettext("Hidden"))], default="hidden")
 
 class CopyPollForm(PollForm):
     copy_choices = BooleanField(lazy_gettext("Copy choices"), default=True)
