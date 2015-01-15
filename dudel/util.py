@@ -32,9 +32,11 @@ class LocalizationContext(object):
         return default_timezone
 
     def utc_to_local(self, datetime):
+        if not datetime: return None
         return pytz.utc.localize(datetime).astimezone(self.timezone)
 
     def local_to_utc(self, datetime):
+        if not datetime: return None
         return self.timezone.localize(datetime).astimezone(pytz.utc).replace(tzinfo=None)
 
 class DateTimePart(str, Enum):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from dudel import app, db, babel, supported_languages
+from dudel import app, db, babel, supported_languages, default_timezone
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
 from dudel.login import get_user
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, \
@@ -81,6 +81,8 @@ def index():
 
         if current_user.is_authenticated():
             poll.timezone_name = current_user.timezone_name
+        else:
+            poll.timezone_name = str(default_timezone)
 
         if poll.due_date:
             localization_context = LocalizationContext(current_user, None)
@@ -379,7 +381,8 @@ def poll_edit(slug):
         return redirect(url_for("poll_edit", slug=poll.slug))
     else:
         form.owner_id.data = poll.owner_id
-        form.due_date.data = localization_context.utc_to_local(poll.due_date)
+        if poll.due_date:
+            form.due_date.data = localization_context.utc_to_local(poll.due_date)
 
 
     return render_template("poll/settings/edit.html", poll=poll, form=form, localization_context=localization_context)
@@ -516,7 +519,7 @@ def poll_edit_choices(slug, step=1):
             datetimes = [parser.parse(data) for data in request.form.getlist("datetimes[]")]
 
             # convert all datetimes back to UTC
-            datetimes = [lc.local_to_utc(datetime) for datetime in datetimes]
+            datetimes = [localization_context.local_to_utc(datetime) for datetime in datetimes]
 
             if not datetimes:
                 flash(gettext("Please select at least one combination."), "error")
