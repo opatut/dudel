@@ -2,6 +2,7 @@
 from dudel import app, db, babel, supported_languages, default_timezone
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
 from dudel.login import get_user
+from dudel.filters import get_current_timezone
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, \
     EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, \
     PollInviteForm, VoteAssignForm, CopyPollForm, CreateGroupForm, GroupAddMemberForm, RegisterForm
@@ -79,10 +80,7 @@ def index():
         form.populate_obj(poll)
         poll.public_listing = (form.visibility.data == "public")
 
-        if current_user.is_authenticated():
-            poll.timezone_name = current_user.timezone_name
-        else:
-            poll.timezone_name = str(default_timezone)
+        poll.timezone_name = str(get_current_timezone())
 
         if poll.due_date:
             localization_context = LocalizationContext(current_user, None)
