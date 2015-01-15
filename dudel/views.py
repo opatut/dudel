@@ -545,7 +545,7 @@ def poll_edit_choices(slug, step=1):
 
         if form.validate_on_submit():
             dates = form.dates.data.split(",")
-            dates = sorted(list(set(PartialDateTime(parser.parse(data, fuzzy=True), DateTimePart.date, localization_context) for data in dates)))
+            dates = sorted(list(set(parser.parse(data, fuzzy=True) for data in dates)))
 
             if not dates:
                 flash(gettext("Please select at least one date."), "error")
