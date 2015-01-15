@@ -7,6 +7,9 @@ BRAND_TEXT = "Dudel"
 BRAND_COLOR = None
 HOME_URL = "https://example.com/"
 HOME_TEXT = "Home"
+FOOTER_LINKS = [
+    ('Imprint', '/imprint')
+]
 
 # Debug mode, set to False in productive environment
 DEBUG = True
