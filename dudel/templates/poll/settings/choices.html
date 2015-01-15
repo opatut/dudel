@@ -62,9 +62,10 @@
                         <tr>
                             <td>
                                 <form class="form form-inline" method="POST">
+                                    {{ form_errors(form) }}
+
                                     <div class="input-group input-group-sm">
                                         {{ form.hidden_tag() }}
-                                        {{ form_errors(form) }}
                                         {{ form.text(class="form-control", placeholder=_("Add a choice")) }}
                                         <span class="input-group-btn">
                                             <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i></button>
