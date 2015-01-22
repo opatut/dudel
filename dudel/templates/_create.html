@@ -16,11 +16,11 @@
 
             {% if config.ALLOW_CUSTOM_SLUGS %}
             <div class="help-block script-only" id="slug-preview-box">
-                The poll will be available at
+                {{ _("The poll will be available at") }}
                 <span id="url-preview">
                     <span id="url-prefix">{{ url_for('poll', slug='', _external=True) }}</span><span id="slug-preview"></span>
                 </span>
-                <a href="#" class="pull-right btn btn-xs btn-default" id="slug-customize-button"><i class="fa fa-wrench"></i> Customize</a>
+                <a href="#" class="pull-right btn btn-xs btn-default" id="slug-customize-button"><i class="fa fa-wrench"></i> {{ _("Customize") }}</a>
             </div>
             {% endif %}
 
@@ -35,7 +35,7 @@
 
             <div class="pull-right script-only">
                 <button class="btn btn-xs btn-default" id="slug-randomize">
-                    <i class="fa fa-random"></i> Randomize
+                    <i class="fa fa-random"></i> {{ _("Randomize") }}
                 </button>
             </div>
 
