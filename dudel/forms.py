@@ -4,10 +4,9 @@ from flask.ext.babel import gettext, lazy_gettext
 from flask.ext.wtf import Form, RecaptchaField
 from flask.ext.wtf.recaptcha.validators import Recaptcha as RecaptchaValidator
 from flask.ext.login import current_user
-from wtforms import ValidationError
 from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField, IntegerField
 from wtforms.ext.dateutil.fields import DateTimeField
-from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, EqualTo, Email
+from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, EqualTo, Email, ValidationError, StopValidation
 from dudel.models.poll import Poll
 from dudel.models.group import Group
 from dudel.login import try_login
@@ -71,11 +70,6 @@ class SelectButtonInput:
         return Markup('<button name="%s" type="submit" value="%s" class="btn-link">%s</button>'
                         % (field.name, field.data, field.label.text))
 
-class RecaptchaIfAnonymous(RecaptchaValidator):
-    def __call__(self, form, field):
-        if current_user.is_anonymous():
-            super(RecaptchaIfAnonymous, self).__call__(form, field)
-
 class RequiredIf(object):
     def __init__(self, condition):
         self.condition = condition
@@ -83,6 +77,16 @@ class RequiredIf(object):
     def __call__(self, form, field):
         if self.condition(form, field) and not field.data:
             raise ValidationError(gettext("This field is required."))
+
+class OptionalIf(object):
+    def __init__(self, condition):
+        self.condition = condition
+
+    def __call__(self, form, field):
+        if self.condition(form, field) and not field.data:
+            field.errors[:] = []
+            print("This is optional because of condition")
+            raise StopValidation()
 
 
 ################################################################################
@@ -198,6 +202,9 @@ class CreateVoteChoiceForm(Form):
 def anonymous_not_checked(form, field):
     return not form["anonymous"].data
 
+def logged_in(form, field):
+    return current_user.is_authenticated()
+
 def not_logged_in(form, field):
     return current_user.is_anonymous()
 
@@ -213,7 +220,7 @@ class PollPassword(Form):
 class CommentForm(Form):
     name = TextField(lazy_gettext("Your Name"), validators=[RequiredIf(not_logged_in), Length(max=80)])
     text = TextAreaField(lazy_gettext("Comment"))
-    captcha = RecaptchaField(validators=[RecaptchaIfAnonymous()])
+    captcha = RecaptchaField(validators=[OptionalIf(logged_in), RecaptchaValidator()])
 
 class LanguageForm(Form):
     language = SelectField(lazy_gettext("Language"), choices=LANGUAGES, option_widget=SelectButtonInput())
