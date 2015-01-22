@@ -50,7 +50,7 @@ def cron():
         except Exception, e:
             yield "error updating LDAP groups: %s\n" % str(e)
 
-        for poll in Poll.query.filter(deleted=False).all():
+        for poll in Poll.query.filter_by(deleted=False).all():
             if poll.should_auto_delete:
                 poll.deleted = True
                 yield "auto-deleted poll: %s\n" % poll.title
