@@ -314,6 +314,8 @@ class Poll(db.Model):
         for comment in self.comments:
             dates.append(comment.created)
 
+        dates = [date for date in dates if date]
+
         return max(dates)
 
     @property
