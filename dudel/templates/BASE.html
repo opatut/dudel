@@ -87,9 +87,11 @@
             {% block content %}
             {% endblock %}
         </div>
-
         <footer>
             <div class="container">
+                {% if config.DEBUG or config.TESTING %}
+                        {{ alert('warning', 'Dudel is configured with <code>DEBUG = True</code> or <code>TESTING = True</code>.'|safe) }}
+                {% endif %}
                 Powered by <a href="http://github.com/opatut/dudel">Dudel</a>
                 {% for link in config.FOOTER_LINKS %}
                     &middot; <a href="{{ link[1] }}" target="_blank">{{ link[0] }}</a>
