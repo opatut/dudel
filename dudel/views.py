@@ -70,7 +70,7 @@ def members():
             type=member.type,
             name=member.displayname))
 
-    return json.dumps(members, indent=4)
+    return Response(json.dumps(members, indent=4), mimetype='application/json')
 
 @app.route("/", methods=("POST", "GET"))
 def index():
