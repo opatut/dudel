@@ -386,6 +386,7 @@ def poll_edit(slug):
     return render_template("poll/settings/edit.html", poll=poll, form=form, localization_context=localization_context)
 
 @app.route("/<slug>/invitations/", methods=("POST", "GET"))
+@login_required
 def poll_invitations(slug):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -430,6 +431,7 @@ def poll_invitations(slug):
 
 
 @app.route("/<slug>/invitations/<int:id>/delete")
+@login_required
 def poll_invitation_delete(slug, id):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -444,6 +446,7 @@ def poll_invitation_delete(slug, id):
     return redirect(url_for("poll_invitations", slug=poll.slug))
 
 @app.route("/<slug>/invitations/<int:id>/resend")
+@login_required
 def poll_invitation_resend(slug, id):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -457,6 +460,7 @@ def poll_invitation_resend(slug, id):
     return redirect(url_for("poll_invitations", slug=poll.slug))
 
 @app.route("/<slug>/invitations/resend")
+@login_required
 def poll_invitations_resend_all(slug):
     poll = get_poll(slug)
     poll.check_edit_permission()

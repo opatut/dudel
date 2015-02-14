@@ -9,7 +9,9 @@
 
         {% if poll.user_can_edit(current_user) %}
             <li{% if request.endpoint in ("poll_edit", "poll_edit_values") %} class="active"{% endif %}><a href="{{ url_for('poll_edit', slug=poll.slug) }}"><i class="fa fa-wrench"></i> <span>{{ _("Settings") }}</span></a></li>
-            <li{% if request.endpoint in ("poll_invitations",) %} class="active"{% endif %}><a href="{{ url_for('poll_invitations', slug=poll.slug) }}"><i class="fa fa-envelope"></i> <span>{{ _("Invitations") }}</span></a></li>
+            {% if current_user.is_authenticated() %}
+                <li{% if request.endpoint in ("poll_invitations",) %} class="active"{% endif %}><a href="{{ url_for('poll_invitations', slug=poll.slug) }}"><i class="fa fa-envelope"></i> <span>{{ _("Invitations") }}</span></a></li>
+            {% endif %}
             <li{% if request.endpoint == "poll_edit_choices" %} class="active"{% endif %}><a href="{{ url_for('poll_edit_choices', slug=poll.slug) }}"><i class="fa fa-list"></i> <span>{{ _("Choices") }}</span></a></li>
         {% endif %}
 
