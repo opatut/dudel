@@ -1,18 +1,20 @@
-from dudel import db, mail, default_timezone
+from datetime import datetime, timedelta
+
+from flask import url_for, render_template
+from flask.ext.babel import lazy_gettext
+from flask.ext.login import current_user
+from flask.ext.mail import Message
+from pytz import timezone
+
+from dudel import db, mail
 from dudel.models.choice import Choice
 from dudel.models.choicevalue import ChoiceValue
 from dudel.models.comment import Comment
 from dudel.models.pollwatch import PollWatch
 from dudel.models.vote import Vote
 from dudel.models.invitation import Invitation
-from dudel.models.votechoice import VoteChoice
 from dudel.util import PollExpiredException, PollActionException, LocalizationContext
-from datetime import datetime, timedelta
-from flask import url_for, render_template
-from flask.ext.babel import lazy_gettext
-from flask.ext.login import current_user
-from flask.ext.mail import Message
-from pytz import timezone
+
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -100,7 +102,6 @@ class Poll(db.Model):
 
         return invited, failed
 
-
     def show_votes(self, user):
         return self.user_can_administrate(user) \
             or self.show_results == "complete" \
@@ -130,7 +131,7 @@ class Poll(db.Model):
         # return VoteChoice.query.filter_by(vote=vote, choice=choice).first()
 
     def get_choices(self):
-        if self._choices == None:
+        if self._choices is None:
             self._choices = Choice.query.filter_by(poll_id=self.id, deleted=False).all()
             self._choices.sort(key=Choice.get_hierarchy)
         return self._choices
@@ -199,7 +200,8 @@ class Poll(db.Model):
 
     def choice_groups_valid(self, left_hierarchy, ignore_id=None):
         for right in self.get_choices():
-            if ignore_id != None and right.id == ignore_id: continue
+            if ignore_id is not None and right.id == ignore_id:
+                continue
             right_hierarchy = right.get_hierarchy()
             smaller = min([len(left_hierarchy), len(right_hierarchy)])
             if left_hierarchy[:smaller] == right_hierarchy[:smaller]:
@@ -223,7 +225,7 @@ class Poll(db.Model):
         # Merge None left to determine depth
         for i in range(width-1, 0, -1):
             for row in matrix:
-                if row[i][0] == None:
+                if row[i][0] is None:
                     row[i-1][1] = row[i][1] + 1
 
         # Merge items up and replace by None
@@ -238,7 +240,6 @@ class Poll(db.Model):
             matrix = [[row[0]] for row in matrix]
 
         return matrix
-
 
     def get_choices_by_group(self, group):
         return [choice for choice in self.get_choices() if choice.group == group]

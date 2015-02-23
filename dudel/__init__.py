@@ -3,10 +3,10 @@ from flask import Flask
 from flask.ext.babel import Babel
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.markdown import Markdown
-from flask.ext.login import LoginManager, current_user
+from flask.ext.login import LoginManager
 from flask.ext.gravatar import Gravatar
 from flask.ext.migrate import Migrate, MigrateCommand
-from flask.ext.script import Manager, Command
+from flask.ext.script import Manager
 from flask.ext.mail import Mail
 import pytz
 
