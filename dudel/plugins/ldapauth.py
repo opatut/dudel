@@ -4,6 +4,7 @@ import ldap
 
 config = app.config["LDAP"]
 
+
 class LdapConnector(object):
     def __init__(self):
         self.connected = False
@@ -166,6 +167,7 @@ class LdapConnector(object):
 
 
 ldap_connector = LdapConnector()
+
 
 @login_provider("ldap")
 def try_login_ldap(username, password):
