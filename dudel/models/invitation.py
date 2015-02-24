@@ -4,6 +4,7 @@ from flask.ext.mail import Message
 from flask.ext.babel import gettext
 from flask import render_template
 
+
 class Invitation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     creator_id = db.Column(db.Integer, db.ForeignKey("user.id"))
@@ -17,7 +18,7 @@ class Invitation(db.Model):
 
     @property
     def voted(self):
-        return self.vote != None
+        return self.vote is not None
 
     def send_mail(self, reminder=False):
         # Do nothing if user opted out
@@ -41,4 +42,3 @@ class Invitation(db.Model):
                 print("EMAIL SENT // " + m.subject)
                 print(m.body)
                 print("===========================")
-

@@ -1,5 +1,6 @@
 from dudel import db
 
+
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text)
@@ -17,8 +18,8 @@ class Comment(db.Model):
 
     def to_dict(self):
         return dict(id=self.id,
-            text=self.text,
-            created=str(self.created),
-            name=self.name,
-            user_id=self.user_id,
-            deleted=self.deleted)
+                    text=self.text,
+                    created=str(self.created),
+                    name=self.name,
+                    user_id=self.user_id,
+                    deleted=self.deleted)

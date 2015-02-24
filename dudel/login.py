@@ -2,6 +2,8 @@ from dudel import app, login_manager
 from flask.ext.login import login_user, logout_user
 
 _login_providers = {}
+
+
 class login_provider(object):
     """decorator to register login providers"""
     def __init__(self, mode):
@@ -16,6 +18,7 @@ class login_provider(object):
         """
         _login_providers[self.mode] = func
         return func
+
 
 def try_login(username, password):
     if not app.config["LOGIN_PROVIDERS"]:
@@ -41,11 +44,14 @@ def try_login(username, password):
 
     return None, None
 
+
 def force_login(user):
     login_user(user)
 
+
 def logout():
     logout_user()
+
 
 @login_manager.user_loader
 def get_user(username):
