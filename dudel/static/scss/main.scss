@@ -2,10 +2,36 @@
     border-radius: 0 !important;
 }
 
+html,
+body {
+    margin:0;
+    padding:0;
+    height:100%;
+}
+#wrapper {
+    min-height:100%;
+    position:relative;
+}
+#main-content {
+    padding-bottom: 150px;
+}
+footer {
+    width:100%;
+    height:80px;
+    position:absolute;
+    bottom:0;
+    left:0;
+}
+
 .btn-xs .fa {
     font-size: 14px;
     margin: -1px;
     vertical-align: -1px;
+}
+
+.btn-block {
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .filtered {
@@ -128,17 +154,27 @@ td.vote-comment {
 }
 
 footer {
-    margin: 3em 0;
-    color: #AAA;
+    margin: 0;
+    height: 120px;
+    padding: 50px;
+    box-sizing: border-box;
     text-align: center;
-}
+    background: #D9D9D9;
+    color: #555;
 
-footer .btn-link,
-footer .btn-link:focus,
-footer .btn-link:hover,
-footer .btn-link:active {
-    color: #AAA;
-    padding: 0;
+    a, .btn-link {
+        &, &:hover, &:focus, &:active {
+            color: inherit;
+            padding: 0;
+        }
+    }
+
+    .separator {
+        margin: 5px;
+        &:before {
+            content: "-";
+        }
+    }
 }
 
 .color {

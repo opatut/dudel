@@ -1,0 +1,17 @@
+footer
+    .container
+        a(href=url_for("about")) About
+
+        - for link in config.FOOTER_LINKS
+            span.separator
+            a(href="link[1]", target="_blank")= link[0]
+
+                //- <form class="form-inline" action="{{ url_for('user_change_language', next=request.url) }}" method="POST">
+                //-     {{ lang_form.hidden_tag() }}
+                //-     {% for language in lang_form.language %}
+                //-         &bullet; {{ language() }}
+                //-     {% endfor %}
+                //- </form>
+
+            span.separator
+            | Current timezone is #{current_timezone}.

@@ -1,5 +1,6 @@
 from dudel import db
 from dudel.util import PartialDateTime, DateTimePart
+from datetime import datetime
 
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -10,6 +11,18 @@ class Choice(db.Model):
 
     # relationships
     vote_choices = db.relationship("VoteChoice", backref="choice", lazy="dynamic")
+
+    def __init__(self, content=None, poll=None):
+        if content:
+            if isinstance(content, str):
+                self.text = content
+            elif isinstance(content, datetime):
+                self.date = content
+            else:
+                raise ValueError("Invalid content type for choice: %s" % type(content))
+
+        if poll:
+            self.poll = poll
 
     def __cmp__(self,other):
         return cmp(self.date, other.date) or cmp(self.deleted, other.deleted) or cmp(self.text, other.text)
@@ -37,10 +50,11 @@ class Choice(db.Model):
     @property
     def title(self):
         from dudel.filters import date, datetime
-        poll_type = self.poll.type
-        if poll_type == "day":
+        from dudel.models.poll import PollType
+
+        if self.poll.type == PollType.date:
             return date(self.date, ref=self.poll)
-        elif poll_type == "date":
+        elif self.poll.type == PollType.datetime:
             return datetime(self.date, ref=self.poll.localization_context)
         else:
             return '<i class="fa fa-chevron-right choice-separator"></i>'.join(self.get_hierarchy())
@@ -48,10 +62,11 @@ class Choice(db.Model):
 
     @property
     def value(self):
-        poll_type = self.poll.type
-        if poll_type == "day":
+        from dudel.models.poll import PollType
+
+        if self.poll.type == PollType.date:
             return PartialDateTime(self.date, DateTimePart.date, self.poll.localization_context)
-        elif poll_type == "date":
+        elif self.poll.type == PollType.datetime:
             return self.date
         else:
             return self.text

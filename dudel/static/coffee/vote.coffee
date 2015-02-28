@@ -20,8 +20,7 @@ setChoice = (voteChoice, choice) ->
     $tr.find("td.vote-choice[data-choice=\"#{choice}\"]").removeClass "off"
 
 $ ->
-    # Hide voting radio column
-    $("td .vote-choice-radio").parent().hide()
+    $(".vote-choice-form").hide();
 
     # Apply checked radio states to table cells
     $(".vote-choice-radio:checked").each ->
@@ -80,4 +79,22 @@ $ ->
 
     $(".vote-choice-radio").change ->
         setChoice($(this).parents("tr").data("vote-choice"), $(this).val())
+
+    $table = $("table.vote")
+    min    = $table.attr("data-minimum")?.toNumber() or 0
+    max    = $table.attr("data-maximum")?.toNumber() or 100
+    step   = $table.attr("data-step")?.toNumber() or 1
+
+    $(".numeric").each ->
+        $field = $(this)
+        $field.change ->
+            val = $(this).val()
+            val = val.toNumber()
+            console.log(val)
+            if (min and val < min) then val = min
+            if (max and val > max) then val = max
+            console.log(val)
+            val = Math.round((val - min) / step) * step + min if step
+            console.log(val)
+            $(this).val(val)
 

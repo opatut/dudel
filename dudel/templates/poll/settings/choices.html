@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block poll_content %}
-    {% if poll.type == "normal" %}
+    {% if poll.type in (PollType.normal, PollType.numeric) %}
         {% if poll.get_choices()|length != poll.choices.count() %}
             {{ alert("info", _("Deleted choices will stay in this list, so votes that have already been made are not lost.")) }}
         {% endif %}
@@ -102,14 +102,14 @@
                 <a class="btn btn-primary" href="{{ poll.get_url() }}">{{ _("Done") }}</a>
             </div>
         </form>
-    {% elif poll.type in ("date", "day") %}
+    {% elif poll.type in (PollType.datetime, PollType.date) %}
         {% if not poll.timezone %}
             {{ alert("info", _("This poll is using coordinated time, which means the choices are interpreted as your profile timezone (%(userzone)s). They will be displayed in the user's respective timezone for everyone else.", userzone=current_timezone)) }}
         {% elif poll.timezone != current_timezone %}
             {{ alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone)) }}
         {% endif %}
 
-        {% if poll.type == "date" %}
+        {% if poll.type == PollType.datetime %}
         <div class="visible-xs visible-sm">
             <ul class="steps">
                 <li{% if step == 1 %} class="current"{% endif %}><span>{{ _("Step 1") }}</span>{{ _("Days") }}</li>

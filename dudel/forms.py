@@ -7,7 +7,7 @@ from flask.ext.login import current_user
 from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField, IntegerField
 from wtforms.ext.dateutil.fields import DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, EqualTo, Email, ValidationError, StopValidation
-from dudel.models.poll import Poll
+from dudel.models.poll import Poll, PollType
 from dudel.models.group import Group
 from dudel.login import try_login
 import ldap
@@ -102,7 +102,7 @@ class PollForm(Form):
     due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional()])
 
 class CreatePollForm(PollForm):
-    type = SelectField(lazy_gettext("Type"), choices=[("date", lazy_gettext("Date and Time")), ("day", lazy_gettext("Date")),  ("normal", lazy_gettext("Normal poll"))])
+    type = SelectField(lazy_gettext("Type"), choices=[(choice.value, choice.title) for choice in PollType])
     visibility = SelectField(lazy_gettext("Visibility"), choices=[("public", lazy_gettext("Public")), ("hidden", lazy_gettext("Hidden"))], default="hidden")
 
 class CreateGroupForm(Form):
@@ -196,8 +196,14 @@ class EditPollForm(Form):
 
 class CreateVoteChoiceForm(Form):
     value = RadioField(lazy_gettext("Value"), coerce=int, validators=[Optional()])
+    amount = DecimalField(lazy_gettext("Amount"), validators=[Optional()], default=0)
     comment = TextField(lazy_gettext("Comment"))
     choice_id = HiddenField("choice id", validators=[Required()])
+
+class AmountRangeForm(Form):
+    minimum = DecimalField(lazy_gettext("Minimum"))
+    maximum = DecimalField(lazy_gettext("Maximum"))
+    step = DecimalField(lazy_gettext("Step"))
 
 def anonymous_not_checked(form, field):
     return not form["anonymous"].data

@@ -17,7 +17,7 @@
         <tr><th>Title</th><td>{{ poll.title }}</td></tr>
         <tr><th>Description</th><td>{{ poll.description }}</td></tr>
         <tr><th>Slug</th><td>{{ poll.slug }}</td></tr>
-        <tr><th>Type</th><td>{{ poll.type }}</td></tr>
+        <tr><th>Type</th><td>{{ PollType(poll.type).title }}</td></tr>
         <tr><th>Created</th><td>{{ poll.created }}</td></tr>
         <tr><th>Owner</th><td>{{ poll.owner.displayname }}</td></tr>
         <tr><th>Due date</th><td>{{ poll.due_date }}</td></tr>

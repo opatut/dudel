@@ -13,13 +13,38 @@ from flask.ext.babel import lazy_gettext
 from flask.ext.login import current_user
 from flask.ext.mail import Message
 from pytz import timezone
+from enum import Enum
+
+class PollType(str, Enum):
+    datetime = "date"
+    date = "day"
+    normal = "normal"
+    numeric = "numeric"
+
+    @property
+    def icon(self):
+        return {
+            PollType.datetime: "clock-o",
+            PollType.date:     "calendar",
+            PollType.normal:   "list",
+            PollType.numeric:  "sliders"
+        }[self]
+
+    @property
+    def title(self):
+        return {
+            PollType.datetime: lazy_gettext("Date"),
+            PollType.date:     lazy_gettext("Date and Time"),
+            PollType.normal:   lazy_gettext("Normal Poll"),
+            PollType.numeric:  lazy_gettext("Numeric")
+        }[self]
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))
     description = db.Column(db.Text)
     slug = db.Column(db.String(80))
-    type = db.Column(db.String(20), default="normal") # date|normal|day
+    type = db.Column(db.String(20), default="normal") # PollType
     created = db.Column(db.DateTime)
     owner_id = db.Column(db.Integer, db.ForeignKey("member.id"))
 
@@ -37,6 +62,11 @@ class Poll(db.Model):
     show_invitations = db.Column(db.Boolean, default=True)
     timezone_name = db.Column(db.String(40))
 
+    # Type: numeric
+    amount_minimum = db.Column(db.Float, default=0)
+    amount_maximum = db.Column(db.Float, default=None)
+    amount_step = db.Column(db.Float, default=1)
+
     RESERVED_NAMES = ["login", "logout", "index", "user", "admin", "api", "register", "static"]
 
     # relationships
@@ -50,7 +80,16 @@ class Poll(db.Model):
     _vote_choice_map = None
     _choices = None
 
-    def __init__(self, create_choice_values=True):
+    def __init__(self, title=None, slug=None, type=None, create_choice_values=True):
+        if title:
+            self.title = title
+
+        if slug:
+            self.slug = slug
+
+        if type:
+            self.type = type
+
         self.created = datetime.utcnow()
 
         # create yes/no/maybe default choice values
@@ -62,6 +101,16 @@ class Poll(db.Model):
     @property
     def is_expired(self):
         return self.due_date and self.due_date < datetime.utcnow()
+
+    def numeric_format(self, extra_digits=0):
+        if not self.type == PollType.numeric:
+            raise TypeError("Poll %s is not of type numeric." % self.slug)
+
+        def get_decimal_places(val):
+            decimals = str(val).rstrip("0").split(".")
+            return len(decimals[1]) if (len(decimals) > 1) else 0
+
+        return "%%.%df" % (max(map(get_decimal_places, [self.amount_step, self.amount_maximum, self.amount_minimum])) + extra_digits)
 
     def invite(self, user):
         result = True
@@ -234,7 +283,7 @@ class Poll(db.Model):
                     matrix[i][j][0] = None
 
         # cut off time column in day mode, only use date field
-        if self.type == "day":
+        if self.type == PollType.date:
             matrix = [[row[0]] for row in matrix]
 
         return matrix
@@ -257,21 +306,35 @@ class Poll(db.Model):
             subform.value.choices = [(v.id, v.title) for v in self.get_choice_values()]
 
     def get_stats(self):
-        counts = {}
-        for choice in self.choices:
-            counts[choice] = choice.get_counts()
+        if self.type == PollType.numeric:
+            totals = {}
+            counts = {}
+            averages = {}
 
-        scores = {}
-        totals = {}
-        for choice, choice_counts in counts.items():
-            totals[choice] = choice.vote_choices.count()
-            scores[choice] = 0
-            for value, count in choice_counts.items():
-                scores[choice] += count * value.weight
+            for choice in self.choices:
+                amounts = [vote_choice.amount for vote_choice in choice.vote_choices]
+                counts[choice] = len(amounts)
+                totals[choice] = sum(amounts)
+                averages[choice] = totals[choice] / counts[choice] if amounts else 0
 
-        max_score = max(scores.values())
+            return totals, counts, averages
 
-        return scores, counts, totals, max_score
+        else:
+            counts = {}
+            for choice in self.choices:
+                counts[choice] = choice.get_counts()
+
+            scores = {}
+            totals = {}
+            for choice, choice_counts in counts.items():
+                totals[choice] = choice.vote_choices.count()
+                scores[choice] = 0
+                for value, count in choice_counts.items():
+                    scores[choice] += count * value.weight
+
+            max_score = max(scores.values())
+
+            return scores, counts, totals, max_score
 
     def is_watching(self, user):
         return PollWatch.query.filter_by(poll=self, user=user).first()

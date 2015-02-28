@@ -11,6 +11,7 @@ scss = Bundle(
     'scss/calendar.scss',
     'scss/iconpreview.scss',
     'scss/timeinput.scss',
+    'scss/slider.scss',
     filters='scss',
     output='gen/scss.css')
 assets.register('scss', scss)
@@ -20,6 +21,7 @@ css_all = Bundle(
     'css/bootstrap.css',
     'css/font-awesome.css',
     'css/jquery-ui.css',
+    'css/jquery-range.css',
     'css/jquery-ui-timepicker-addon.css',
     'css/jquery.colorpicker.css',
     scss,
@@ -34,6 +36,7 @@ coffee = Bundle(
     'coffee/votefilter.coffee',
     'coffee/vote.coffee',
     'coffee/slug.coffee',
+    'coffee/slider.coffee',
     filters='coffeescript',
     output='gen/coffee.js'
 )
@@ -43,6 +46,7 @@ assets.register('coffee', coffee)
 js_libs = Bundle(
     'js/lib/jquery.js',
     'js/lib/jquery-ui.min.js',
+    'js/lib/jquery-range.min.js',
     'js/lib/bootstrap.js',
     'js/lib/sugar.js',
     'js/lib/sugar-de.js',

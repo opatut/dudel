@@ -1,8 +1,36 @@
 {% extends "poll/BASE.html" %}
 
 {% block polltitle %}{{ _("Values") }}{% endblock %}
-
+    blah
 {% block poll_content %}
+{% if poll.type == PollType.numeric %}
+    <form method="POST" class="form-inline">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.minimum.label }}
+            {{ form.minimum(class="form-control") }}
+            {{ field_error(form.minimum) }}
+        </div>
+
+        <div class="form-group">
+            {{ form.maximum.label }}
+            {{ form.maximum(class="form-control") }}
+            {{ field_error(form.maximum) }}
+        </div>
+
+        <div class="form-group">
+            {{ form.step.label }}
+            {{ form.step(class="form-control") }}
+            {{ field_error(form.step) }}
+        </div>
+
+        <div class="form-group">
+            <label for="">&nbsp;</label>
+            <input type="submit" value="{{ _('Save') }}" class="btn btn-block btn-primary">
+        </div>
+    </form>
+{% else %}
     <p>
         {{ _("Here you can edit which options the voters have for each choice you give them. By default, <b>yes</b>, <b>no</b> and <b>maybe</b> are always enabled, but you can disable or change any of these. You should have at least one value in this list for the voting to make sense.") | safe }}
     </p>
@@ -121,4 +149,5 @@
 
         </div>
     </div>
+{% endif %}
 {% endblock %}

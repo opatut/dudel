@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from dudel import app, db, babel, supported_languages, default_timezone
-from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
+from dudel.models import Poll, PollType, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
 from dudel.login import get_user
 from dudel.filters import get_current_timezone
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, \
     EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, \
-    PollInviteForm, VoteAssignForm, CopyPollForm, CreateGroupForm, GroupAddMemberForm, RegisterForm
+    PollInviteForm, VoteAssignForm, CopyPollForm, CreateGroupForm, GroupAddMemberForm, RegisterForm, AmountRangeForm
 from dudel.util import PollExpiredException, PollActionException, random_string, get_slug, DateTimePart, PartialDateTime, LocalizationContext
 import dudel.login
 from flask import redirect, abort, request, render_template, flash, url_for, g, Response
@@ -76,7 +76,7 @@ def members():
 def index():
     form = CreatePollForm()
     if form.validate_on_submit():
-        poll = Poll()
+        poll = Poll(form.type.data != PollType.numeric)
         form.populate_obj(poll)
         poll.public_listing = (form.visibility.data == "public")
 
@@ -114,6 +114,11 @@ def index():
     user_count = User.query.count()
 
     return render_template("index.html", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count, user_count=user_count)
+
+
+@app.route("/about")
+def about():
+    return render_template("about.jade", asdf="omg")
 
 @app.route("/login", methods=("GET", "POST"))
 def login():
@@ -494,7 +499,7 @@ def poll_edit_choices(slug, step=1):
 
     localization_context = poll.localization_context
 
-    if poll.type == "date":
+    if poll.type == PollType.datetime:
         form = DateTimeSelectForm()
         args["form"] = form
 
@@ -539,7 +544,7 @@ def poll_edit_choices(slug, step=1):
                 db.session.commit()
                 flash(gettext("The choices list has been updated."), "success")
                 return redirect(poll.get_url())
-    elif poll.type == "day":
+    elif poll.type == PollType.date:
         form = DateTimeSelectForm()
         args["form"] = form
 
@@ -651,47 +656,66 @@ def poll_edit_values(slug):
 
     args = {}
 
-    if "toggle" in request.args:
-        value = ChoiceValue.query.filter_by(id=request.args["toggle"]).first_or_404()
-        if value.poll != poll: abort(404)
-        value.deleted = not value.deleted
-        db.session.commit()
-        if value.deleted:
-            flash(gettext("The choice value was removed."), "success")
-        else:
-            flash(gettext("The choice value restored."), "success")
+    if poll.type == PollType.numeric:
+        form = AmountRangeForm()
 
-        return redirect(url_for("poll_edit_values", slug=poll.slug))
-
-    elif "edit" in request.args:
-        id = request.args.get("edit")
-        value = ChoiceValue.query.filter_by(poll_id=poll.id, id=id).first_or_404()
-        form = AddValueForm(obj=value)
         if form.validate_on_submit():
-            value.title = form.title.data
-            value.icon = form.icon.data
-            value.color = form.color.data.lstrip("#")
-            value.weight = form.weight.data
+            poll.amount_minimum = form.minimum.data
+            poll.amount_maximum = form.maximum.data
+            poll.amount_step = form.step.data
             db.session.commit()
-            flash(gettext("The choice value was edited."), "success")
-            return redirect(url_for("poll_edit_values", slug=poll.slug))
+            flash(gettext("The choice value range has been saved."), "success")
+            return redirect(url_for("poll_edit", slug=poll.slug))
+
+        elif request.method == "GET":
+            form.minimum.data = poll.amount_minimum
+            form.maximum.data = poll.amount_maximum
+            form.step.data = poll.amount_step
+
         args["form"] = form
-        args["edit_value"] = value
 
     else:
-        form = AddValueForm()
-        if form.validate_on_submit():
-            value = ChoiceValue()
-            value.title = form.title.data
-            value.icon = form.icon.data
-            value.color = form.color.data.lstrip("#")
-            value.weight = form.weight.data
-            value.poll = poll
-            db.session.add(value)
+        if "toggle" in request.args:
+            value = ChoiceValue.query.filter_by(id=request.args["toggle"]).first_or_404()
+            if value.poll != poll: abort(404)
+            value.deleted = not value.deleted
             db.session.commit()
-            flash(gettext("The choice value was added."), "success")
+            if value.deleted:
+                flash(gettext("The choice value was removed."), "success")
+            else:
+                flash(gettext("The choice value restored."), "success")
+
             return redirect(url_for("poll_edit_values", slug=poll.slug))
-        args["form"] = form
+
+        elif "edit" in request.args:
+            id = request.args.get("edit")
+            value = ChoiceValue.query.filter_by(poll_id=poll.id, id=id).first_or_404()
+            form = AddValueForm(obj=value)
+            if form.validate_on_submit():
+                value.title = form.title.data
+                value.icon = form.icon.data
+                value.color = form.color.data.lstrip("#")
+                value.weight = form.weight.data
+                db.session.commit()
+                flash(gettext("The choice value was edited."), "success")
+                return redirect(url_for("poll_edit_values", slug=poll.slug))
+            args["form"] = form
+            args["edit_value"] = value
+
+        else:
+            form = AddValueForm()
+            if form.validate_on_submit():
+                value = ChoiceValue()
+                value.title = form.title.data
+                value.icon = form.icon.data
+                value.color = form.color.data.lstrip("#")
+                value.weight = form.weight.data
+                value.poll = poll
+                db.session.add(value)
+                db.session.commit()
+                flash(gettext("The choice value was added."), "success")
+                return redirect(url_for("poll_edit_values", slug=poll.slug))
+            args["form"] = form
 
     return render_template("poll/settings/values.html", poll=poll, **args)
 
@@ -762,6 +786,7 @@ def poll_vote(slug):
                 vote_choice = VoteChoice()
                 vote_choice.value = value
                 vote_choice.comment = subform.comment.data
+                vote_choice.amount = subform.amount.data
                 vote_choice.vote = vote
                 vote_choice.choice = choice
                 db.session.add(vote_choice)
@@ -785,6 +810,12 @@ def poll_vote(slug):
 
     if not request.method == "POST":
         poll.fill_vote_form(form)
+
+        for subform in form.vote_choices:
+            min_ = poll.amount_minimum or 0
+            max_ = poll.amount_maximum or 0
+            avg = min_ + (max_ - min_) / 2 if min_ != max_ else 0
+            subform.amount.data = avg
 
     return render_template("poll/vote/edit.html", poll=poll, form=form)
 
@@ -886,6 +917,7 @@ def poll_vote_edit(slug, vote_id):
                     vote_choice.choice = choice
 
                 vote_choice.comment = subform.comment.data
+                vote_choice.amount = subform.amount.data
                 vote_choice.value = value
 
             # remove 'assigned-by' tag if the user themselves edited the vote, and notify them about this change
@@ -902,6 +934,7 @@ def poll_vote_edit(slug, vote_id):
         for subform in form.vote_choices:
             vote_choice = VoteChoice.query.filter_by(vote_id = vote.id, choice_id = subform.choice_id.data).first()
             subform.comment.data = vote_choice.comment if vote_choice else ""
+            subform.amount.data = vote_choice.amount
 
     return render_template("poll/vote/edit.html", poll=poll, form=form, vote=vote)
 
@@ -966,7 +999,7 @@ def poll_copy(slug):
         # Copy choices
         if form.copy_choices.data:
             date_offset = None
-            if poll.type in ("day", "date"):
+            if poll.type in (PollType.datetime, PollType.date):
                 date_offset = timedelta(days=form.date_offset.data)
 
             for choice in poll.choices:

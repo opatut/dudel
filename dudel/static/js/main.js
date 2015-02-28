@@ -83,5 +83,18 @@ $(document).ready(function() {
 
         group.find(".btn[value='" + select.val() + "']").addClass("active");
     });
+
+    $('.slider').each(function() {
+        $(this).jRange({
+            from: $(this).data("minimum"),
+            to: $(this).data("maximum"),
+            step: $(this).data("step"),
+            // scale: [0,25,50,75,100],
+            // format: '%s',
+            theme: "theme-blue",
+            width: 300,
+            showLabels: true
+        });
+    });
 });
 

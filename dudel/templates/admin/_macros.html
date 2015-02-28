@@ -25,7 +25,7 @@
             </tr>
             {% for poll in polls %}
             <tr>
-                <td><i class="fa fa-{{ {'normal':'list', 'date':'clock-o', 'day': 'calendar'}[poll.type] }}" title="Type: {{ poll.type }}"></i></td>
+                <td><i class="fa fa-{{ PollType(poll.type).icon }}" title="Type: {{ PollType(poll.type).title }}"></i></td>
                 <td><a href="{{ url_for('admin_poll', id=poll.id) }}">{{ poll.title }}</a></td>
                 <td><a href="{{ poll.get_url() }}">/{{ poll.slug }}/</a></td>
                 <td>{{ poll.last_changed|datetime }}</td>
