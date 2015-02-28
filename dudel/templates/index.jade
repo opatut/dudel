@@ -1,0 +1,44 @@
+extends BASE.html
+
+block content
+    .container: .row
+        .col-md-6
+            include _create.jade
+
+        .col-md-6
+            - if current_user.is_authenticated()
+                .page-header
+                    h1= _("My polls")
+
+                p= _("You can find a list of all the polls in which you have participated on your profile page.")
+
+                a.btn.btn-primary(href=url_for('user_settings'))= _("Show my polls")
+
+                .page-header.secondary
+            - else
+                .page-header
+                    h1{{ _("Public polls") }}</h1>
+
+            - if polls
+                ul
+                    - for poll in polls
+                        li: a(href=poll.get_url())= poll.title
+
+            - else
+                = alert("info", _("There are currently no public polls."))
+
+            .page-header.secondary
+                h1= _("Dudel statistics")
+
+            table.table
+                tr
+                    th= _("Polls created")
+                    td= poll_count
+
+                tr
+                    th= _("Votes cast")
+                    td= vote_count
+
+                tr
+                    th= _("Users")
+                    td= user_count
