@@ -1,5 +1,6 @@
 from dudel import db
 
+
 class VoteChoice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.Text)

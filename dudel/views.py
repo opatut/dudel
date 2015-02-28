@@ -1,23 +1,31 @@
 # -*- coding: utf-8 -*-
-from dudel import app, db, babel, supported_languages, default_timezone
-from dudel.models import Poll, PollType, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, Invitation
+
+from datetime import datetime, timedelta
+import json
+
+from flask import redirect, abort, request, render_template, flash, url_for, Response
+from dateutil import parser
+import re
+from sqlalchemy import func
+
+from dudel import app, db, babel, supported_languages, sentry
+from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, \
+    Invitation
 from dudel.login import get_user
 from dudel.filters import get_current_timezone
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, \
-    EditPollForm, CreateVoteChoiceForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, \
-    PollInviteForm, VoteAssignForm, CopyPollForm, CreateGroupForm, GroupAddMemberForm, RegisterForm, AmountRangeForm
-from dudel.util import PollExpiredException, PollActionException, random_string, get_slug, DateTimePart, PartialDateTime, LocalizationContext
+    EditPollForm, CreateVoteForm, CommentForm, LanguageForm, SettingsFormLdap, SettingsFormPassword, \
+    PollInviteForm, VoteAssignForm, CopyPollForm, CreateGroupForm, GroupAddMemberForm, RegisterForm
+from dudel.util import PollExpiredException, PollActionException, random_string, get_slug, LocalizationContext
+
 import dudel.login
-from flask import redirect, abort, request, render_template, flash, url_for, g, Response
 from flask.ext.babel import gettext
 from flask.ext.login import current_user, login_required
-from dateutil import parser
-from datetime import datetime, timedelta
-import json, re, pytz
-from sqlalchemy import func
+
 
 def get_poll(slug):
     return Poll.query.filter_by(slug=slug, deleted=False).first_or_404()
+
 
 @babel.localeselector
 def get_locale():
@@ -59,6 +67,7 @@ def cron():
 
     return Response(generate(), mimetype="text/plain")
 
+
 @app.route("/api/members")
 @login_required
 def members():
@@ -70,7 +79,8 @@ def members():
             type=member.type,
             name=member.displayname))
 
-    return json.dumps(members, indent=4)
+    return Response(json.dumps(members, indent=4), mimetype='application/json')
+
 
 @app.route("/", methods=("POST", "GET"))
 def index():
@@ -85,7 +95,6 @@ def index():
         if poll.due_date:
             localization_context = LocalizationContext(current_user, None)
             poll.due_date = localization_context.local_to_utc(poll.due_date)
-
 
         success = True
         if not app.config["ALLOW_CUSTOM_SLUGS"] or not form.slug.data:
@@ -113,7 +122,9 @@ def index():
     vote_count = Vote.query.count()
     user_count = User.query.count()
 
-    return render_template("index.html", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count, user_count=user_count)
+    return render_template("index.html", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count,
+                           user_count=user_count)
+
 
 
 @app.route("/about")
@@ -131,7 +142,8 @@ def login():
 
         return redirect(request.args.get("next") or url_for("index"))
 
-    return render_template("user/login.html", form=form)
+    return render_template('user/login.html', form=form)
+
 
 @app.route("/register", methods=("GET", "POST"))
 def register():
@@ -153,7 +165,8 @@ def register():
 
         return redirect(request.args.get("next") or url_for("index"))
 
-    return render_template("user/register.html", form=form)
+    return render_template('user/register.html', form=form)
+
 
 @app.route("/logout")
 def logout():
@@ -161,6 +174,7 @@ def logout():
         flash(gettext("You were logged out, %(name)s. Goodbye!", name=current_user.displayname), "success")
         dudel.login.logout()
     return redirect(request.args.get("next") or url_for("index"))
+
 
 @app.route("/user/language", methods=("GET", "POST"))
 def user_change_language():
@@ -176,6 +190,7 @@ def user_change_language():
             else:
                 response.set_cookie("lang", lang)
     return response
+
 
 @app.route("/groups", methods=("GET", "POST"))
 @login_required
@@ -201,6 +216,7 @@ def groups():
             return redirect(url_for('group', id=group.id))
 
     return render_template("user/groups.html", form=form)
+
 
 @app.route("/groups/<int:id>", methods=("GET", "POST"))
 @login_required
@@ -229,6 +245,7 @@ def group(id):
 
     return render_template("user/group.html", group=group, form=form)
 
+
 @app.route("/groups/<int:id>/disband")
 @login_required
 def group_disband(id):
@@ -245,6 +262,7 @@ def group_disband(id):
     flash(gettext("You have disbanded the group."), "success")
     return redirect(url_for("groups"))
 
+
 @app.route("/groups/<int:id>/make-admin/<int:user_id>")
 @login_required
 def group_make_admin(id, user_id):
@@ -257,8 +275,10 @@ def group_make_admin(id, user_id):
 
     group.admin = user
     db.session.commit()
-    flash(gettext("You have transferred the admin rights for this group to %(user)s.", user=user.displayname), "success")
+    flash(gettext("You have transferred the admin rights for this group to %(user)s.", user=user.displayname),
+          "success")
     return redirect(url_for("group", id=group.id))
+
 
 @app.route("/groups/<int:id>/leave/<int:user_id>")
 @login_required
@@ -311,6 +331,7 @@ def user_settings():
 
     return render_template("user/settings.jade", form=form)
 
+
 @app.route("/<slug>/", methods=("GET", "POST"))
 def poll(slug):
     return redirect(url_for("poll_overview", slug=slug))
@@ -345,10 +366,11 @@ def poll_overview(slug):
     poll = get_poll(slug)
     return render_template("poll/overview.jade", poll=poll)
 
+
 @app.route("/<slug>/comment/delete/<int:id>", methods=("POST", "GET"))
 def poll_delete_comment(slug, id):
     poll = get_poll(slug)
-    comment = Comment.query.filter_by(id=id,poll=poll).first_or_404()
+    comment = Comment.query.filter_by(id=id, poll=poll).first_or_404()
     if not comment.user_can_edit(current_user):
         abort(403)
 
@@ -356,6 +378,7 @@ def poll_delete_comment(slug, id):
     db.session.commit()
     flash(gettext("The comment was deleted."), "success")
     return redirect(poll.get_url())
+
 
 @app.route("/<slug>/edit/", methods=("POST", "GET"))
 def poll_edit(slug):
@@ -367,7 +390,7 @@ def poll_edit(slug):
 
     if current_user.is_authenticated():
         form.owner_id.choices = [(0, gettext("Nobody")),
-            (current_user.id, current_user.displayname)]
+                                 (current_user.id, current_user.displayname)]
         for group in current_user.groups:
             form.owner_id.choices.append((group.id, group.displayname))
 
@@ -389,17 +412,18 @@ def poll_edit(slug):
 
         db.session.commit()
         flash(gettext("Poll settings have been saved."), "success")
-        #return redirect(poll.get_url())
+        # return redirect(poll.get_url())
         return redirect(url_for("poll_edit", slug=poll.slug))
     else:
         form.owner_id.data = poll.owner_id
         if poll.due_date:
             form.due_date.data = localization_context.utc_to_local(poll.due_date)
 
-
     return render_template("poll/settings/edit.jade", poll=poll, form=form, localization_context=localization_context)
 
+
 @app.route("/<slug>/invitations/", methods=("POST", "GET"))
+@login_required
 def poll_invitations(slug):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -430,20 +454,22 @@ def poll_invitations(slug):
         db.session.commit()
 
         if notfound:
-            flash(gettext("The following %(count)d user/groups were not found: %(names)s.", count=len(notfound), names=", ".join(notfound)), "error")
+            flash(gettext("The following %(count)d user/groups were not found: %(names)s.", count=len(notfound),
+                          names=", ".join(notfound)), "error")
         if found:
             flash(gettext("You have invited %(count)d users.", count=len(found)), "success")
         if alreadyInvitedOrVoted:
             flash(gettext("%(count)d users were skipped, since they either are already invited or have already voted.",
-                count=len(alreadyInvitedOrVoted)), "info")
+                          count=len(alreadyInvitedOrVoted)), "info")
 
-        #return redirect(poll.get_url())
+        # return redirect(poll.get_url())
         return redirect(url_for("poll_invitations", slug=poll.slug))
 
     return render_template("poll/settings/invitations.html", poll=poll, form=form)
 
 
 @app.route("/<slug>/invitations/<int:id>/delete")
+@login_required
 def poll_invitation_delete(slug, id):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -457,7 +483,9 @@ def poll_invitation_delete(slug, id):
     flash(gettext("The invitation was deleted."), "success")
     return redirect(url_for("poll_invitations", slug=poll.slug))
 
+
 @app.route("/<slug>/invitations/<int:id>/resend")
+@login_required
 def poll_invitation_resend(slug, id):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -470,7 +498,9 @@ def poll_invitation_resend(slug, id):
     flash(gettext("The invitation was resent."), "success")
     return redirect(url_for("poll_invitations", slug=poll.slug))
 
+
 @app.route("/<slug>/invitations/resend")
+@login_required
 def poll_invitations_resend_all(slug):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -481,6 +511,7 @@ def poll_invitations_resend_all(slug):
 
     flash(gettext("All invitations were resent."), "success")
     return redirect(url_for("poll_invitations", slug=poll.slug))
+
 
 @app.route("/<slug>/watch/<watch>", methods=("POST", "GET"))
 @login_required
@@ -495,8 +526,10 @@ def poll_watch(slug, watch):
         db.session.add(PollWatch(poll, current_user))
     db.session.commit()
 
-    flash(gettext("You are now watching this poll.") if watch else gettext("You are not watching this poll anymore."), "success")
+    flash(gettext("You are now watching this poll.") if watch else gettext("You are not watching this poll anymore."),
+          "success")
     return redirect(request.args.get("next", None) or poll.get_url())
+
 
 @app.route("/<slug>/choices/", methods=("POST", "GET"))
 @app.route("/<slug>/choices/<int:step>", methods=("POST", "GET"))
@@ -582,8 +615,8 @@ def poll_edit_choices(slug, step=1):
                 flash(gettext("The choices list has been updated."), "success")
                 return redirect(poll.get_url())
         else:
-            form.dates.data = ",".join(set(choice.date.strftime("%Y-%m-%d") for choice in poll.choices if not choice.deleted))
-
+            form.dates.data = ",".join(
+                set(choice.date.strftime("%Y-%m-%d") for choice in poll.choices if not choice.deleted))
 
     else:
         form = AddChoiceForm()
@@ -657,6 +690,7 @@ def poll_edit_choices(slug, step=1):
 
     return render_template("poll/settings/choices.html", poll=poll, step=step, **args)
 
+
 @app.route("/<slug>/values/", methods=("POST", "GET"))
 def poll_edit_values(slug):
     poll = get_poll(slug)
@@ -728,6 +762,7 @@ def poll_edit_values(slug):
 
     return render_template("poll/settings/values.html", poll=poll, **args)
 
+
 @app.route("/<slug>/delete", methods=("POST", "GET"))
 def poll_delete(slug):
     poll = get_poll(slug)
@@ -739,6 +774,7 @@ def poll_delete(slug):
         return redirect(url_for("index"))
 
     return render_template("poll/settings/delete.html", poll=poll)
+
 
 @app.route("/<slug>/vote", methods=("POST", "GET"))
 def poll_vote(slug):
@@ -752,7 +788,9 @@ def poll_vote(slug):
 
     # Check if user voted already
     if poll.one_vote_per_user and not current_user.is_anonymous() and poll.get_user_votes(current_user):
-        flash(gettext("You can only vote once on this poll. Please edit your choices by clicking the edit button on the right."), "error")
+        flash(gettext(
+            "You can only vote once on this poll. Please edit your choices by clicking the edit button on the right."),
+              "error")
         return redirect(poll.get_url())
 
     # Check if user was invited
@@ -808,7 +846,7 @@ def poll_vote(slug):
             flash(gettext("You have voted."), "success")
 
             poll.send_watchers("[Dudel] New vote: " + poll.title,
-                "email/poll_voted.txt", voter=vote.displayname)
+                               "email/poll_voted.txt", voter=vote.displayname)
 
             db.session.commit()
 
@@ -827,6 +865,7 @@ def poll_vote(slug):
             subform.amount.data = avg
 
     return render_template("poll/vote/edit.html", poll=poll, form=form)
+
 
 @app.route("/<slug>/vote/<int:vote_id>/assign", methods=("POST", "GET"))
 @login_required
@@ -871,6 +910,7 @@ def poll_vote_assign(slug, vote_id):
 
     return render_template("poll/vote/assign.html", poll=poll, vote=vote, form=form)
 
+
 @app.route("/<slug>/vote/<int:vote_id>/edit", methods=("POST", "GET"))
 def poll_vote_edit(slug, vote_id):
     poll = get_poll(slug)
@@ -880,7 +920,8 @@ def poll_vote_edit(slug, vote_id):
     if vote.poll != poll: abort(404)
 
     if vote.user and current_user.is_anonymous():
-        flash(gettext("This vote was created by a logged in user. If that was you, please log in to edit the vote."), "error")
+        flash(gettext("This vote was created by a logged in user. If that was you, please log in to edit the vote."),
+              "error")
         return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
 
     if vote.user and not current_user.is_anonymous() and vote.user != current_user:
@@ -941,11 +982,12 @@ def poll_vote_edit(slug, vote_id):
     if not request.method == "POST":
         poll.fill_vote_form(form)
         for subform in form.vote_choices:
-            vote_choice = VoteChoice.query.filter_by(vote_id = vote.id, choice_id = subform.choice_id.data).first()
+            vote_choice = VoteChoice.query.filter_by(vote_id=vote.id, choice_id=subform.choice_id.data).first()
             subform.comment.data = vote_choice.comment if vote_choice else ""
             subform.amount.data = vote_choice.amount
 
     return render_template("poll/vote/edit.html", poll=poll, form=form, vote=vote)
+
 
 @app.route("/<slug>/vote/<int:vote_id>/delete", methods=("POST", "GET"))
 def poll_vote_delete(slug, vote_id):
@@ -961,6 +1003,7 @@ def poll_vote_delete(slug, vote_id):
     db.session.commit()
     flash(gettext("The vote has been deleted"), "success")
     return redirect(poll.get_url())
+
 
 @app.route("/<slug>/copy", methods=("POST", "GET"))
 def poll_copy(slug):
@@ -1046,25 +1089,30 @@ def poll_copy(slug):
 
     return render_template("poll/settings/copy.html", poll=poll, form=form)
 
+
 @app.errorhandler(PollExpiredException)
 def poll_expired(e):
     flash(gettext("This poll is expired. You cannot vote or edit your choice anymore."), "error")
     return redirect(e.poll.get_url())
 
+
 @app.errorhandler(PollActionException)
 def poll_action(e):
     if current_user.is_anonymous():
-        flash(gettext("You do not have permission to %(action)s this poll. Please log in and try again.", action=e.action), "error")
+        flash(gettext("You do not have permission to %(action)s this poll. Please log in and try again.",
+                      action=e.action), "error")
         return redirect(url_for("login", next=request.url))
     else:
         flash(gettext("You do not have permission to %(action)s this poll.", action=e.action), "error")
         return redirect(e.poll.get_url())
+
 
 @app.route('/static/translations/<locale>.po')
 def root(locale):
     if locale not in ("de",):
         abort(404)
     return open('dudel/translations/%s/LC_MESSAGES/messages.po' % locale).read()
+
 
 @app.errorhandler(501)
 @app.errorhandler(500)
@@ -1073,4 +1121,8 @@ def root(locale):
 @app.errorhandler(401)
 @app.errorhandler(400)
 def error(err):
-    return render_template("error.html", error=err), err.code
+    # if it is not a simple 4xx send a message to sentry
+    if not hasattr(err, 'code') or err.code not in [404, 403, 401, 400]:
+        sentry.captureException()
+    return render_template("error.html", error=err), err.code if hasattr(err, 'code') else 500
+

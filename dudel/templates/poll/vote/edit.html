@@ -3,6 +3,7 @@
 {% block polltitle %}{{ _("Edit Vote") if vote else _("Vote") }}{% endblock %}
 
 {% block content %}
+<div class="container">
     {% if not vote and not current_user.is_anonymous() and poll.get_user_votes(current_user) %}
         {{ alert("warning", _("You have already voted on this poll. Maybe instead of voting again you'd rather edit your choices?")) }}
     {% endif %}
@@ -135,4 +136,5 @@
 
         <a href="{{ url_for('poll_vote_delete', slug=poll.slug, vote_id=vote.id) }}" class="btn btn-danger btn-xs"><span class="fa fa-trash-o"></span> {{ _("Delete vote") }}</a>
     {% endif %}
+</div>
 {% endblock %}

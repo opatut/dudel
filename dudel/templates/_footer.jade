@@ -1,5 +1,8 @@
 footer
     .container
+        - if (config.DEBUG or config.TESTING) and not request.host.startswith("localhost")
+            = alert('warning', 'Dudel is configured with <code>DEBUG = True</code> or <code>TESTING = True</code> on a non-local host.'|safe)
+
         a(href=url_for("about")) About
 
         - for link in config.FOOTER_LINKS
