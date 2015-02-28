@@ -309,10 +309,14 @@ def user_settings():
         flash(gettext("Your user settings were updated."), "success")
         return redirect(url_for('user_settings'))
 
-    return render_template("user/settings.html", form=form)
+    return render_template("user/settings.jade", form=form)
 
 @app.route("/<slug>/", methods=("GET", "POST"))
 def poll(slug):
+    return redirect(url_for("poll_overview", slug=slug))
+
+@app.route("/<slug>/activity/", methods=("GET", "POST"))
+def poll_activity(slug):
     poll = get_poll(slug)
 
     comment_form = CommentForm()
@@ -334,7 +338,12 @@ def poll(slug):
         db.session.commit()
         return redirect(poll.get_url() + "#comment-" + str(comment.id))
 
-    return render_template("poll/view.html", poll=poll, comment_form=comment_form)
+    return render_template("poll/activity.jade", poll=poll, comment_form=comment_form)
+
+@app.route("/<slug>/overview", methods=("GET", "POST"))
+def poll_overview(slug):
+    poll = get_poll(slug)
+    return render_template("poll/overview.jade", poll=poll)
 
 @app.route("/<slug>/comment/delete/<int:id>", methods=("POST", "GET"))
 def poll_delete_comment(slug, id):
@@ -388,7 +397,7 @@ def poll_edit(slug):
             form.due_date.data = localization_context.utc_to_local(poll.due_date)
 
 
-    return render_template("poll/settings/edit.html", poll=poll, form=form, localization_context=localization_context)
+    return render_template("poll/settings/edit.jade", poll=poll, form=form, localization_context=localization_context)
 
 @app.route("/<slug>/invitations/", methods=("POST", "GET"))
 def poll_invitations(slug):

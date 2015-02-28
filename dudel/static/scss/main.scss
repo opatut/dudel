@@ -1,5 +1,5 @@
-* {
-    border-radius: 0 !important;
+.form-control, .btn {
+    border-radius: 0;
 }
 
 html,
@@ -14,13 +14,6 @@ body {
 }
 #main-content {
     padding-bottom: 150px;
-}
-footer {
-    width:100%;
-    height:80px;
-    position:absolute;
-    bottom:0;
-    left:0;
 }
 
 .btn-xs .fa {
@@ -115,12 +108,6 @@ h1 small { font-size: 0.6em; margin-left: 1em; }
     overflow: visible;
 }
 
-.table-padding {
-    padding: 0 10px;
-}
-
-
-
 .checkbox-cell {
     background-color: #F6F6F6;
     text-align: center;
@@ -154,17 +141,19 @@ td.vote-comment {
 }
 
 footer {
+    width:100%;
+    position:absolute;
+    bottom:0;
+    left:0;
     margin: 0;
-    height: 120px;
-    padding: 50px;
+    padding: 30px 0;
     box-sizing: border-box;
-    text-align: center;
-    background: #D9D9D9;
-    color: #555;
+    border-top: 1px solid #DDD;
+    color: #888;
 
     a, .btn-link {
         &, &:hover, &:focus, &:active {
-            color: inherit;
+            // color: inherit;
             padding: 0;
         }
     }
@@ -188,32 +177,6 @@ footer {
 
     &.green {
         color: #0A0;
-    }
-}
-
-@media(max-width: 785px) {
-    .nav-tabs {
-        margin: 1em 0;
-
-        span {
-            display: none;
-        }
-        i {
-            font-size: 1.4em;
-        }
-        li a {
-            // padding: 0.3em 0.6em;
-        }
-    }
-}
-
-@media(min-width: 786px) {
-    .nav-tabs {
-        margin-top: -40px;
-    }
-
-    .nav-tabs li {
-        float: right;
     }
 }
 
@@ -359,4 +322,12 @@ footer {
     p {
         color: #777;
     }
+}
+
+.container-full {
+    margin: 0 40px;
+}
+
+.poll-overview .fa {
+    margin-right: 4px;
 }

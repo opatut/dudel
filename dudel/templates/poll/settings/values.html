@@ -1,8 +1,8 @@
-{% extends "poll/BASE.html" %}
+{% extends "poll/BASE.jade" %}
 
 {% block polltitle %}{{ _("Values") }}{% endblock %}
-    blah
-{% block poll_content %}
+
+{% block content %}
 {% if poll.type == PollType.numeric %}
     <form method="POST" class="form-inline">
         {{ form.hidden_tag() }}

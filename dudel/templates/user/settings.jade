@@ -1,0 +1,131 @@
+{% extends "BASE.html" %}
+
+block title
+    = _("Settings")
+
+block content
+    .container: .row
+        .col-md-8
+            h1= _("Poll overview")
+
+            p= _("This list shows all the polls you have participated in, either by owning them, voting on them, being invited, or watching.")
+
+            - set watches = current_user.watches.all()
+            - set polls = current_user.poll_list
+
+            table.table.table-condensed.table-striped.poll-overview
+                tr
+                    th Poll title
+                    th Last changed
+                    th(colspan="3") Tags
+
+                - for poll in polls
+                    tr
+                        td: a(href=poll.get_url())= poll.title
+                        td= poll.last_changed|date(year=True)
+
+                        td(width=10)
+                            - if poll.owner == current_user
+                                span.label.label-danger
+                                    i.fa.fa-pencil
+                                    = _("Owner")
+
+                            - elif current_user.is_member(poll.owner)
+                                span.label.label-danger
+                                    i.fa.fa-pencil
+                                    = _("Owner (group)")
+
+                            - else
+                                span.label.label-default
+                                    i.fa.fa-ban
+                                    = _("Not owner")
+
+                        td(width=10)
+                            - if poll.get_user_votes(current_user)
+                                span.label.label-success
+                                    i.fa.fa-check
+                                    = _("Voted")
+
+                            - elif current_user.is_invited(poll)
+                                span.label.label-info
+                                    i.fa.fa-envelope
+                                    = _("Invited")
+
+                            - else
+                                span.label.label-default
+                                    i.fa.fa-pencil
+                                    = _("Not voted")
+
+                        td(width=10)
+                            - if poll.is_watching(current_user)
+                                span.label.label-warning
+                                    i.fa.fa-eye
+                                    = _("Watching")
+
+                            - else
+                                span.label.label-default
+                                    i.fa.fa-eye-slash
+                                    = _("Not watching")
+
+        .col-md-4
+            h1= _("Settings")
+
+            form(method="POST")
+                = form.hidden_tag()
+                = field_error(form.hidden_tag)
+
+                - if form.firstname
+                    .form-group
+                        = form.firstname.label(class="control-label")
+                        = form.firstname(class="form-control")
+                        = field_error(form.firstname)
+
+                    .form-group
+                        = form.lastname.label(class="control-label")
+                        = form.lastname(class="form-control")
+                        = field_error(form.lastname)
+
+                    .form-group
+                        = form.email.label(class="control-label")
+                        = form.email(class="form-control")
+                        = field_error(form.email)
+
+                    .form-group
+                        = form.password1.label(class="control-label")
+                        = form.password1(class="form-control")
+                        = field_error(form.password1)
+
+                        .help-block Leave empty to keep your current password.
+
+                    .form-group
+                        = form.password2.label(class="control-label")
+                        = form.password2(class="form-control")
+                        = field_error(form.password2)
+
+                - else
+                    p= _("You can edit your account settings in the centralized accounts page.")
+
+                .form-group
+                    = form.preferred_language.label
+                    = form.preferred_language(class="form-control", **{'data-slug-field':"#slug"})
+                    = field_error(form.preferred_language)
+
+                .form-group
+                    = form.timezone_name.label
+                    = form.timezone_name(class="form-control")
+                    = field_error(form.timezone_name)
+
+                label Various
+
+                .checkbox
+                    = form.autowatch()
+                    = form.autowatch.label
+                    = field_error(form.autowatch)
+
+                .checkbox
+                    = form.allow_invitation_mails()
+                    = form.allow_invitation_mails.label
+                    = field_error(form.allow_invitation_mails)
+
+                .form-group
+                    input.btn.btn-primary(type="submit", value=_('Save'))/
