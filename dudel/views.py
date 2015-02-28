@@ -113,7 +113,8 @@ def index():
     vote_count = Vote.query.count()
     user_count = User.query.count()
 
-    return render_template("index.html", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count, user_count=user_count)
+    return render_template("index.jade", polls=polls, form=form, poll_count=poll_count, vote_count=vote_count,
+                           user_count=user_count)
 
 
 @app.route("/about")
