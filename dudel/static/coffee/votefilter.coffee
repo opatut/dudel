@@ -33,7 +33,9 @@ i18n.ready (gettext) ->
     # Extract scores from table
     scores = []
     $(".choice-sum").each ->
-        scores.push($(this).data("score").toNumber())
+        scores.push($(this).data("score")?.toNumber())
+
+    return if not scores
 
     countToPercent = (count) ->
         sorted = scores.slice()

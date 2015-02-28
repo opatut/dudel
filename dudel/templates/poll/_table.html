@@ -18,9 +18,19 @@
             </td>
             {% for choice in choices %}
                 {% set vote_choice = poll.get_vote_choice(vote, choice) %}
-                {% if vote_choice and not vote_choice.value.deleted %}
-                <td class="vote-choice text-center {{ '' if vote_choice.value else 'none' }} {{ 'comment' if vote_choice.comment else '' }}" style="background-color: #{{ vote_choice.value.color }}" data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{{ vote.displayname }}{% if vote_choice.comment %}<div class='comment'>{{ vote_choice.comment }}</div>{% endif %}" data-placement="bottom" data-choice-value="{{ vote_choice.value_id }}">
+                {% set numeric = poll.type == PollType.numeric %}
+
+                {% if numeric or (vote_choice and not vote_choice.value.deleted) %}
+                <td class="vote-choice text-center {{ 'numeric' if numeric else ('' if vote_choice.value else 'none') }} {{ 'comment' if vote_choice.comment else '' }}" {% if not numeric %}style="background-color: #{{ vote_choice.value.color }}" {% endif %}data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{{ vote.displayname }}{% if not numeric and vote_choice.comment %}<div class='comment'>{{ vote_choice.comment }}</div>{% endif %}" data-placement="bottom" data-choice-value="{{ choice.amount if numeric else vote_choice.value_id }}">
+                {% if numeric %}
+                    {% if vote_choice.amount %}
+                        {{ poll.numeric_format() % vote_choice.amount }}
+                    {% else %}
+                        &ndash;
+                    {% endif %}
+                {% else %}
                     <span class="fa fa-{{ vote_choice.value.icon if vote_choice.value else 'question' }}"></span>
+                {% endif %}
                 </td>
                 {% else %}
                 <td class="vote-choice text-center none">
@@ -76,10 +86,12 @@
     {{ alert("info", _("You as an admin of this poll will always see full results, no matter what you select under 'Results display'. Log out to see the poll as a normal visitor.")) }}
 {% endif %}
 
-{% if not poll.timezone %}
-    {{ alert("info", _("This poll is using coordinated time, which means the choices are displayed as your profile timezone (%(userzone)s), and may be different for other users.", userzone=current_timezone)) }}
-{% elif poll.timezone != current_timezone %}
-    {{ alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone)) }}
+{% if poll.type in (PollType.datetime, PollType.date) %}
+    {% if not poll.timezone %}
+        {{ alert("info", _("This poll is using coordinated time, which means the choices are displayed as your profile timezone (%(userzone)s), and may be different for other users.", userzone=current_timezone)) }}
+    {% elif poll.timezone != current_timezone %}
+        {{ alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone)) }}
+    {% endif %}
 {% endif %}
 
 {% if (poll.votes and poll.has_choices) and (show_votes or show_summary or poll.get_user_votes(current_user)) %}
@@ -134,28 +146,51 @@
                     </tbody>
                     {% if show_summary %}
                     <tfoot>
-                        <tr id="scores">
-                            {% set total = poll.votes.count() %}
-                            <th>
-                                <span class="print-only">
-                                    <b>{{ _("Percent") }}<br/>{{ _("Score") }}</b>
-                                </span>
-                            </th>
-                            {% set scores, counts, totals, max_score = poll.get_stats() %}
-                            {% for choice in choices %}
-                                <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}"
-                                    data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{% for choice_value in poll.get_choice_values() %}<div class='value'>{{ counts[choice][choice_value] }}<i class='fa fa-times'></i><span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>{{ choice_value.title }}</div>{% endfor %}<div class='score'>{{ _('Score') }}: {{ '%.f' % scores[choice] }}</div>" data-placement="top" data-score="{{ scores[choice]*1.0/totals[choice] if totals[choice] != 0 else 1 }}">
+                        {% if poll.type == PollType.numeric %}
+                            {% set totals, counts, averages = poll.get_stats() %}
 
-                                    {% if totals[choice] != 0 %}
-                                        {{ "%.f %%" % (scores[choice]*100.0/totals[choice]) }}
-                                    {% else %}
-                                        N/A
-                                    {% endif %}
-                                    <span class="print-only">{{ '%.f' % scores[choice] }}</span>
+                            <tr class="scores">
+                                <th data-trigger="hover" data-toggle="popover" data-container="body" data-content="based on the number of people who voted in each category, not number of total votes">
+                                    <b>{{ _("Average") }}</b>
                                 </th>
-                            {% endfor %}
-                            <th class="noprint"></th>
-                        </tr>
+                                {% for choice in choices %}
+                                    <td class="choice-sum">{{ poll.numeric_format(2) % averages[choice] }}</td>
+                                {% endfor %}
+                            </tr>
+
+                            <tr class="scores">
+                                <th>
+                                    <b>{{ _("Total") }}</b>
+                                </th>
+                                {% for choice in choices %}
+                                    <td class="choice-sum" data-score="{{ averages[choice] }}">{{ poll.numeric_format() % totals[choice] }}</td>
+                                {% endfor %}
+                            </tr>
+
+                        {% else %}
+                            <tr id="scores">
+                                {% set total = poll.votes.count() %}
+                                <th>
+                                    <span class="print-only">
+                                        <b>{{ _("Percent") }}<br/>{{ _("Score") }}</b>
+                                    </span>
+                                </th>
+                                {% set scores, counts, totals, max_score = poll.get_stats() %}
+                                {% for choice in choices %}
+                                    <th class="choice-sum {% if scores[choice] == max_score %}maximum{% endif %}"
+                                        data-toggle="popover" data-trigger="hover" data-container="body" data-title="{{ choice.title }}" data-content="{% for choice_value in poll.get_choice_values() %}<div class='value'>{{ counts[choice][choice_value] }}<i class='fa fa-times'></i><span class='label choice-sum-value-label' style='background-color: #{{ choice_value.color }};'><span class='fa fa-{{ choice_value.icon }}'></span></span>{{ choice_value.title }}</div>{% endfor %}<div class='score'>{{ _('Score') }}: {{ '%.f' % scores[choice] }}</div>" data-placement="top" data-score="{{ scores[choice]*1.0/totals[choice] if totals[choice] != 0 else 1 }}">
+
+                                        {% if totals[choice] != 0 %}
+                                            {{ "%.f %%" % (scores[choice]*100.0/totals[choice]) }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                        <span class="print-only">{{ '%.f' % scores[choice] }}</span>
+                                    </th>
+                                {% endfor %}
+                                <th class="noprint"></th>
+                            </tr>
+                        {% endif %}
                     </tfoot>
                     {% endif %}
                 </table>

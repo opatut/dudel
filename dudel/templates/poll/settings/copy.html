@@ -68,7 +68,7 @@
                 {{ field_error(form.reset_ownership) }}
             </div>
 
-            {% if poll.type in ("day", "date") and poll.get_choices() %}
+            {% if poll.type in (PollType.datetime, PollType.date) and poll.get_choices() %}
                 <div class="form-group">
                     {{ form.date_offset.label }}
                     {{ form.date_offset(class="form-control dateoffset-input") }}

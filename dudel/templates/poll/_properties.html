@@ -12,6 +12,9 @@
         {{ property(_("Expiration date"), poll.due_date|date, "clock-o", poll.due_date|datetime) }}
     {% endif %}
 
+    {% set pt = PollType(poll.type) %}
+    {{ property(_("Poll type"), pt.title, pt.icon) }}
+
     {% if poll.owner %}
         {{ property(_("Ownership"), _("you") if poll.owner == current_user else poll.owner.displayname, "briefcase", poll.owner.displayname) }}
     {% endif %}

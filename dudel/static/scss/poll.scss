@@ -107,6 +107,7 @@ table.vote label {
     background-image: url("../gfx/comment-background.png");
 }
 
+
 .no { background: #F96; }
 .yes { background: #9C6; }
 .maybe { background: #FF6; }
@@ -139,6 +140,12 @@ td.off, td.none {
 table.poll td.none {
     border: 1px solid #DDD !important;
     color: #DDD;
+}
+
+table.poll td.numeric {
+    background: #F9F9F9;
+    color: #333;
+    font-size: 9pt;
 }
 
 .vote-comment span:hover {
@@ -251,3 +258,4 @@ tr.choice td {
         }
     }
 }
+

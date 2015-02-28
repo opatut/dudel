@@ -1,5 +1,5 @@
 from dudel import app, ICONS, default_timezone
-from dudel.models import Choice, User
+from dudel.models import Choice, User, PollType
 from dudel.forms import LoginForm, LanguageForm
 from dudel.util import PartialDateTime, DateTimePart
 from flask import g
@@ -73,5 +73,6 @@ def inject():
         enumerate=enumerate,
         lang=get_locale(),
         current_timezone=get_current_timezone(),
-        default_timezone=default_timezone
+        default_timezone=default_timezone,
+        PollType=PollType
         )

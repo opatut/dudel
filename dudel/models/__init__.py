@@ -3,7 +3,7 @@ from .choicevalue import ChoiceValue
 from .comment import Comment
 from .group import Group
 from .member import Member
-from .poll import Poll
+from .poll import Poll, PollType
 from .pollwatch import PollWatch
 from .invitation import Invitation
 from .user import User

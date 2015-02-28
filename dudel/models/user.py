@@ -60,6 +60,13 @@ class User(Member):
         'polymorphic_identity': 'user',
     }
 
+    def __init__(self, username=None, firstname=None, lastname=None, email=None, password=None):
+        self.username = username
+        self.firstname = firstname
+        self.lastname = lastname
+        self.email = email
+        self.set_password(password)
+
     @property
     def displayname(self):
         return self._displayname or ((app.config["NAME_FORMAT"] if "NAME_FORMAT" in app.config else "%(firstname)s (%(username)s)") % {

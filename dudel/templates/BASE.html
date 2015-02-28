@@ -17,93 +17,85 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-default navbar-inverse" role="navigation"{% if config.BRAND_COLOR %} style="background: {{ config.BRAND_COLOR }};"{% endif %}>
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
-                        <span class="sr-only">{{ _("Toggle navigation") }}</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a href="/" class="navbar-brand">{{ config.BRAND_TEXT }}</a>
+        <div id="wrapper">
+            <header>
+                <nav class="navbar navbar-default navbar-inverse" role="navigation"{% if config.BRAND_COLOR %} style="background: {{ config.BRAND_COLOR }};"{% endif %}>
+                    <div class="container">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                                <span class="sr-only">{{ _("Toggle navigation") }}</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a href="/" class="navbar-brand">{{ config.BRAND_TEXT }}</a>
 
-                    <div class="navbar-left visible-sm visible-xs">
-                        {% if config.HOME_URL %}
-                        <a class="btn navbar-btn btn-default" href="{{ config.HOME_URL }}" style="margin-top: 10px;" target="_blank">
-                            <i class="fa fa-home"></i> {{ config.HOME_TEXT }}
-                        </a>
-                        {% endif %}
+                            <div class="navbar-left visible-sm visible-xs">
+                                {% if config.HOME_URL %}
+                                <a class="btn navbar-btn btn-default" href="{{ config.HOME_URL }}" style="margin-top: 10px;" target="_blank">
+                                    <i class="fa fa-home"></i> {{ config.HOME_TEXT }}
+                                </a>
+                                {% endif %}
 
-                        <a class="btn navbar-btn btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
-                            <i class="fa fa-plus"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="navbar-left hidden-sm hidden-xs">
-                    <a class="btn navbar-btn btn-default" href="{{ config.HOME_URL }}" style="margin-top: 10px;" target="_blank">
-                        <i class="fa fa-home"></i> {{ config.HOME_TEXT }}
-                    </a>
-                    <a class="btn navbar-btn btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
-                        <i class="fa fa-plus"></i> {{ _("Create poll") }}
-                    </a>
-                </div>
-
-                <div class="collapse navbar-collapse" id="navbar-collapse-1">
-                    {% if current_user.is_anonymous() %}
-                    <form class="navbar-form navbar-right" method="POST" action="{{ url_for('login', next=request.url) }}" style="border: 0; padding-right: 0; padding-left: 0;">
-                        <div class="form-group">
-                            {{ login_form.username(class="form-control", placeholder=login_form.username.label.text) }}
+                                <a class="btn navbar-btn btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            {{ login_form.password(class="form-control", placeholder=login_form.password.label.text) }}
-                        </div>
-                        {{ login_form.hidden_tag() }}
-                        <input type="submit" class="btn navbar-btn btn-primary" value="{{ _('Login') }}" />
 
-                        {% if config.REGISTRATIONS_ENABLED %}
-                        <a href="{{ url_for('register') }}" class="btn btn-default">{{ _('Register') }}</a>
-                        {% endif %}
-                    </form>
-                    {% else %}
-                    <div class="navbar-right">
-                        <a class="btn navbar-btn btn-default current-user" href="{{ url_for('user_settings') }}">
-                            <img src="{{ current_user.get_avatar(40) }}">
-                            {{ current_user.displayname }}
-                        </a>
-                        {% if config.GROUPS_ENABLED or current_user.groups %}
-                        <a class="btn navbar-btn btn-default" href="{{ url_for('groups') }}"><i class="fa fa-users"></i></a>
-                        {% endif %}
-                        <a class="btn navbar-btn btn-default" href="{{ url_for('user_settings') }}"><i class="fa fa-wrench"></i></a>
-                        <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}"><i class="fa fa-sign-out"></i></a>
+                        <div class="navbar-left hidden-sm hidden-xs">
+                            <a class="btn navbar-btn btn-default" href="{{ config.HOME_URL }}" style="margin-top: 10px;" target="_blank">
+                                <i class="fa fa-home"></i> {{ config.HOME_TEXT }}
+                            </a>
+                            <a class="btn navbar-btn btn-default" href="{{ url_for('index') }}" style="margin-top: 10px;">
+                                <i class="fa fa-plus"></i> {{ _("Create poll") }}
+                            </a>
+                        </div>
+
+                        <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                            {% if current_user.is_anonymous() %}
+                            <form class="navbar-form navbar-right" method="POST" action="{{ url_for('login', next=request.url) }}" style="border: 0; padding-right: 0; padding-left: 0;">
+                                <div class="form-group">
+                                    {{ login_form.username(class="form-control", placeholder=login_form.username.label.text) }}
+                                </div>
+                                <div class="form-group">
+                                    {{ login_form.password(class="form-control", placeholder=login_form.password.label.text) }}
+                                </div>
+                                {{ login_form.hidden_tag() }}
+                                <input type="submit" class="btn navbar-btn btn-primary" value="{{ _('Login') }}" />
+
+                                {% if config.REGISTRATIONS_ENABLED %}
+                                <a href="{{ url_for('register') }}" class="btn btn-default">{{ _('Register') }}</a>
+                                {% endif %}
+                            </form>
+                            {% else %}
+                            <div class="navbar-right">
+                                <a class="btn navbar-btn btn-default current-user" href="{{ url_for('user_settings') }}">
+                                    <img src="{{ current_user.get_avatar(40) }}">
+                                    {{ current_user.displayname }}
+                                </a>
+                                {% if config.GROUPS_ENABLED or current_user.groups %}
+                                <a class="btn navbar-btn btn-default" href="{{ url_for('groups') }}"><i class="fa fa-users"></i></a>
+                                {% endif %}
+                                <a class="btn navbar-btn btn-default" href="{{ url_for('user_settings') }}"><i class="fa fa-wrench"></i></a>
+                                <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}"><i class="fa fa-sign-out"></i></a>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% endif %}
+                </nav>
+            </header>
+
+            <section id="main-content">
+                <div class="container">
+                    {% include "_flashes.html" %}
+                    {% block content %}
+                    {% endblock %}
                 </div>
-            </div>
-        </nav>
-        <div class="container">
-            {% include "_flashes.html" %}
-            {% block content %}
-            {% endblock %}
+            </section>
+
+            {% include "_footer.jade" %}
         </div>
-
-        <footer>
-            <div class="container">
-                Powered by <a href="http://github.com/opatut/dudel">Dudel</a>
-                {% for link in config.FOOTER_LINKS %}
-                    &middot; <a href="{{ link[1] }}" target="_blank">{{ link[0] }}</a>
-                {% endfor %}
-                <form class="form-inline" action="{{ url_for('user_change_language', next=request.url) }}" method="POST">
-                    {{ lang_form.hidden_tag() }}
-                    {% for language in lang_form.language %}
-                        &middot; {{ language() }}
-                    {% endfor %}
-                </form>
-                &middot;
-                Current timezone is {{ current_timezone }}.
-            </div>
-        </footer>
 
         {% assets "js_all" -%}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
