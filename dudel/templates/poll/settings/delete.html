@@ -1,8 +1,8 @@
-{% extends "poll/BASE.html" %}
+{% extends "poll/BASE.jade" %}
 
 {% block polltitle %}{{ _("Delete poll") }}{% endblock %}
 
-{% block poll_content %}
+{% block content %}
     <div class="danger-zone">
         <h2>{{ _("Warning!") }}</h2>
         <p>{{ _("You are about to permanently delete the poll <b>%(title)s</b>. Are you sure you want to continue?", title=poll.title) | safe }}</p>

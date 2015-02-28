@@ -1,0 +1,110 @@
+extends poll/BASE.jade
+
+block polltitle
+    = _("Settings")
+
+block content
+    .container
+        - if poll.owner and not current_user.is_member(poll.owner)
+            p.well.text-center
+                strong= _("Note:")
+                = _("This poll is owned by %(owner)s, but you can edit it due to your administrator privileges.", owner=poll.owner.displayname)
+
+        form(method="POST")
+            h3= _("Settings")
+            .row
+                .col-md-5
+                    = form.hidden_tag()
+                    = field_error(form.hidden_tag)
+
+                    .form-group
+                        = form.title.label
+                        = form.title(class="form-control")
+                        = field_error(form.title)
+
+                    .form-group
+                        = form.due_date.label
+                        = form.due_date(class="form-control datetime-input", **{"data-timezone": localization_context.timezone if true or localization_context.timezone != current_timezone else ''})
+                        = field_error(form.due_date)
+
+                    .form-group
+                        = form.show_results.label
+                        = form.show_results(class="form-control")
+                        = field_error(form.show_results)
+
+                        .help-block= _("Owners of this poll and administrators will always see all votes.")
+
+                    .form-group
+                        = form.timezone_name.label
+                        = form.timezone_name(class="form-control")
+                        = field_error(form.timezone_name)
+
+                    .form-group
+                        = form.description.label
+                        = form.description(class="form-control monospace", rows=6)
+                        = field_error(form.description)
+                        = markdown_info(true)
+
+                .col-md-5.col-md-offset-1
+                    label= _("Additional settings")
+
+                    .checkbox
+                        = form.allow_comments()
+                        = form.allow_comments.label
+                        = field_error(form.allow_comments)
+
+                    .checkbox
+                        = form.anonymous_allowed()
+                        = form.anonymous_allowed.label
+                        = field_error(form.anonymous_allowed)
+
+                    .checkbox
+                        = form.require_login()
+                        = form.require_login.label
+                        = field_error(form.require_login)
+
+                    .checkbox
+                        = form.require_invitation()
+                        = form.require_invitation.label
+                        = field_error(form.require_invitation)
+
+                    .checkbox
+                        = form.public_listing()
+                        = form.public_listing.label
+                        = field_error(form.public_listing)
+
+                    .checkbox
+                        = form.one_vote_per_user()
+                        = form.one_vote_per_user.label
+                        = field_error(form.one_vote_per_user)
+
+                    .checkbox
+                        = form.show_invitations()
+                        = form.show_invitations.label
+                        = field_error(form.show_invitations)
+
+                    .help-block
+                        = _("These settings are not retroactive, meaning that changing them will not modify votes/comments already created.")
+
+                    hr/
+
+                    .form-group
+                        = form.owner_id.label
+                        = form.owner_id(class="form-control", rows=6)
+                        = field_error(form.owner_id)
+
+                        .help-block _('Only the owner of a poll, or a member of the owner group, can edit the settings on this page. If you set this to "Nobody", then anyone may claim exclusive ownership. Most restrictive settings above are useless if you do not claim ownership of this poll.')
+
+                    hr/
+
+                    label= _("Very advanced stuff")
+
+                    ul.list-unstyled
+                        li: a(href=url_for('poll_edit_values', slug=poll.slug))= _("Edit possible answer values")
+                        li: a(href=url_for('poll_invitations', slug=poll.slug))= _("Manage invitations")
+                        li: a(href=url_for('poll_copy', slug=poll.slug))= _("Copy poll")
+                        - if poll.user_can_administrate(current_user)
+                            li: a.red(href=url_for('poll_delete', slug=poll.slug))= _("Delete this poll")
+
+            .form-actions
+                input.btn.btn-primary(type="submit", value=_("Save settings"))/

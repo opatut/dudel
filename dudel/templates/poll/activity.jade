@@ -1,0 +1,42 @@
+- from "_macros.html" import alert, form_errors, field_error, markdown_info
+- set comments = poll.get_comments()
+
+extends poll/BASE.jade
+
+block content
+    .container
+        h3= _("Recent activity")
+            = " "
+            small= _("Most recent first")
+
+
+        - if poll.allow_comments
+            h3= _("Post a comment")
+
+            form.form(method="POST")
+                = comment_form.hidden_tag()
+
+                .form-group
+                    = comment_form.name.label
+
+                    - if current_user.is_anonymous()
+                        = comment_form.name(class="form-control")
+                    - else
+                        input.form-control(type="text", disabled=True, value=current_user.displayname)/
+
+                    = field_error(comment_form.name)
+
+                .form-group
+                    = comment_form.text.label
+                    = comment_form.text(class="form-control", rows=6)
+                    = field_error(comment_form.text)
+                    = markdown_info(true)
+
+                - if current_user.is_anonymous()
+                    .form-group
+                        = comment_form.captcha
+                        = field_error(comment_form.captcha)
+                        p.help-block= _("You can avoid this captcha if you login.")
+
+                .form-actions
+                    input.btn.btn-primary(type="submit", value=_('Post comment'))/

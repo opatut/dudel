@@ -38,6 +38,10 @@ print("Creating user")
 user = User("13musterm", "Max", "Mustermann", "test@example.com", "hunter2")
 db.session.add(user)
 
+print("Creating another user")
+user2 = User("14musterf", "Minna", "Musterfrau", "test2@example.com", "hunter2")
+db.session.add(user2)
+
 print("Creating poll: normal")
 poll_normal = Poll("Test: Type Normal", "test-normal", PollType.normal)
 db.session.add(poll_normal)
@@ -71,5 +75,12 @@ poll_numeric.amount_maximum = 2
 poll_numeric.amount_step = 0.5
 add_choices(poll_numeric, ["Penguins", "Gnus", "Dromedaries", "Pythons"])
 db.session.add(poll_numeric)
+
+print("Creating poll: other owner")
+poll_owner = Poll("Test: Other owner", "test-owner", PollType.normal)
+poll_owner.owner = user2
+db.session.add(poll_owner)
+add_choices(poll_owner, ["Left", "Right", "Middle"])
+random_votes(poll_owner, 20)
 
 db.session.commit()

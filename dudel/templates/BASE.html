@@ -87,11 +87,15 @@
             </header>
 
             <section id="main-content">
+                {% block header %}
+                {% endblock %}
+
                 <div class="container">
                     {% include "_flashes.html" %}
-                    {% block content %}
-                    {% endblock %}
                 </div>
+
+                {% block content %}
+                {% endblock %}
             </section>
 
             {% include "_footer.jade" %}

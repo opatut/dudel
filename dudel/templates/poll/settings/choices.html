@@ -1,4 +1,4 @@
-{% extends "poll/BASE.html" %}
+{% extends "poll/BASE.jade" %}
 
 {% block polltitle %}{{ _("Choices") }}{% endblock %}
 
@@ -6,7 +6,7 @@
     <script src="{{ url_for('static', filename='js/poll_edit_choices.js') }}" type="text/javascript" lang="javascript"></script>
 {% endblock %}
 
-{% block poll_content %}
+{% block content %}
     {% if poll.type in (PollType.normal, PollType.numeric) %}
         {% if poll.get_choices()|length != poll.choices.count() %}
             {{ alert("info", _("Deleted choices will stay in this list, so votes that have already been made are not lost.")) }}
