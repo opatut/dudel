@@ -31,6 +31,7 @@ assets.register('css_all', css_all)
 # CoffeeScript
 coffee = Bundle(
     'coffee/gettext.coffee',
+    'coffee/create.coffee',
     'coffee/datetime.coffee',
     'coffee/dateoffset.coffee',
     'coffee/votefilter.coffee',

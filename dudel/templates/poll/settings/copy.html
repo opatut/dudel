@@ -29,11 +29,6 @@
                 {{ field_error(form.slug) }}
                 <noscript><span class="help-block">{{ _("This would be automatically generated for you if you had not blocked javascript.") }}</span></noscript>
             </div>
-            <div class="form-group">
-                {{ form.due_date.label }} <span class="help-inline">optional</span>
-                {{ form.due_date(class="form-control datetime-input") }}
-                {{ field_error(form.due_date) }}
-            </div>
         </div>
         <div class="col-md-6">
             <label>{{ _("Settings to copy") }}</label>

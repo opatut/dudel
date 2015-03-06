@@ -1,34 +1,36 @@
 extends BASE.html
 
-block content
-    .container: .row
-        .col-md-6
-            include _create.jade
+block header
+    include _create.jade
 
-        .col-md-6
+block content
+    - if not current_user.is_authenticated()
+        include _login.jade
+
+    .container: .row.padded-cells
+        .col-md-4
             - if current_user.is_authenticated()
-                .page-header
-                    h1= _("My polls")
+                h4= _("My polls")
 
                 p= _("You can find a list of all the polls in which you have participated on your profile page.")
 
                 a.btn.btn-primary(href=url_for('user_settings'))= _("Show my polls")
 
-                .page-header.secondary
             - else
-                .page-header
-                    h1{{ _("Public polls") }}</h1>
+                h4= _("Register for more")
 
-            - if polls
-                ul
-                    - for poll in polls
-                        li: a(href=poll.get_url())= poll.title
+                p
+                    | Registered users have access to the full width of features available.
 
-            - else
-                = alert("info", _("There are currently no public polls."))
+                include user/_registerbuttons.jade
 
-            .page-header.secondary
-                h1= _("Dudel statistics")
+                a.btn.btn-primary(href=url_for('login'))
+                    i.fa.fa-sign-in
+                    = ' ' + _('Login')
+
+
+        .col-md-4
+            h4= _("Dudel statistics")
 
             table.table
                 tr
@@ -42,3 +44,14 @@ block content
                 tr
                     th= _("Users")
                     td= user_count
+
+        .col-md-4
+            h4= _('Public polls')
+
+            - if polls
+                ul
+                    - for poll in polls
+                        li: a(href=poll.get_url())= poll.title
+
+            - else
+                = alert("info", _("There are currently no public polls."))

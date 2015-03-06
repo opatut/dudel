@@ -33,11 +33,23 @@ class PollType(str, Enum):
     @property
     def title(self):
         return {
-            PollType.datetime: lazy_gettext("Date"),
+            PollType.datetime: lazy_gettext("Date and Time"),
             PollType.date:     lazy_gettext("Date and Time"),
             PollType.normal:   lazy_gettext("Normal Poll"),
             PollType.numeric:  lazy_gettext("Numeric")
         }[self]
+
+    @property
+    def description(self):
+        return {
+            PollType.datetime: lazy_gettext("Schedule date and time for an event"),
+            PollType.date:     lazy_gettext("Schedule an all-day event"),
+            PollType.normal:   lazy_gettext("Retrieve opinions on various choices"),
+            PollType.numeric:  lazy_gettext("Rate each choice in a numeric range")
+        }[self]
+
+    def __str__(self):
+        return str(self.title)
 
 class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)

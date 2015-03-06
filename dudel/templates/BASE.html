@@ -54,6 +54,7 @@
 
                         <div class="collapse navbar-collapse" id="navbar-collapse-1">
                             {% if current_user.is_anonymous() %}
+                            {#
                             <form class="navbar-form navbar-right" method="POST" action="{{ url_for('login', next=request.url) }}" style="border: 0; padding-right: 0; padding-left: 0;">
                                 <div class="form-group">
                                     {{ login_form.username(class="form-control", placeholder=login_form.username.label.text) }}
@@ -64,10 +65,16 @@
                                 {{ login_form.hidden_tag() }}
                                 <input type="submit" class="btn navbar-btn btn-primary" value="{{ _('Login') }}" />
 
-                                {% if config.REGISTRATIONS_ENABLED %}
-                                <a href="{{ url_for('register') }}" class="btn btn-default">{{ _('Register') }}</a>
-                                {% endif %}
                             </form>
+                            #}
+
+                            <div class="navbar-right">
+                                {% if config.REGISTRATIONS_ENABLED %}
+                                    <a href="{{ url_for('register') }}" class="btn navbar-btn btn-default">{{ _('Register') }}</a>
+                                {% endif %}
+                                <a href="{{ url_for('login') }}" class="btn navbar-btn btn-primary">{{ _('Login') }}</a>
+                            </div>
+
                             {% else %}
                             <div class="navbar-right">
                                 <a class="btn navbar-btn btn-default current-user" href="{{ url_for('user_settings') }}">
@@ -90,9 +97,7 @@
                 {% block header %}
                 {% endblock %}
 
-                <div class="container">
-                    {% include "_flashes.html" %}
-                </div>
+                {% include "_flashes.jade" %}
 
                 {% block content %}
                 {% endblock %}
