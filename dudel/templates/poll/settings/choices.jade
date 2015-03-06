@@ -1,0 +1,227 @@
+extends poll/BASE.jade
+
+block polltitle
+    = _("Choices")
+
+block foot
+    script(src=url_for('static', filename='js/poll_edit_choices.js'), type="text/javascript", lang="javascript")
+
+block content
+    .container
+        - if poll.type in (PollType.normal, PollType.numeric)
+            - if poll.get_choices()|length != poll.choices.count()
+                = alert("info", _("Deleted choices will stay in this list, so votes that have already been made are not lost."))
+
+            .halfsize
+                table.table
+                    tr
+                        th.nobr= _("Choice")
+                        th.nobr= _("Votes cast")
+                        th.nobr= _("Actions")
+
+                    - set total_votes = poll.votes.count()
+
+                    - for choice in poll.choices|sort()
+                        tr(class=("choice" + (" deleted" if choice.deleted else "") + (" editing" if edit_id == choice.id else "")))
+                            td.choice
+                                - if edit_id == choice.id
+                                    form.form.form-inline(method="POST")
+                                        .input-group.input-group-sm
+                                            = edit_form.hidden_tag()
+                                            = form_errors(edit_form)
+                                            = edit_form.text(class="form-control", autofocus=True)
+
+                                            span.input-group-btn
+                                                button.btn.btn-primary(type="submit")
+                                                    i.fa.fa-check
+
+                                - else
+                                    = choice.title
+
+                            - set vote_count = choice.vote_choices.count()
+
+                            td(class=("color " + ("green" if vote_count >= total_votes else ("red" if vote_count == 0 else "orange"))))
+                                strong= vote_count
+                                | / #{total_votes}
+
+                            td
+                                a.btn.btn-default.btn-(href="?edit=#{choice.id}")
+                                    i.fa.fa-pencil
+                                    = " " + _("Edit")
+
+                                = " "
+
+                                a.btn.btn-default.btn-(href="?toggle=#{choice.id}")
+                                    - if choice.deleted
+                                        i.fa.fa-undo
+                                        = " " + _("Restore")
+                                    - else
+                                        i.fa.fa-trash-o
+                                        = " " + _("Delete")
+
+                    tr
+                        td(colspan=3)
+                            form.form(method="POST")
+                                = form_errors(form)
+
+                                .input-group
+                                    = form.hidden_tag()
+                                    = form.text(class="form-control", placeholder=_("Add a choice"), size=50)
+
+                                    span.input-group-btn
+                                        button.btn.btn-primary(type="submit")
+                                            i.fa.fa-plus
+
+
+
+        - elif poll.type in (PollType.datetime, PollType.date)
+            - if not poll.timezone
+                = alert("info", _("This poll is using coordinated time, which means the choices are interpreted as your profile timezone (%(userzone)s). They will be displayed in the user's respective timezone for everyone else.", userzone=current_timezone)) }}
+            - elif poll.timezone != current_timezone
+                = alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone)) }}
+
+            - if poll.type == PollType.datetime
+                .visible-xs.visible-sm
+                    ul.steps
+                        li(class=("current" if step == 1 else ""))
+                            span= _("Step 1")
+                            = _("Days")
+
+                        li(class=("current" if step == 2 else ""))
+                            span= _("Step 2")
+                            = _("Times")
+
+                        li(class=("current" if step >= 3 else ""))
+                            span= _("Step 3")
+                            = _("Combine")
+
+                .hidden-xs.hidden-sm
+                    ul.steps
+                        li(class=("current" if step == 1 else ""))
+                            span= _("Step 1")
+                            = _("Select days")
+
+                        li(class=("current" if step == 2 else ""))
+                            span= _("Step 2")
+                            = _("Select time slots")
+
+                        li(class=("current" if step >= 3 else ""))
+                            span= _("Step 3")
+                            = _("Choose combinations")
+
+            - if step in (1, 2)
+                noscript
+                    = alert("warning", _("It's a pity you don't have <b>JavaScript</b> turned on, so you'll have to type in comma separated values in the correct format yourself, no spaces allowed. Or just stop being paranoid and enable JavaScript on this site. You'll get a certainly fancy interface for date and time input..."))
+
+                form#date-time-form(method="POST", action=url_for('poll_edit_choices', slug=poll.slug, step=step+1))
+                    div#date-time-form-content
+                        = form.hidden_tag()
+                        = form_errors(form)
+
+                        .form-group
+                            = form.dates.label
+                            = form.dates(class="form-control")
+
+                        .form-group
+                            = form.times.label
+                            = form.times(class="form-control")
+
+                    - if step == 1
+                        = alert("info", _("Please select the days that you want to be able to choose. In the next step, you will select time slots."))
+
+                        .script-only
+                            div#calendar.calendar(data-calendar-field="#date")
+                                table.table.auto-width
+                                    tr
+                                        th: button#calendar-prev-month.btn.btn-default.btn-xs &laquo;
+                                        th.title(colspan=6) MONTHNAME
+                                        th: button#calendar-next-month.btn.btn-default.btn-xs &raquo;
+
+                                    tr
+                                        - for day in ["", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+                                            td= day
+
+                                    for i in [1,2,3,4,5]
+                                        tr.week
+                                            - for day in ["", 1, 2, 3, 4, 5, 6, 7]
+                                                td= day
+
+
+                            div.calendar-list
+                                ul#calendar-list
+
+                    - if step == 2
+                        .script-only
+                            = alert("info", _("Please select the time slots that you want to be able to choose. In the next step, you will match them against the selected days."))
+
+                            .time-input
+                                #time-slider
+                                    #time-slider-knob
+
+                                .time-slider-display
+                                    .hour
+                                    .minute
+
+                                div.form-inline#time-slider-form
+                                    input#time-hour.form-control(type="text", placeholder="HH")/
+                                    input#time-minute.form-control(type="text", placeholder="MM")/
+                                    input#time-add-button.btn.btn-default(type="button", value=_("Add"), style="height: 3.4em;")/
+
+                            .calendar-list
+                                ul.time-slots
+
+                    .form-actions
+                        a.btn.btn-default(href="javascript: history.back();")= _("Back")
+                        input.btn.btn-primary(type="submit", value=_('Next'))
+
+            - if step in (3, 4) %}
+                = alert("info", _("Here you can select which day/time combinations are available for voting."))
+
+                form.form.form-inline(method="POST", action=url_for('poll_edit_choices', slug=poll.slug, step=4))
+                    = form.hidden_tag()
+                    = form_errors(form)
+                    = form.dates(hidden=True)
+                    = form.times(hidden=True)
+
+                    .table-responsive(style="margin-bottom: 1em;")
+                        table.table.auto-width.poll
+                            tr
+                                th
+                                - for time in times
+                                    th.choice-text= time|time(ref=None)
+
+                            - for date in dates
+                                - set dateloop = loop
+                                tr
+                                    th.author= date|date(ref=None)
+
+                                    - for time in times
+                                        td.checkbox-cell
+                                            input(type="checkbox", name="datetimes[]", value=date.date()+" "+time.time(), checked=poll.has_choice_date_time(date.date(), time.time()))
+
+                                    td.choice-text
+                                        input.btn.btn-xs.btn-link.toggle.toggle-select.toggle-row(type="button", value=_('all'))
+                                        input.btn.btn-xs.btn-link.toggle.toggle-deselect.toggle-row(type="button", value=_('none'))
+
+                            tr
+                                td
+                                - if times
+                                    - for time in times+[0]
+                                        td.choice-text
+                                            input(type="button",
+                                                  class="btn btn-block btn-xs btn-link toggle toggle-select toggle-" + ("all" if loop.last else "column"),
+                                                  value=_('all'))/
+                                            input(type="button",
+                                                  class="btn btn-block btn-xs btn-link toggle toggle-deselect toggle" + ("all" if loop.last else "column"),
+                                                  value=_('none'))/
+                                - else
+                                    = alert("warning", _("An Error occurred, you can try to go back to fix it."))
+
+                                td
+
+                    .form-actions
+                        a.btn.btn-default(href="javascript: history.back();")= _("Back")
+                        input.btn.btn-primary(type="submit", value=_('Next'))/
+
+        - else
+            = alert("error", "Cannot render poll type %s" % poll.type)

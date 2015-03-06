@@ -1,5 +1,27 @@
-.form-control, .btn {
+@import "vars";
+
+.form-control, .btn, .input-addon, .input-addon-btn, .alert {
     border-radius: 0;
+}
+
+.btn {
+    border: 1px solid #d5d5d5;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FCFCFC), to(#EEE));
+    color: #333;
+    font-weight: 600;
+    font-size: 9pt;
+    text-shadow: 0 1px 0 #FFF;
+
+    &:hover {
+        background: -webkit-gradient(linear, left top, left bottom, from(#EEE), to(#DDD));
+        color: #333;
+        border-color: #d0d0d0;
+    }
+}
+
+.btn-lg {
+    margin: 0 auto;
+    padding: 16px 32px;
 }
 
 html,
@@ -238,6 +260,8 @@ footer {
 .navbar {
     border-radius: 0;
     border: 0;
+    background: $primary-color;
+    margin-bottom: 0;
 
     .navbar-brand {
         color: rgba(255, 255, 255, 0.5);
@@ -330,4 +354,25 @@ footer {
 
 .poll-overview .fa {
     margin-right: 4px;
+}
+
+.halfsize {
+    max-width: 585px;
+    margin: 0 auto;
+}
+
+.initial-hidden {
+    opacity: 0;
+}
+.help-block {
+    transition: opacity 0.3s;
+}
+
+.padded-cells > * {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+section.flashes .alert:last-child {
+    margin-bottom: 1px;
 }

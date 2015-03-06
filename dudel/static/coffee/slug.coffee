@@ -30,6 +30,11 @@ $ ->
         $slug.val slug
         $preview.text slug
 
+        if title
+            $previewBox.parent().removeClass("initial-hidden")
+        else
+            $previewBox.parent().addClass("initial-hidden")
+
     updateTitle = ->
         update(false)
         return false

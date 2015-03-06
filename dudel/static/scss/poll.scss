@@ -275,11 +275,21 @@ header.poll {
     margin: 16px -4px 0 -4px;
     padding: 0;
     list-style: none;
+    align-items: flex-end;
 
     li {
         flex: 1 1 auto;
         margin: 0 4px;
         padding: 0;
+
+        &.vote a {
+            background: #7FDA7F;
+            color: white;
+
+            &:hover {
+                background: #4FBA4F;
+            }
+        }
 
         a {
             text-align: center;
@@ -308,8 +318,9 @@ header.poll {
             }
         }
 
-        &.active a {
+        &.active a, &.active a:hover {
             background: #FFF;
+            color: #666;
         }
     }
 }

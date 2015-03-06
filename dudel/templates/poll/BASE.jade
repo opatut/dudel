@@ -44,7 +44,7 @@ block header
                             i.fa.fa-list
                             span= _("Choices")
 
-                li(class=("active" if request.endpoint in ("poll_vote", "poll_vote_edit") else ""))
+                li(class=("vote " + ("active" if request.endpoint in ("poll_vote", "poll_vote_edit") else "")))
                     a(href=url_for('poll_vote', slug=poll.slug))
                         i.fa.fa-check
                         span= _("Vote")

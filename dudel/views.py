@@ -10,7 +10,7 @@ from sqlalchemy import func
 
 from dudel import app, db, babel, supported_languages, sentry
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, \
-    Invitation
+    Invitation, PollType
 from dudel.login import get_user
 from dudel.filters import get_current_timezone
 from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, EditChoiceForm, AddValueForm, LoginForm, \
@@ -88,13 +88,8 @@ def index():
     if form.validate_on_submit():
         poll = Poll(form.type.data != PollType.numeric)
         form.populate_obj(poll)
-        poll.public_listing = (form.visibility.data == "public")
 
         poll.timezone_name = str(get_current_timezone())
-
-        if poll.due_date:
-            localization_context = LocalizationContext(current_user, None)
-            poll.due_date = localization_context.local_to_utc(poll.due_date)
 
         success = True
         if not app.config["ALLOW_CUSTOM_SLUGS"] or not form.slug.data:
@@ -142,7 +137,7 @@ def login():
 
         return redirect(request.args.get("next") or url_for("index"))
 
-    return render_template('user/login.html', form=form)
+    return render_template('user/login.jade', form=form)
 
 
 @app.route("/register", methods=("GET", "POST"))
@@ -688,7 +683,7 @@ def poll_edit_choices(slug, step=1):
 
         args["form"] = form
 
-    return render_template("poll/settings/choices.html", poll=poll, step=step, **args)
+    return render_template("poll/settings/choices.jade", poll=poll, step=step, **args)
 
 
 @app.route("/<slug>/values/", methods=("POST", "GET"))
@@ -1016,7 +1011,6 @@ def poll_copy(slug):
         # New data
         new_poll.title = form.title.data.strip()
         new_poll.slug = form.slug.data
-        new_poll.due_date = form.due_date.data
         new_poll.created = datetime.utcnow()
 
         # Copied data
@@ -1084,7 +1078,6 @@ def poll_copy(slug):
 
     elif request.method == "GET":
         form.title.data = gettext("Copy of %(title)s", title=poll.title)
-        form.due_date.data = poll.due_date if (poll.due_date and poll.due_date > datetime.utcnow()) else None
         form.reset_ownership.data = not poll.user_can_administrate(current_user)
 
     return render_template("poll/settings/copy.html", poll=poll, form=form)

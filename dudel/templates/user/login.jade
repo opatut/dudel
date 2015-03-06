@@ -1,0 +1,27 @@
+extends BASE.html
+
+block content
+    .container
+        .page-header
+            h1.inline= _("Login")
+
+        form.form.login(method="POST")
+            = form.hidden_tag()
+            = field_error(form.hidden_tag)
+
+            .form-group
+                = form.username.label
+                = form.username(class="form-control")
+                = field_error(form.username)
+
+            .form-group
+                = form.password.label
+                = form.password(class="form-control")
+                = field_error(form.password)
+
+            .form-actions
+                include user/_registerbuttons.jade
+
+                button.btn.btn-primary(type="submit")
+                    i.fa.fa-sign-in
+                    = ' ' + _('Login')

@@ -1,61 +1,68 @@
 - from "_macros.html" import field_error, form_errors
 
-.create-poll
-    .page-header
-        h1= _("Create a poll")
+section.section.create-poll: .container:.halfsize
+    h1= _("Create a poll")
+    hr/
 
     form.form(method="POST")
         = form.hidden_tag()
         = field_error(form.hidden_tag)
 
+        .form-step
+            .number Step 1
+            .title Select type
+
         .form-group
-            = form.title.label
-            = form.title(class="form-control", id="title-input", autocomplete="off")
+            //- = form.type.label
+            = form.type(class="form-control script-hidden", id="create-type-field")
+            = field_error(form.type)
+
+            .script-only: ul.type-choices#create-type-list
+                - for key, type in form.type.choices
+                    li(data-key=key)
+                        .icon: i.fa(class="fa-#{type.icon}")
+                        .text
+                            .title= type.title
+                            .description= type.description
+
+        .form-step
+            .number Step 2
+            .title Enter title
+
+        .form-group
+            //- = form.title.label
+            = form.title(class="form-control", id="title-input", autocomplete="off", placeholder=form.title.label.text)
             = field_error(form.title)
 
             - if config.ALLOW_CUSTOM_SLUGS
-                div#slug-preview-box.help-block.script-only
-                    = _("The poll will be available at")
-                    span#url-preview
-                        span#url-prefix= url_for('poll', slug='', _external=True)
-                        span#slug-preview
+                .help-block.script-only.initial-hidden
+                    = _("The poll will be available at") + " "
 
-                    a.pull-right.btn.btn-xs.btn-default#slug-customize-button(href="#")
-                        i.fa.fa-wrench
-                        = _("Customize")
+                    span#slug-preview-box
+                        span#url-preview
+                            span#url-prefix= url_for('poll', slug='', _external=True)
+                            span#slug-preview
+
+                        a.btn.btn-xs.btn-default.pull-right#slug-customize-button(href="#", title=_("Customize"))
+                            i.fa.fa-pencil
 
             script= "var RANDOM_SLUGS = " + ("true" if config.RANDOM_SLUGS else "false") + ";"
 
         .form-group#slug-customize
             - if config.ALLOW_CUSTOM_SLUGS
-                = form.slug.label
+                //-= form.slug.label
 
                 .pull-right.script-only
-                    button.btn.btn-xs.btn-default#slug-randomize
-                        i.fa.fa-random
-                        = _("Randomize")
 
-                .input-group
+                .input-group.input-group-sm
                     span.input-group-addon= url_for('poll', slug='', _external=True)
                     = form.slug(class="form-control", id="slug-input")
+                    span.input-group-btn
+                        button.btn.btn-default#slug-randomize(title=_("Randomize"))
+                            i.fa.fa-random
 
             = field_error(form.slug)
 
-        .form-group
-            = form.type.label
-            = form.type(class="form-control make-button-group")
-            = field_error(form.type)
 
-        .form-group
-            = form.visibility.label
-            = form.visibility(class="form-control make-button-group")
-            = field_error(form.visibility)
-
-        .form-group
-            = form.due_date.label
-            span.help-inline optional
-            = form.due_date(class="form-control datetime-input")
-            = field_error(form.due_date)
-
-        .form-group
-            input.btn.btn-primary(type="submit", value=_('Create'))/
+        .form-group.text-center
+            input.btn.btn-lg.btn-primary(type="submit", value=_('Create'))/

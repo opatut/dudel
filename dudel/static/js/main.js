@@ -4,6 +4,7 @@ $(document).ready(function() {
     $("td.script-only").css("display", "table-cell");
     $("tr.script-only").css("display", "table-row");
     $("table.script-only").css("display", "table");
+    $(".script-hidden").hide();
 
     // Enable bootstrap popovers
     $('[data-toggle="popover"]').popover({
@@ -64,7 +65,7 @@ $(document).ready(function() {
         var select = $(this);
         select.hide();
 
-        var group = $('<div class="btn-group input-group"></div>');
+        var group = $('<div class="types"></div>');
         select.after(group);
 
         select.find("option").each(function() {
@@ -79,22 +80,11 @@ $(document).ready(function() {
                 return false;
             });
             group.append(button);
+            group.append(' ');
         });
 
         group.find(".btn[value='" + select.val() + "']").addClass("active");
     });
 
-    $('.slider').each(function() {
-        $(this).jRange({
-            from: $(this).data("minimum"),
-            to: $(this).data("maximum"),
-            step: $(this).data("step"),
-            // scale: [0,25,50,75,100],
-            // format: '%s',
-            theme: "theme-blue",
-            width: 300,
-            showLabels: true
-        });
-    });
 });
 

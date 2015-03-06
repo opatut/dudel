@@ -100,7 +100,7 @@ class OptionalIf(object):
 
 # ###############################################################################
 
-class PollForm(Form):
+class PollForm(MultiForm):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
     slug = TextField(lazy_gettext("URL name"), validators=[Optional(),
                                                            Length(min=3, max=80),
@@ -112,15 +112,11 @@ class PollForm(Form):
                                                            NoneOf(Poll.RESERVED_NAMES,
                                                                   message=lazy_gettext("This is a reserved name."))
     ])
-    due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional()])
 
 
 class CreatePollForm(PollForm):
     type = SelectField(lazy_gettext("Type"),
-                       choices=[(choice.value, choice.title) for choice in PollType])
-    visibility = SelectField(lazy_gettext("Visibility"),
-                             choices=[("public", lazy_gettext("Public")), ("hidden", lazy_gettext("Hidden"))],
-                             default="hidden")
+                       choices=[(choice.value, choice) for choice in PollType])
 
 
 class CreateGroupForm(Form):
