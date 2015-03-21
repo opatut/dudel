@@ -8,6 +8,8 @@ Make a virtual environment, activate it, run:
 
     pip install -r requirements.txt
 
+Make sure you also have `scss` and `coffee` (from coffeescript) installed.
+
 Copy `config.py.example` to `config.py` and adjust your settings.
 You will probably want to change `DEBUG`, `TESTING` and `MAIL_DEBUG` for production environments!
 
