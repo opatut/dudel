@@ -78,6 +78,9 @@
                                 <a class="btn navbar-btn btn-default" href="{{ url_for('groups') }}"><i class="fa fa-users"></i></a>
                                 {% endif %}
                                 <a class="btn navbar-btn btn-default" href="{{ url_for('user_settings') }}"><i class="fa fa-wrench"></i></a>
+                                {% if current_user.is_admin %}
+                                <a class="btn navbar-btn btn-default" href="{{ url_for('admin_index') }}"><i class="fa fa-cogs"></i></a>
+                                {% endif %}
                                 <a class="btn navbar-btn btn-default" href="{{ url_for('logout', next=request.url) }}"><i class="fa fa-sign-out"></i></a>
                             </div>
                             {% endif %}
