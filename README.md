@@ -21,6 +21,10 @@ Create an empty database:
 
     make init
 
+Compile the translations:
+
+    make i18n-compile
+
 Run the testserver:
 
     make run
