@@ -43,7 +43,7 @@ ul.help-list {
         list-style: none;
 
         &:before {
-            content: "✓";
+            content: "\2713";
             margin-left: -1.2em;
             width: 1.2em;
             display: inline-block;
