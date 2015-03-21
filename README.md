@@ -9,6 +9,7 @@ Make a virtual environment, activate it, run:
     pip install -r requirements.txt
 
 Copy `config.py.example` to `config.py` and adjust your settings.
+You will probably want to change `DEBUG`, `TESTING` and `MAIL_DEBUG` for production environments!
 
     cp config.py.example config.py
     $EDITOR config.py
