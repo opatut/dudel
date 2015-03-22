@@ -8,7 +8,10 @@ Make a virtual environment, activate it, run:
 
     pip install -r requirements.txt
 
+Make sure you also have `scss` and `coffee` (from coffeescript) installed.
+
 Copy `config.py.example` to `config.py` and adjust your settings.
+You will probably want to change `DEBUG`, `TESTING` and `MAIL_DEBUG` for production environments!
 
     cp config.py.example config.py
     $EDITOR config.py
@@ -20,6 +23,10 @@ Create a test database:
 Create an empty database:
 
     make init
+
+Compile the translations:
+
+    make i18n-compile
 
 Run the testserver:
 
