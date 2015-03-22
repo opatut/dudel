@@ -18,7 +18,8 @@ manager = Manager(app)
 db = SQLAlchemy(app)
 markdown = Markdown(app, safe_mode="escape")
 login_manager = LoginManager(app)
-sentry = Sentry(app)
+if app.config['SENTRY_ENABLED']:
+    sentry = Sentry(app)
 gravatar = Gravatar(app, size=48, rating='g', default='identicon', force_default=False, use_ssl=True, base_url=None)
 babel = Babel(app)
 supported_languages = ['en', 'de']
