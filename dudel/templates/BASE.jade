@@ -84,6 +84,10 @@ html
                                     a.btn.navbar-btn.btn-default(href=url_for('user_settings'))
                                         i.fa.fa-wrench
 
+                                    - if current_user.is_admin
+                                        a.btn.navbar-btn.btn-default(href=url_for('admin_index'))
+                                            i.fa.fa-cogs Admin
+
                                     a.btn.navbar-btn.btn-default(href=url_for('logout', next=request.url))
                                         i.fa.fa-sign-out
 
