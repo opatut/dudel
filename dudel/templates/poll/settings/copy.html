@@ -75,7 +75,7 @@
                     {{ field_error(form.date_offset) }}
                 </div>
                 {% set range = poll.get_choice_range() %}
-                {% if poll.type == "day" %}
+                {% if poll.type == PollType.date %}
                     {% set from = range[0].datetime %}
                     {% set to = range[1].datetime %}
                 {% else %}
