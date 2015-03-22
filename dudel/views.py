@@ -1078,7 +1078,7 @@ def root(locale):
 @app.errorhandler(400)
 def error(err):
     # if it is not a simple 4xx send a message to sentry
-    if not hasattr(err, 'code') or err.code not in [404, 403, 401, 400]:
+    if sentry and (not hasattr(err, 'code') or err.code not in [404, 403, 401, 400]):
         sentry.captureException()
-    return render_template("error.html", error=err), err.code if hasattr(err, 'code') else 500
 
+    return render_template("error.html", error=err), err.code if hasattr(err, 'code') else 500

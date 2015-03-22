@@ -51,6 +51,7 @@ LDAP = dict(
 )
 
 # Sentry settings
+# The Sentry DSN, if it is not set or False Sentry is disabled
 # SENTRY_DSN = "https://user:password@sentry.host.tld/X"
 
 MAIL_SERVER = None
