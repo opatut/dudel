@@ -151,7 +151,7 @@ def register():
 
         return redirect(request.args.get("next") or url_for("index"))
 
-    return render_template("user/register.html", form=form)
+    return render_template('user/register.jade', form=form)
 
 @app.route("/logout")
 def logout():
@@ -1069,4 +1069,7 @@ def root(locale):
 @app.errorhandler(401)
 @app.errorhandler(400)
 def error(err):
-    return render_template("error.html", error=err), err.code
+    # if it is not a simple 4xx send a message to sentry
+    if not hasattr(err, 'code') or err.code not in [404, 403, 401, 400]:
+        sentry.captureException()
+    return render_template("error.jade", error=err), err.code if hasattr(err, 'code') else 500

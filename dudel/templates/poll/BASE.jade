@@ -1,4 +1,4 @@
-extends BASE.html
+extends BASE.jade
 
 block title
     | #{poll.title} - #{super()}
@@ -33,10 +33,11 @@ block header
                             i.fa.fa-wrench
                             span= _("Settings")
 
-                    li(class=("active" if request.endpoint in ("poll_invitations",) else ""))
-                        a(href=url_for('poll_invitations', slug=poll.slug))
-                            i.fa.fa-envelope
-                            span= _("Invitations")
+                    - if current_user.is_authenticated()
+                        li(class=("active" if request.endpoint in ("poll_invitations",) else ""))
+                            a(href=url_for('poll_invitations', slug=poll.slug))
+                                i.fa.fa-envelope
+                                span= _("Invitations")
 
                     li(class=("active" if request.endpoint in ("poll_edit_choices",) else ""))
                         a(href=url_for('poll_edit_choices', slug=poll.slug))

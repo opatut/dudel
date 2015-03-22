@@ -1,6 +1,7 @@
 from dudel import db
 from dudel.util import PartialDateTime, DateTimePart
 from datetime import datetime
+from flask import Markup
 
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,7 +58,7 @@ class Choice(db.Model):
         elif self.poll.type == PollType.datetime:
             return datetime(self.date, ref=self.poll.localization_context)
         else:
-            return '<i class="fa fa-chevron-right choice-separator"></i>'.join(self.get_hierarchy())
+            return Markup('<i class="fa fa-chevron-right choice-separator"></i>').join(self.get_hierarchy())
             # return self.text
 
     @property

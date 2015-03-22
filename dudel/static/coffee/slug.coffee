@@ -8,13 +8,9 @@ makeRandomString = (length) ->
     return text
 
 $ ->
-    $randomize       = $ '#slug-randomize'
+    $randomizeButton = $ '#slug-randomize'
     $title           = $ '#title-input'
-    $slug            = $ '#slug-input'
-    $customizeBox    = $ '#slug-customize'
-    $preview         = $ '#slug-preview'
-    $previewBox      = $ '#slug-preview-box'
-    $customizeButton = $ '#slug-customize-button'
+    $slugInput       = $ '#slug-input'
 
     # Check if we are on a page with a slug input
     return if $title.length == 0
@@ -27,13 +23,7 @@ $ ->
         else
             slug = get_slug title
 
-        $slug.val slug
-        $preview.text slug
-
-        if title
-            $previewBox.parent().removeClass("initial-hidden")
-        else
-            $previewBox.parent().addClass("initial-hidden")
+        $slugInput.val slug
 
     updateTitle = ->
         update(false)
@@ -43,18 +33,8 @@ $ ->
         update(true)
         return false
 
-    openCustomize = ->
-        $previewBox.hide().removeClass("script-only")
-        $customizeBox.show()
-        return false
 
     # Bind events
-    $customizeButton.on "click", openCustomize
-    $randomize.on       "click", updateRandom
-    $title.on           "input", updateTitle
+    $randomizeButton.on "click", updateRandom
+    $title.on "input", updateTitle
     update(false)
-
-    # Hide the customization box, if there was no error
-    $customizeBox.hide()
-    if $customizeBox.find(".alert-danger").length > 0
-        openCustomize()

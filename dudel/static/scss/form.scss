@@ -99,6 +99,10 @@ section.login {
     box-sizing: border-box;
 }
 
+section.section {
+    padding: 16px 0;
+}
+
 @media #{$media-tablet-desktop} {
     section.section {
         padding: 32px 0;

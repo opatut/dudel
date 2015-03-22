@@ -9,68 +9,93 @@ block foot
 block content
     .container
         - if poll.type in (PollType.normal, PollType.numeric)
-            - if poll.get_choices()|length != poll.choices.count()
-                = alert("info", _("Deleted choices will stay in this list, so votes that have already been made are not lost."))
-
             .halfsize
                 table.table
-                    tr
-                        th.nobr= _("Choice")
-                        th.nobr= _("Votes cast")
-                        th.nobr= _("Actions")
-
-                    - set total_votes = poll.votes.count()
-
-                    - for choice in poll.choices|sort()
-                        tr(class=("choice" + (" deleted" if choice.deleted else "") + (" editing" if edit_id == choice.id else "")))
-                            td.choice
-                                - if edit_id == choice.id
-                                    form.form.form-inline(method="POST")
-                                        .input-group.input-group-sm
-                                            = edit_form.hidden_tag()
-                                            = form_errors(edit_form)
-                                            = edit_form.text(class="form-control", autofocus=True)
-
-                                            span.input-group-btn
-                                                button.btn.btn-primary(type="submit")
-                                                    i.fa.fa-check
-
-                                - else
-                                    = choice.title
-
-                            - set vote_count = choice.vote_choices.count()
-
-                            td(class=("color " + ("green" if vote_count >= total_votes else ("red" if vote_count == 0 else "orange"))))
-                                strong= vote_count
-                                | / #{total_votes}
-
+                    - if poll.choices.count()
+                        tr.header
                             td
-                                a.btn.btn-default.btn-(href="?edit=#{choice.id}")
-                                    i.fa.fa-pencil
-                                    = " " + _("Edit")
+                            td(colspan=3)= _("Active choices")
 
-                                = " "
+                        tr
+                            th(width=10)
+                            th.nobr= _("Choice")
+                            th.nobr(width=10)= _("Votes cast")
+                            th.nobr(width=10)= _("Actions")
 
-                                a.btn.btn-default.btn-(href="?toggle=#{choice.id}")
+                        - set total_votes = poll.votes.count()
+
+                        - set deleted_header_shown = False
+
+                        - for choice in poll.choices|sort()
+                            - if not deleted_header_shown and choice.deleted
+                                tr.header
+                                    td
+                                    td(colspan=3) Deleted choices
+
+                                - set deleted_header_shown = True
+
+                            tr(class=("choice" + (" deleted" if choice.deleted else "") + (" editing" if edit_id == choice.id else "")))
+                                td
                                     - if choice.deleted
-                                        i.fa.fa-undo
-                                        = " " + _("Restore")
-                                    - else
                                         i.fa.fa-trash-o
-                                        = " " + _("Delete")
+                                    - else
+                                        i.fa.fa-check
+
+                                td.choice
+                                    - if edit_id == choice.id
+                                        form.form.form-inline(method="POST")
+                                            .input-group.input-group-sm
+                                                = edit_form.hidden_tag()
+                                                = form_errors(edit_form)
+                                                = edit_form.text(class="form-control", autofocus=True)
+
+                                                span.input-group-btn
+                                                    button.btn.btn-primary(type="submit")
+                                                        i.fa.fa-check
+
+                                    - else
+                                        = choice.title
+
+                                - set vote_count = choice.vote_choices.count()
+
+                                td.nobr(class=("color " + ("green" if vote_count >= total_votes else ("red" if vote_count == 0 else "orange"))))
+                                    strong= vote_count
+                                    | / #{total_votes}
+
+                                td.nobr
+                                    - if choice.deleted
+                                        a.action(href="?toggle=#{choice.id}")
+                                            i.fa.fa-undo
+                                            = " " + _("Restore")
+
+                                    - else
+                                        a.action(href="?edit=#{choice.id}")
+                                            i.fa.fa-pencil
+                                            = " " + _("Edit")
+
+                                        = " "
+
+                                        a.action(href="?toggle=#{choice.id}")
+                                            i.fa.fa-trash-o
+                                            = " " + _("Delete")
+                        - else
+                            = alert("warning", "You have not yet created any choices.")
+
+                    tr.header
+                        td
+                        td(colspan=3)= _("Add a choice")
 
                     tr
-                        td(colspan=3)
-                            form.form(method="POST")
+                        td
+                        td(colspan=2)
+                            form.form(method="POST", id="add-form")
                                 = form_errors(form)
-
-                                .input-group
-                                    = form.hidden_tag()
-                                    = form.text(class="form-control", placeholder=_("Add a choice"), size=50)
-
-                                    span.input-group-btn
-                                        button.btn.btn-primary(type="submit")
-                                            i.fa.fa-plus
+                                = form.hidden_tag()
+                                = form.text(class="form-control", placeholder=_("Add a choice"), size=50)
+                        td
+                            button.action(type="submit", form="add-form")
+                                i.fa.fa-check
+                                = " " + _("Add")
 
 
 

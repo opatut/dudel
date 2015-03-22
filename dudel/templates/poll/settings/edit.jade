@@ -93,7 +93,7 @@ block content
                         = form.owner_id(class="form-control", rows=6)
                         = field_error(form.owner_id)
 
-                        .help-block _('Only the owner of a poll, or a member of the owner group, can edit the settings on this page. If you set this to "Nobody", then anyone may claim exclusive ownership. Most restrictive settings above are useless if you do not claim ownership of this poll.')
+                        .help-block= _('Only the owner of a poll, or a member of the owner group, can edit the settings on this page. If you set this to "Nobody", then anyone may claim exclusive ownership. Most restrictive settings above are useless if you do not claim ownership of this poll.')
 
                     hr/
 

@@ -1,0 +1,29 @@
+extends BASE.jade
+
+block title
+    = _("Groups")
+
+block content
+    .row
+        .col-md-6
+            h1= _("My groups")
+
+            ul.list-unstyled
+                - for group in current_user.groups %}
+                    li: a(href=url_for('group', id=group.id))= group.name
+
+        .col-md-6
+            - if config.GROUPS_ENABLED
+                h1= _("Create a group")
+
+                form(method="POST")
+                    = form.hidden_tag()
+                    = field_error(form.hidden_tag)
+
+                    .form-group
+                        = form.name.label
+                        = form.name(class="form-control")
+                        = field_error(form.name)
+
+                    .form-group
+                        input.btn.btn-primary(type="submit", value=_('Create group'))

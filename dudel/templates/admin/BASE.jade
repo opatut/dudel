@@ -1,0 +1,31 @@
+- from "_macros.html" import alert, form_errors, field_error, markdown_info
+- from "admin/_macros.html" import poll_table, user_table, group_table
+
+doctype html
+html
+    head
+        meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+
+        title dudel admin
+
+        - for filename in ["bootstrap.css", "bootstrap-theme.css", "admin.css", "font-awesome.css"]
+            link(href=url_for('static', filename='css/#{filename}.css'), rel="stylesheet", media="screen")
+
+        block head
+
+    body
+        nav.navbar.navbar-default.navbar-inverse(role="navigation") Admin
+
+        .container
+            include _flashes.html
+            block content
+
+        footer
+            .container
+                a(href=url_for('index'))= Main Site
+                | &mdash; Find
+                a(href="http://github.com/opatut/dudel") Dudel on Github
+
+        - for filename in ["moment.min.js", "jquery.js", "bootstrap.js", "admin.js"]
+            script(type="text/javascript", src=url_for('static', filename='js/#{filename}'))/
