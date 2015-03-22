@@ -1,0 +1,10 @@
+extends "BASE.jade"
+
+block title
+    = error
+
+block content
+    #error-page
+        i.fa.fa-fire
+        h1= error
+        p= error.description

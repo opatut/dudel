@@ -160,11 +160,25 @@ table.poll td.numeric {
 .choice.deleted,
 .choice.deleted .color {
     color: #AAA;
-    text-decoration: line-through;
+    background: #F9F9F9;
 }
 
 tr.choice td {
     vertical-align: middle !important;
+}
+
+.table > tbody > tr.header {
+    background: #FFF;
+    // font-weight: bold;
+    // font-size: 1.2em;
+    font-weight: bold;
+    color: #888;
+    border-top: 0;
+
+    > td, > th {
+        padding-top: 32px;
+        border-top: 0;
+    }
 }
 
 .poll-details {

@@ -5,13 +5,7 @@ assets = Environment(app)
 
 # SCSS
 scss = Bundle(
-    'scss/main.scss',
-    'scss/poll.scss',
-    'scss/form.scss',
-    'scss/calendar.scss',
-    'scss/iconpreview.scss',
-    'scss/timeinput.scss',
-    'scss/slider.scss',
+    'scss/_all.scss',
     filters='scss',
     output='gen/scss.css')
 assets.register('scss', scss)

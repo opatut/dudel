@@ -30,39 +30,32 @@ section.section.create-poll: .container:.halfsize
             .title Enter title
 
         .form-group
-            //- = form.title.label
             = form.title(class="form-control", id="title-input", autocomplete="off", placeholder=form.title.label.text)
             = field_error(form.title)
 
-            - if config.ALLOW_CUSTOM_SLUGS
-                .help-block.script-only.initial-hidden
-                    = _("The poll will be available at") + " "
-
-                    span#slug-preview-box
-                        span#url-preview
-                            span#url-prefix= url_for('poll', slug='', _external=True)
-                            span#slug-preview
-
-                        a.btn.btn-xs.btn-default.pull-right#slug-customize-button(href="#", title=_("Customize"))
-                            i.fa.fa-pencil
+        #advanced-open.hidden
+            .form-step
+                .number Step 3
+                .title Advanced Settings
 
             script= "var RANDOM_SLUGS = " + ("true" if config.RANDOM_SLUGS else "false") + ";"
+            .form-group#slug
+                - if config.ALLOW_CUSTOM_SLUGS
+                    = form.slug.label
 
-        .form-group#slug-customize
-            - if config.ALLOW_CUSTOM_SLUGS
-                //-= form.slug.label
+                    .input-group
+                        span.input-group-addon= url_for('poll', slug='', _external=True)
+                        = form.slug(class="form-control", id="slug-input")
+                        span.input-group-btn
+                            button.action#slug-randomize(title=_("Randomize"))
+                                i.fa.fa-random
 
-                .pull-right.script-only
-
-                .input-group.input-group-sm
-                    span.input-group-addon= url_for('poll', slug='', _external=True)
-                    = form.slug(class="form-control", id="slug-input")
-                    span.input-group-btn
-                        button.btn.btn-default#slug-randomize(title=_("Randomize"))
-                            i.fa.fa-random
-
-            = field_error(form.slug)
+                = field_error(form.slug)
 
 
         .form-group.text-center
-            input.btn.btn-lg.btn-primary(type="submit", value=_('Create'))/
+            input.action.action-highlight(type="submit", value=_('Create'))/
+
+        #advanced-closed.text-center
+            a#advanced-toggle(href="#")
+                = " " + _("More options")

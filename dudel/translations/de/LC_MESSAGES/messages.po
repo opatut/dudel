@@ -685,24 +685,24 @@ msgstr "Abgegebene Stimmen"
 msgid "Users"
 msgstr "Benutzer"
 
-#: dudel/templates/poll/BASE.html:8
+#: dudel/templates/poll/BASE.jade:8
 msgid "Poll"
 msgstr "Umfrage"
 
-#: dudel/templates/poll/BASE.html:11 dudel/templates/poll/settings/edit.html:3
+#: dudel/templates/poll/BASE.jade:11 dudel/templates/poll/settings/edit.html:3
 #: dudel/templates/poll/settings/edit.html:14
 #: dudel/templates/poll/vote/assign.html:3
 #: dudel/templates/user/settings.html:3 dudel/templates/user/settings.html:59
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: dudel/templates/poll/BASE.html:12
+#: dudel/templates/poll/BASE.jade:12
 #: dudel/templates/poll/settings/invitations.html:3
 #: dudel/templates/poll/settings/invitations.html:6
 msgid "Invitations"
 msgstr "Einladungen"
 
-#: dudel/templates/poll/BASE.html:13
+#: dudel/templates/poll/BASE.jade:13
 #: dudel/templates/poll/settings/choices.html:3
 msgid "Choices"
 msgstr "Wahlmöglichkeiten"
