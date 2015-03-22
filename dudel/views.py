@@ -35,37 +35,6 @@ def get_locale():
         return request.accept_languages.best_match(supported_languages)
 
 
-@app.route("/api/cron")
-def cron():
-    # This view should execute some regular tasks to be called by a cronjob, e.g.
-    # by simply curl-ing "/api/cron"
-
-    # Update LDAP groups
-    from dudel.plugins.ldapauth import ldap_connector
-
-    def generate():
-        try:
-            ldap_connector.update_users()
-            yield "updated LDAP users\n"
-        except Exception, e:
-            yield "error updating LDAP users: %s\n" % str(e)
-
-        try:
-            ldap_connector.update_groups()
-            yield "updated LDAP groups\n"
-        except Exception, e:
-            yield "error updating LDAP groups: %s\n" % str(e)
-
-        for poll in Poll.query.filter_by(deleted=False).all():
-            if poll.should_auto_delete:
-                poll.deleted = True
-                yield "auto-deleted poll: %s\n" % poll.title
-
-        db.session.commit()
-
-    return Response(generate(), mimetype="text/plain")
-
-
 @app.route("/api/members")
 @login_required
 def members():
