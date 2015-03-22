@@ -70,8 +70,15 @@
                     {{ field_error(form.date_offset) }}
                 </div>
                 {% set range = poll.get_choice_range() %}
+                {% if poll.type == PollType.date %}
+                    {% set from = range[0].datetime %}
+                    {% set to = range[1].datetime %}
+                {% else %}
+                    {% set from = range[0] %}
+                    {% set to = range[1] %}
+                {% endif %}
 
-                <div id="dateoffset-preview" data-from="{{ range[0].datetime|timestamp }}" data-to="{{ range[1].datetime|timestamp }}">
+                <div id="dateoffset-preview" data-from="{{ from|timestamp }}" data-to="{{ to|timestamp }}">
                     <div class="current">
                         {{ _('Current Range: %(from)s - %(to)s', from='<div class="from"></div>'|safe, to='<div class="to"></div>'|safe) }}
                     </div>
