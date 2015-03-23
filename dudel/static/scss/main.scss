@@ -1,3 +1,5 @@
+@import "vars";
+
 .form-control, .btn, .input-addon, .input-addon-btn, .alert {
     border-radius: 0;
 }
@@ -184,6 +186,12 @@ footer {
             content: "-";
         }
     }
+
+    .footer-warning {
+        display: inline-block;
+        color: #FF9900;
+        float: right;
+    }
 }
 
 .color {
@@ -252,18 +260,6 @@ footer {
 
 .monospace {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
-
-.navbar {
-    border-radius: 0;
-    border: 0;
-    background: $primary-color;
-    margin-bottom: 0;
-
-    .navbar-brand {
-        color: rgba(255, 255, 255, 0.5);
-    }
 }
 
 .print-only {

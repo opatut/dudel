@@ -3,6 +3,7 @@
 {% block polltitle %}{{ _("Invitations") }}{% endblock %}
 
 {% block content %}
+<div class="container">
     <h2>{{ _("Invitations") }}</h2>
 
     <div class="row">
@@ -63,4 +64,6 @@
         <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="fa fa-arrow-left"></span> {{ _("Back to poll") }}</a>
         <a href="{{ url_for('poll_invitations_resend_all', slug=poll.slug) }}" class="btn btn-default"><span class="fa fa-refresh"></span> {{ _("Resend all invitations") }}</a>
     </form>
+
+</div>
 {% endblock %}

@@ -11,7 +11,7 @@ block content
             p= _("This list shows all the polls you have participated in, either by owning them, voting on them, being invited, or watching.")
 
             - set watches = current_user.watches.all()
-            - set polls = current_user.poll_list
+            - set polls = current_user.get_poll_list()
 
             table.table.table-condensed.table-striped.poll-overview
                 tr

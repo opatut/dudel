@@ -1,10 +1,9 @@
 # SQL-Alchemy Settings
-SQLALCHEMY_DATABASE_URI = "sqlite:///tmp/dudel.db" # DO NOT USE RELATIVE PATHS IF USING MIGRATION!!!
+SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/dudel.db" # DO NOT USE RELATIVE PATHS IF USING MIGRATION!!!
 SQLALCHEMY_ECHO = False
 
 # Home button in menu bar
 BRAND_TEXT = "Dudel"
-BRAND_COLOR = None
 HOME_URL = "https://example.com/"
 HOME_TEXT = "Home"
 FOOTER_LINKS = [

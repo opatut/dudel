@@ -195,7 +195,7 @@ def groups():
             flash(gettext("The group was created."), "success")
             return redirect(url_for('group', id=group.id))
 
-    return render_template("user/groups.html", form=form)
+    return render_template("user/groups.jade", form=form)
 
 
 @app.route("/groups/<int:id>", methods=("GET", "POST"))

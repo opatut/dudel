@@ -1,0 +1,74 @@
+header#header
+    //- div.logo
+    //-     .container
+    //-         h1 Dudel
+
+    //-         - if current_user.is_authenticated()
+    //-             = "Logged in as " + current_user.displayname
+
+    nav.main-menu(role="navigation")
+        .container
+            ul.menu
+                - if config.HOME_URL
+                    li: a(href=config.HOME_URL, target="_blank")
+                        i.fa.fa-home
+                        = config.HOME_TEXT or "Home"
+
+                li: a(href=url_for('index'))
+                    i.fa.fa-plus
+                    = _("Create poll")
+
+                - if recent_polls
+                    li
+                        a(href="#")
+                            i.fa.fa-gavel
+                            | Recent Polls
+                            i.fa.fa-chevron-down
+
+                        ul.submenu.left
+                            - for poll in recent_polls
+                                li: a(href=poll.get_url())
+                                    = poll.title
+
+                li.spacing
+
+                li
+                    a(href=url_for('user_settings'))
+                        - if current_user.is_anonymous()
+                            i.fa.fa-user
+
+                        | Account
+                        i.fa.fa-chevron-down
+
+                        - if current_user.is_authenticated()
+                            img(src=current_user.get_avatar(32), width=32, height=32)
+
+                    ul.submenu.right
+                        - if current_user.is_anonymous()
+                            - if config.REGISTRATIONS_ENABLED
+                                li: a(href=url_for('register'))
+                                    i.fa.fa-pencil
+                                    = _('Register')
+
+                            li: a(href=url_for('login'))
+                                i.fa.fa-sign-in
+                                = _('Login')
+
+                        - else
+                            li: a(href=url_for('user_settings'))
+                                i.fa.fa-cogs
+                                | Settings
+
+                            - if config.GROUPS_ENABLED or current_user.groups
+                                li: a(href=url_for('groups'))
+                                    i.fa.fa-users
+                                    | Groups
+
+                            - if current_user.is_admin
+                                li: a(href=url_for('admin_index'))
+                                    i.fa.fa-cogs
+                                    | Admin panel
+
+                            li: a(href=url_for('logout', next=request.url))
+                                i.fa.fa-sign-out
+                                | Logout

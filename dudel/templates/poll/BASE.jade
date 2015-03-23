@@ -25,7 +25,7 @@ block header
                     a(href=url_for('poll_activity', slug=poll.slug))
                         i.fa.fa-comments-o
                         span= _("Activity")
-                        b.label.label-info 5
+                        //- b.label.label-info 5
 
                 - if poll.user_can_edit(current_user)
                     li(class=("active" if request.endpoint in ("poll_edit", "poll_edit_values") else ""))

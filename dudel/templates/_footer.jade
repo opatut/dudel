@@ -15,3 +15,7 @@ footer
 
             span.separator
             | Current timezone is #{current_timezone}.
+
+
+        - if config.DEBUG or config.TESTING
+            .footer-warning= _('<b>Warning!</b> Dudel is configured with <code>DEBUG = True</code> or <code>TESTING = True</code>.')|safe

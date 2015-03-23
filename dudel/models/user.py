@@ -118,8 +118,7 @@ class User(Member):
         else:
             return self in of.users
 
-    @property
-    def poll_list(self):
+    def get_poll_list(self, limit=None):
         from dudel.models.poll import Poll
         from dudel.models.group import Group, group_users
 
@@ -142,6 +141,10 @@ class User(Member):
         my_polls = [poll for poll in my_polls if not poll.deleted]
         my_polls = list(set(my_polls))
         my_polls.sort(key=lambda x: x.created, reverse=True)
+
+        if limit:
+            my_polls = my_polls[:limit]
+
         return my_polls
 
     def __repr__(self):

@@ -86,15 +86,16 @@
     {{ alert("info", _("You as an admin of this poll will always see full results, no matter what you select under 'Results display'. Log out to see the poll as a normal visitor.")) }}
 {% endif %}
 
-{% if poll.type in (PollType.datetime, PollType.date) %}
-    {% if not poll.timezone %}
-        {{ alert("info", _("This poll is using coordinated time, which means the choices are displayed as your profile timezone (%(userzone)s), and may be different for other users.", userzone=current_timezone)) }}
-    {% elif poll.timezone != current_timezone %}
-        {{ alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone)) }}
-    {% endif %}
-{% endif %}
-
 {% if (poll.votes and poll.has_choices) and (show_votes or show_summary or poll.get_user_votes(current_user)) %}
+    {% if poll.type in (PollType.datetime, PollType.date) %}
+        {% if not poll.timezone %}
+            {{ alert("info", _("This poll is using coordinated time, which means the choices are displayed as your profile timezone (%(userzone)s), and may be different for other users.", userzone=current_timezone)) }}
+        {% elif poll.timezone != current_timezone %}
+            {{ alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone)) }}
+        {% endif %}
+    {% endif %}
+
+
     <div class="table-padding">
         {% set choices = poll.get_choices() %}
         {% set matrix = poll.get_choice_group_matrix()|transpose %}
@@ -207,7 +208,14 @@
     </div>
 {% else %}
     {% if not poll.has_choices %}
-        {{ alert("warning", _("This poll does not have any choices, so no votes can be cast. If this is your poll, please fix that by clicking the 'choices' button on the top.")) }}
+        <div id="error-page">
+            <i class="fa fa-frown-o"></i>
+            <h1>No choices</h1>
+            <p>
+                This poll does not have any choices, so no votes can be cast. If this is your poll, please fix that by clicking the 'choices' button on the top.
+            </p>
+
+        <!-- {{ alert("warning", _("This poll does not have any choices, so no votes can be cast. If this is your poll, please fix that by clicking the 'choices' button on the top.")) }} -->
     {% elif poll.votes %}
         {{ alert("info", _("The results of this poll are currently hidden.")) }}
     {% elif poll.is_expired %}

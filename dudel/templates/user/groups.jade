@@ -4,12 +4,12 @@ block title
     = _("Groups")
 
 block content
-    .row
+    .container: .row
         .col-md-6
             h1= _("My groups")
 
             ul.list-unstyled
-                - for group in current_user.groups %}
+                - for group in current_user.groups
                     li: a(href=url_for('group', id=group.id))= group.name
 
         .col-md-6

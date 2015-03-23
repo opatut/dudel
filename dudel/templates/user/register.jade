@@ -1,50 +1,45 @@
 extends "BASE.jade"
 
 block content
-    .page-header
-        h1.inline= _("Register")
+    .container
+        .page-header
+            h1.inline= _("Register")
 
-    form.form.form-horizontal(method="POST")
-        = form.hidden_tag()
-        = field_error(form.hidden_tag)
+        form.form(method="POST")
+            = form.hidden_tag()
+            = field_error(form.hidden_tag)
 
-        .form-group
-            = form.username.label(class="control-label col-sm-2")
-            .col-sm-10
+            .form-group
+                = form.username.label(class="control-label")
                 = form.username(class="form-control")
                 = field_error(form.username)
 
-        .form-group
-            = form.password1.label(class="control-label col-sm-2")
-            .col-sm-4
+            .form-group
+                = form.password1.label(class="control-label")
                 = form.password1(class="form-control")
                 = field_error(form.password1)
 
-            = form.password2.label(class="control-label col-sm-2")
-            .col-sm-4
+            .form-group
+                = form.password2.label(class="control-label")
                 = form.password2(class="form-control")
                 = field_error(form.password2)
 
-        .form-group
-            = form.firstname.label(class="control-label col-sm-2")
-            .col-sm-4
+            .form-group
+                = form.firstname.label(class="control-label")
                 = form.firstname(class="form-control")
                 = field_error(form.firstname)
 
-            = form.lastname.label(class="control-label col-sm-2")
-            .col-sm-4
+            .form-group
+                = form.lastname.label(class="control-label")
                 = form.lastname(class="form-control")
                 = field_error(form.lastname)
 
-        .form-group
-            = form.email.label(class="control-label col-sm-2")
-            .col-sm-10
-                = form.email(class="form-control")
-                = field_error(form.email)
+            .form-group
+                = form.email.label(class="control-label")
+                    = form.email(class="form-control")
+                    = field_error(form.email)
 
-        .form-group
-            .col-sm-2
-            .col-sm-10
+            .form-actions
                 a.btn.btn-default(href=url_for('login', next=request.args.get('next')))
                     i.fa.fa-arrow-left
                     = " " + _("Back to Login")

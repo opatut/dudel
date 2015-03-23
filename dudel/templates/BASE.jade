@@ -21,80 +21,12 @@ html
 
     body
         #wrapper
-            header
-                nav.navbar.navbar-default.navbar-inverse(role="navigation", style=("background: {{ config.BRAND_COLOR }};" if config.BRAND_COLOR else ""))
-                    .container
-                        .navbar-header
-                            button.navbar-toggle(type="button", data-toggle="collapse", data-target="#navbar-collapse-1")
-                                span.sr-only= _("Toggle navigation")
-                                span.icon-bar
-                                span.icon-bar
-                                span.icon-bar
-
-                            a.navbar-brand(href="/")= config.BRAND_TEXT
-
-                            .navbar-left.visible-sm.visible-xs
-                                - if config.HOME_URL
-                                    a.btn.navbar-btn.btn-default(href=config.HOME_URL, style="margin-top: 10px;", target="_blank")
-                                        i.fa.fa-home
-                                        = " " + config.HOME_TEXT
-
-                                a.btn.navbar-btn.btn-default(href=url_for('index'), style="margin-top: 10px;")
-                                    i.fa.fa-plus
-
-                        .navbar-left.hidden-sm.hidden-xs
-                            a.btn.navbar-btn.btn-default(href=config.HOME_URL, style="margin-top: 10px;", target="_blank")
-                                i.fa.fa-home
-                                = " " + config.HOME_TEXT
-
-                            a.btn.navbar-btn.btn-default(href=url_for('index'), style="margin-top: 10px;")
-                                i.fa.fa-plus
-                                = " " + _("Create poll")
-
-                        .collapse.navbar-collapse(id="navbar-collapse-1")
-                            - if current_user.is_anonymous()
-                                //- form.navbar-form.navbar-right(method="POST", action=url_for('login', next=request.url), style="border: 0; padding-right: 0; padding-left: 0;")
-                                    = login_form.hidden_tag() }}
-
-                                    .form-group
-                                        = login_form.username(class="form-control", placeholder=login_form.username.label.text)
-
-                                    .form-group
-                                        = login_form.password(class="form-control", placeholder=login_form.password.label.text)
-
-                                    input.btn.navbar-btn.btn-primary(type="submit", value=_('Login'))/
-
-
-                                .navbar-right
-                                    - if config.REGISTRATIONS_ENABLED
-                                        a.btn.navbar-btn.btn-default(href=url_for('register'))= _('Register')
-
-                                    a.btn.navbar-btn.btn-primary(href=url_for('login'))= _('Login')
-
-                            - else
-                                .navbar-right
-                                    a.btn.navbar-btn.btn-default.current-user(href=url_for('user_settings'))
-                                        img(src=current_user.get_avatar(40))
-                                        = " " + current_user.displayname
-
-                                    - if config.GROUPS_ENABLED or current_user.groups
-                                        a.btn.navbar-btn.btn-default(href=url_for('groups'))
-                                            i.fa.fa-users
-
-                                    a.btn.navbar-btn.btn-default(href=url_for('user_settings'))
-                                        i.fa.fa-wrench
-
-                                    a.btn.navbar-btn.btn-default(href=url_for('logout', next=request.url))
-                                        i.fa.fa-sign-out
+            include _header.jade
 
             section#main-content
                 block header
                 include _flashes.jade
                 block content
-
-
-            - if config.DEBUG or config.TESTING
-                .container= alert('warning', 'Dudel is configured with <code>DEBUG = True</code> or <code>TESTING = True</code>.'|safe)
 
             include _footer.jade
 

@@ -1,3 +1,5 @@
+@import "vars";
+
 table.poll td, table.poll th, table.poll tr {
     border: none !important;
 }
@@ -271,7 +273,6 @@ tr.choice td {
 header.poll {
     background: #F6F6F6;
     margin: 0;
-    margin-top: -20px;
     margin-bottom: 20px;
     padding-top: 30px;
 
@@ -335,6 +336,21 @@ header.poll {
         &.active a, &.active a:hover {
             background: #FFF;
             color: #666;
+        }
+    }
+}
+
+@media #{$media-phone} {
+    .poll-tabs li a {
+        text-align: center;
+        padding: 8px 0;
+
+        i.fa {
+            margin: 0;
+        }
+
+        span {
+            display: none;
         }
     }
 }

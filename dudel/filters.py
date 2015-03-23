@@ -79,6 +79,12 @@ def transpose(matrix):
 @app.context_processor
 def inject():
     from dudel.views import get_locale
+    from dudel.models import Poll
+
+    recent_polls = []
+    if current_user.is_authenticated():
+        recent_polls = current_user.get_poll_list(5)
+
     return dict(
         ICONS=ICONS,
         login_form=LoginForm(),
@@ -87,5 +93,6 @@ def inject():
         lang=get_locale(),
         current_timezone=get_current_timezone(),
         default_timezone=default_timezone,
-        PollType=PollType
+        PollType=PollType,
+        recent_polls=recent_polls
         )

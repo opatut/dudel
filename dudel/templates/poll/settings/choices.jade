@@ -101,9 +101,9 @@ block content
 
         - elif poll.type in (PollType.datetime, PollType.date)
             - if not poll.timezone
-                = alert("info", _("This poll is using coordinated time, which means the choices are interpreted as your profile timezone (%(userzone)s). They will be displayed in the user's respective timezone for everyone else.", userzone=current_timezone)) }}
+                = alert("info", _("This poll is using coordinated time, which means the choices are interpreted as your profile timezone (%(userzone)s). They will be displayed in the user's respective timezone for everyone else.", userzone=current_timezone))
             - elif poll.timezone != current_timezone
-                = alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone)) }}
+                = alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone))
 
             - if poll.type == PollType.datetime
                 .visible-xs.visible-sm
@@ -199,7 +199,7 @@ block content
                         a.btn.btn-default(href="javascript: history.back();")= _("Back")
                         input.btn.btn-primary(type="submit", value=_('Next'))
 
-            - if step in (3, 4) %}
+            - if step in (3, 4)
                 = alert("info", _("Here you can select which day/time combinations are available for voting."))
 
                 form.form.form-inline(method="POST", action=url_for('poll_edit_choices', slug=poll.slug, step=4))
@@ -222,7 +222,7 @@ block content
 
                                     - for time in times
                                         td.checkbox-cell
-                                            input(type="checkbox", name="datetimes[]", value=date.date()+" "+time.time(), checked=poll.has_choice_date_time(date.date(), time.time()))
+                                            input(type="checkbox", name="datetimes[]", value=date.date()|string+" "+time.time()|string, checked=poll.has_choice_date_time(date.date(), time.time()))
 
                                     td.choice-text
                                         input.btn.btn-xs.btn-link.toggle.toggle-select.toggle-row(type="button", value=_('all'))
