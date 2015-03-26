@@ -561,11 +561,11 @@ def poll_edit_choices(slug, step=1):
             if not dates:
                 flash(gettext("Please select at least one date."), "error")
             else:
-                existing_dates = [choice.date.date() for choice in poll.choices]
+                existing_dates = [choice.date for choice in poll.choices]
 
                 # disable all that are not listed
                 for choice in poll.choices:
-                    choice.deleted = not choice.date.date() in dates
+                    choice.deleted = not choice.date in dates
 
                 # create those that don't exist yet
                 for date in dates:
