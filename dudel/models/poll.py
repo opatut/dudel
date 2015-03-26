@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import hmac
 
 from flask import url_for, render_template
 from flask.ext.babel import lazy_gettext
@@ -7,7 +8,7 @@ from flask.ext.mail import Message
 from pytz import timezone
 from enum import Enum
 
-from dudel import db, mail
+from dudel import db, mail, app
 from dudel.models.choice import Choice
 from dudel.models.choicevalue import ChoiceValue
 from dudel.models.comment import Comment
@@ -15,6 +16,7 @@ from dudel.models.pollwatch import PollWatch
 from dudel.models.vote import Vote
 from dudel.models.invitation import Invitation
 from dudel.util import PollExpiredException, PollActionException, LocalizationContext
+
 
 class PollType(str, Enum):
     datetime = "date"
@@ -409,3 +411,15 @@ class Poll(db.Model):
         values = [choice.value for choice in self.get_choices()]
         if not values: return None, None
         return min(values), max(values)
+
+    def get_mac(self, user_id=None):
+        """
+        Generates a mac for actions on a poll
+
+        :param user_id: The id from the user the mac is for. If it is None the current_user.id is used
+        :return: String
+        """
+        if not user_id:
+            user_id = current_user.id
+        to_sign = '{}/{}'.format(self.slug, user_id)
+        return hmac.new(app.config['SECRET_KEY'], to_sign).hexdigest()

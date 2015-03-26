@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
+import hmac
 import json
 
 from flask import redirect, abort, request, render_template, flash, url_for, Response
@@ -477,12 +478,17 @@ def poll_invitations_resend_all(slug):
     return redirect(url_for("poll_invitations", slug=poll.slug))
 
 
-@app.route("/<slug>/watch/<watch>", methods=("POST", "GET"))
+@app.route("/<slug>/watch/<watch>/<mac>", methods=("POST", "GET"))
 @login_required
-def poll_watch(slug, watch):
+def poll_watch(slug, watch, mac):
     poll = get_poll(slug)
 
-    if not watch in ("yes", "no"): abort(404)
+    if not watch in ("yes", "no"):
+        abort(404)
+
+    if not hmac.compare_digest(poll.get_mac(), str(mac)):
+        abort(403)
+
     watch = (watch == "yes")
 
     PollWatch.query.filter_by(poll=poll, user=current_user).delete()
