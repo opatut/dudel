@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import hmac
 
 from flask import url_for, render_template
 from flask.ext.babel import lazy_gettext
@@ -6,7 +7,7 @@ from flask.ext.login import current_user
 from flask.ext.mail import Message
 from pytz import timezone
 
-from dudel import db, mail
+from dudel import db, mail, app
 from dudel.models.choice import Choice
 from dudel.models.choicevalue import ChoiceValue
 from dudel.models.comment import Comment
@@ -14,6 +15,43 @@ from dudel.models.pollwatch import PollWatch
 from dudel.models.vote import Vote
 from dudel.models.invitation import Invitation
 from dudel.util import PollExpiredException, PollActionException, LocalizationContext
+
+
+class PollType(str, Enum):
+    datetime = "date"
+    date = "day"
+    normal = "normal"
+    numeric = "numeric"
+
+    @property
+    def icon(self):
+        return {
+            PollType.datetime: "clock-o",
+            PollType.date:     "calendar",
+            PollType.normal:   "list",
+            PollType.numeric:  "sliders"
+        }[self]
+
+    @property
+    def title(self):
+        return {
+            PollType.datetime: lazy_gettext("Date and Time"),
+            PollType.date:     lazy_gettext("Date and Time"),
+            PollType.normal:   lazy_gettext("Normal Poll"),
+            PollType.numeric:  lazy_gettext("Numeric")
+        }[self]
+
+    @property
+    def description(self):
+        return {
+            PollType.datetime: lazy_gettext("Schedule date and time for an event"),
+            PollType.date:     lazy_gettext("Schedule an all-day event"),
+            PollType.normal:   lazy_gettext("Retrieve opinions on various choices"),
+            PollType.numeric:  lazy_gettext("Rate each choice in a numeric range")
+        }[self]
+
+    def __str__(self):
+        return str(self.title)
 
 
 class Poll(db.Model):
@@ -335,3 +373,15 @@ class Poll(db.Model):
         values = [choice.value for choice in self.get_choices()]
         if not values: return None, None
         return min(values), max(values)
+
+    def get_mac(self, user_id=None):
+        """
+        Generates a mac for actions on a poll
+
+        :param user_id: The id from the user the mac is for. If it is None the current_user.id is used
+        :return: String
+        """
+        if not user_id:
+            user_id = current_user.id
+        to_sign = '{}/{}'.format(self.slug, user_id)
+        return hmac.new(app.config['SECRET_KEY'], to_sign).hexdigest()

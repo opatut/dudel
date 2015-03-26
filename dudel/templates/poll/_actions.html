@@ -13,9 +13,9 @@
 
     {% if current_user.is_authenticated() %}
         {% if poll.is_watching(current_user) %}
-            <a class="btn btn-default" href="{{ url_for('poll_watch', slug=poll.slug, watch='no') }}"><i class="fa fa-eye-slash"></i> {{ _("Unwatch poll") }}</a>
+            <a class="btn btn-default" href="{{ url_for('poll_watch', slug=poll.slug, mac=poll.get_mac(), watch='no') }}"><i class="fa fa-eye-slash"></i> {{ _("Unwatch poll") }}</a>
         {% else %}
-            <a class="btn btn-default" href="{{ url_for('poll_watch', slug=poll.slug, watch='yes') }}"><i class="fa fa-eye"></i> {{ _("Watch poll") }}</a>
+            <a class="btn btn-default" href="{{ url_for('poll_watch', slug=poll.slug, mac=poll.get_mac(), watch='yes') }}"><i class="fa fa-eye"></i> {{ _("Watch poll") }}</a>
         {% endif %}
     {% endif %}
 
