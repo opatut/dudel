@@ -9,15 +9,17 @@ from .group import Group
 from .vote import Vote
 from dudel.login import login_provider
 
-# password stuff (scrypt yay)
 
+# password stuff (scrypt yay)
 def randstr(length):
     return ''.join(chr(random.randint(0,255)) for i in range(length))
+
 
 def hash_password(password, maxtime=0.5, datalength=256):
     salt = randstr(datalength)
     hashed_password = scrypt.encrypt(salt, password.encode('utf-8'), maxtime=maxtime)
     return bytearray(hashed_password)
+
 
 def verify_password(hashed_password, guessed_password, maxtime=300):
     try:
@@ -27,12 +29,14 @@ def verify_password(hashed_password, guessed_password, maxtime=300):
         print "scrypt error: %s" % e    # Not fatal but a necessary measure if server is under heavy load
         return False
 
+
 @login_provider("password")
 def try_login_password(username, password):
     user = User.query.filter_by(username=username).first()
     if user and user.password and verify_password(user.password, password):
         return user
     return None
+
 
 class User(Member):
     id = db.Column(db.Integer, db.ForeignKey("member.id"), primary_key=True)

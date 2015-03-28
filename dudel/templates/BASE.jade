@@ -92,6 +92,10 @@ html
                 include _flashes.jade
                 block content
 
+
+            - if config.DEBUG or config.TESTING
+                .container= alert('warning', 'Dudel is configured with <code>DEBUG = True</code> or <code>TESTING = True</code>.'|safe)
+
             include _footer.jade
 
         - assets "js_all"

@@ -3,6 +3,7 @@ from dudel.util import PartialDateTime, DateTimePart
 from datetime import datetime
 from flask import Markup
 
+
 class Choice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(80))
@@ -25,7 +26,7 @@ class Choice(db.Model):
         if poll:
             self.poll = poll
 
-    def __cmp__(self,other):
+    def __cmp__(self, other):
         return cmp(self.date, other.date) or cmp(self.deleted, other.deleted) or cmp(self.text, other.text)
 
     def get_counts(self):
@@ -38,15 +39,15 @@ class Choice(db.Model):
     def get_hierarchy(self):
         if self.date:
             return [PartialDateTime(self.date, DateTimePart.date, self.poll.localization_context),
-                PartialDateTime(self.date, DateTimePart.time, self.poll.localization_context)]
+                    PartialDateTime(self.date, DateTimePart.time, self.poll.localization_context)]
         else:
             return [part.strip() for part in self.text.split("/") if part]
 
     def to_dict(self):
         return dict(id=self.id,
-            text=self.text,
-            date=str(self.date),
-            deleted=self.deleted)
+                    text=self.text,
+                    date=str(self.date),
+                    deleted=self.deleted)
 
     @property
     def title(self):

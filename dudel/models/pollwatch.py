@@ -1,5 +1,6 @@
 from dudel import db
 
+
 class PollWatch(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))

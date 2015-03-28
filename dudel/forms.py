@@ -1,21 +1,26 @@
-from dudel import app, default_timezone
 from flask import request, Markup
 from flask.ext.babel import gettext, lazy_gettext
 from flask.ext.wtf import Form, RecaptchaField
 from flask.ext.wtf.recaptcha.validators import Recaptcha as RecaptchaValidator
 from flask.ext.login import current_user
-from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, FieldList, FormField, RadioField, PasswordField, TextAreaField, DecimalField, IntegerField
-from wtforms.ext.dateutil.fields import DateTimeField
-from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, EqualTo, Email, ValidationError, StopValidation
-from dudel.models.poll import Poll, PollType
-from dudel.models.group import Group
-from dudel.login import try_login
-import ldap
-from ldap.dn import escape_dn_chars
-from datetime import datetime
+
 from pytz import common_timezones
 
+from wtforms.fields import TextField, SelectField, BooleanField, HiddenField, \
+    FieldList, FormField, RadioField, PasswordField, TextAreaField, \
+    DecimalField, IntegerField
+from wtforms.ext.dateutil.fields import DateTimeField
+from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, \
+    EqualTo, Email, ValidationError, StopValidation
+
+from dudel import default_timezone
+from dudel.login import try_login
+from dudel.models.poll import Poll, PollType
+from dudel.models.group import Group
+
+
 LANGUAGES = [('en', 'English'), ('de', 'Deutsch')]
+
 
 # Helper class for multiple forms on one page
 class MultiForm(Form):
@@ -32,8 +37,9 @@ class MultiForm(Form):
         self.form_name.data = self._form_name
         return Form.hidden_tag(self, *args, **kwargs)
 
+
 class UniqueObject(object):
-    def __init__(self, type, column, constraint={}, message = lazy_gettext("This entry already exists.")):
+    def __init__(self, type, column, constraint={}, message=lazy_gettext("This entry already exists.")):
         self.type = type
         self.column = column
         self.message = message
@@ -47,8 +53,9 @@ class UniqueObject(object):
         if len([x for x in self.type.query.filter_by(**c).all() if not x in self.allowed_objects]):
             raise ValidationError(self.message)
 
+
 class CustomAuthenticator(object):
-    def __init__(self, username_value_or_field, message = lazy_gettext("Invalid credentials.")):
+    def __init__(self, username_value_or_field, message=lazy_gettext("Invalid credentials.")):
         self.username_value_or_field = username_value_or_field
         self.message = message
 
@@ -65,10 +72,12 @@ class CustomAuthenticator(object):
         if not user:
             raise ValidationError(self.message)
 
+
 class SelectButtonInput:
     def __call__(self, field, **kwargs):
         return Markup('<button name="%s" type="submit" value="%s" class="btn-link">%s</button>'
-                        % (field.name, field.data, field.label.text))
+                      % (field.name, field.data, field.label.text))
+
 
 class RequiredIf(object):
     def __init__(self, condition):
@@ -77,6 +86,7 @@ class RequiredIf(object):
     def __call__(self, form, field):
         if self.condition(form, field) and not field.data:
             raise ValidationError(gettext("This field is required."))
+
 
 class OptionalIf(object):
     def __init__(self, condition):
@@ -89,7 +99,7 @@ class OptionalIf(object):
             raise StopValidation()
 
 
-################################################################################
+# ###############################################################################
 
 class PollForm(MultiForm):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
@@ -104,9 +114,13 @@ class PollForm(MultiForm):
                                                                   message=lazy_gettext("This is a reserved name."))
     ])
 
+
 class CreatePollForm(PollForm):
     type = SelectField(lazy_gettext("Type"),
                        choices=[(choice.value, choice) for choice in PollType])
+    visibility = SelectField(lazy_gettext("Visibility"),
+                             choices=[("public", lazy_gettext("Public")), ("hidden", lazy_gettext("Hidden"))],
+                             default="hidden")
 
 class CreateGroupForm(Form):
     name = TextField(lazy_gettext("Name"), validators=[
@@ -114,6 +128,7 @@ class CreateGroupForm(Form):
         Length(min=3, max=80),
         UniqueObject(Group, "name", message=lazy_gettext("A group with this name already exists."))
     ])
+
 
 class CopyPollForm(PollForm):
     copy_choices = BooleanField(lazy_gettext("Copy choices"), default=True)
@@ -123,15 +138,19 @@ class CopyPollForm(PollForm):
     create_invitations_from_votes = BooleanField(lazy_gettext("Create invitations from votes"), default=False)
     reset_ownership = BooleanField(lazy_gettext("Reset ownership"), default=True)
 
+
 class DateTimeSelectForm(Form):
-    dates = TextField(lazy_gettext("Dates"), validators = [Regexp("^([\d]{4}-[\d]{2}-[\d]{2},?)*$")])
-    times = TextField(lazy_gettext("Times"), validators = [Regexp("^([\d]{2}:[\d]{2}(:[\d]{2})?,?)*$")])
+    dates = TextField(lazy_gettext("Dates"), validators=[Regexp("^([\d]{4}-[\d]{2}-[\d]{2},?)*$")])
+    times = TextField(lazy_gettext("Times"), validators=[Regexp("^([\d]{2}:[\d]{2}(:[\d]{2})?,?)*$")])
+
 
 class AddChoiceForm(MultiForm):
     text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(max=80)])
 
+
 class EditChoiceForm(MultiForm):
     text = TextField(lazy_gettext("Choice"), validators=[Required(), Length(max=80)])
+
 
 class AddValueForm(MultiForm):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(max=80)])
@@ -139,9 +158,11 @@ class AddValueForm(MultiForm):
     icon = TextField(lazy_gettext("Icon"), validators=[Required(), Length(max=80)], default="question")
     weight = DecimalField(lazy_gettext("Weight"), validators=[], default=0)
 
+
 class LoginForm(MultiForm):
     username = TextField(lazy_gettext("Username"), validators=[Required()])
     password = PasswordField(lazy_gettext("Password"), validators=[Required(), CustomAuthenticator("username")])
+
 
 class RegisterForm(MultiForm):
     username = TextField(lazy_gettext("Username"), validators=[Required()])
@@ -151,12 +172,16 @@ class RegisterForm(MultiForm):
     password2 = PasswordField(lazy_gettext("Password again"), validators=[Required(), EqualTo("password1")])
     email = TextField(lazy_gettext("Email"), validators=[Required(), Email()])
 
+
 class SettingsForm(MultiForm):
     preferred_language = SelectField(lazy_gettext("Language"), choices=LANGUAGES)
     timezone_name = SelectField(lazy_gettext("Timezone"),
-        choices=[("", lazy_gettext("Server default (%(timezone)s)", timezone=default_timezone))]+[(c,c) for c in common_timezones])
+                                choices=[("",
+                                          lazy_gettext("Server default (%(timezone)s)", timezone=default_timezone))] + [
+                                            (c, c) for c in common_timezones])
     autowatch = BooleanField(lazy_gettext("Auto-watch polls"))
     allow_invitation_mails = BooleanField(lazy_gettext("Allow to receive emails for poll invitations"))
+
 
 class SettingsFormPassword(SettingsForm):
     firstname = TextField(lazy_gettext("First name"))
@@ -165,8 +190,10 @@ class SettingsFormPassword(SettingsForm):
     password2 = PasswordField(lazy_gettext("Password again"), validators=[EqualTo("password1")])
     email = TextField(lazy_gettext("Email"), validators=[Required(), Email()])
 
+
 class SettingsFormLdap(SettingsForm):
     pass
+
 
 class EditPollForm(Form):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
@@ -181,7 +208,7 @@ class EditPollForm(Form):
     show_invitations = BooleanField(lazy_gettext("Show invitations as empty votes"))
     owner_id = SelectField(lazy_gettext("Ownership"), choices=[(0, "Nobody")], coerce=int)
     timezone_name = SelectField(lazy_gettext("Timezone"),
-        choices=[("", lazy_gettext("Coordinated time"))]+[(c,c) for c in common_timezones])
+                                choices=[("", lazy_gettext("Coordinated time"))] + [(c, c) for c in common_timezones])
     # password = TextField("Password")
     # password_level = SelectField("Password mode", choices=[
     #     (0, "Do not use password"),
@@ -197,6 +224,7 @@ class EditPollForm(Form):
         ("summary_after_vote", lazy_gettext("Show summary, but only after voting"))])
     send_mail = BooleanField(lazy_gettext("Send mail to participants about results"))
 
+
 class CreateVoteChoiceForm(Form):
     value = RadioField(lazy_gettext("Value"), coerce=int, validators=[Optional()])
     amount = DecimalField(lazy_gettext("Amount"), validators=[Optional()], default=0)
@@ -211,11 +239,14 @@ class AmountRangeForm(Form):
 def anonymous_not_checked(form, field):
     return not form["anonymous"].data
 
+
 def logged_in(form, field):
     return current_user.is_authenticated()
 
+
 def not_logged_in(form, field):
     return current_user.is_anonymous()
+
 
 class CreateVoteForm(Form):
     name = TextField(lazy_gettext("Your Name"), validators=[RequiredIf(anonymous_not_checked), Length(max=80)])
@@ -223,22 +254,28 @@ class CreateVoteForm(Form):
     vote_choices = FieldList(FormField(CreateVoteChoiceForm))
     comment = TextAreaField(lazy_gettext("Comment"), validators=[Optional()])
 
+
 class PollPassword(Form):
     password = PasswordField(lazy_gettext("Poll password"), validators=[Required()])
+
 
 class CommentForm(Form):
     name = TextField(lazy_gettext("Your Name"), validators=[RequiredIf(not_logged_in), Length(max=80)])
     text = TextAreaField(lazy_gettext("Comment"))
     captcha = RecaptchaField(validators=[OptionalIf(logged_in), RecaptchaValidator()])
 
+
 class LanguageForm(Form):
     language = SelectField(lazy_gettext("Language"), choices=LANGUAGES, option_widget=SelectButtonInput())
+
 
 class PollInviteForm(Form):
     member = TextField(lazy_gettext("Group or User"))
 
+
 class GroupAddMemberForm(Form):
     member = TextField(lazy_gettext("User"))
+
 
 class VoteAssignForm(Form):
     user = TextField(lazy_gettext("New vote owner"))

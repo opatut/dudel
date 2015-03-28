@@ -1,11 +1,11 @@
-from dudel import app, db
-from flask import abort
+from dudel import db
 from .member import Member
 
 group_users = db.Table('group_users', db.metadata,
     db.Column('group_id', db.Integer, db.ForeignKey('group.id')),
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
 )
+
 
 class Group(Member):
     id = db.Column(db.Integer, db.ForeignKey("member.id"), primary_key=True)
