@@ -99,7 +99,7 @@ block content
 
                     label= _("Very advanced stuff")
 
-                    ul.list-unstyled
+                    ul.list-unstyled(style="margin-bottom: 20px;")
                         li: a(href=url_for('poll_edit_values', slug=poll.slug))= _("Edit possible answer values")
                         li: a(href=url_for('poll_invitations', slug=poll.slug))= _("Manage invitations")
                         li: a(href=url_for('poll_copy', slug=poll.slug))= _("Copy poll")
@@ -107,4 +107,6 @@ block content
                             li: a.red(href=url_for('poll_delete', slug=poll.slug))= _("Delete this poll")
 
             .form-actions
-                input.btn.btn-primary(type="submit", value=_("Save settings"))/
+                button.action.primary(type="submit")
+                    span= _("Save settings")
+                    i.fa.fa-arrow-right

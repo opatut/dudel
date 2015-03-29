@@ -14,7 +14,9 @@ block content
 
                 p= _("You can find a list of all the polls in which you have participated on your profile page.")
 
-                a.btn.btn-primary(href=url_for('user_settings'))= _("Show my polls")
+                a.action(href=url_for('user_settings'))
+                    span= _("Show my polls")
+                    i.fa.fa-arrow-right
 
             - else
                 h4= _("Register for more")
@@ -24,7 +26,7 @@ block content
 
                 include user/_registerbuttons.jade
 
-                a.btn.btn-primary(href=url_for('login'))
+                a.action.primary(href=url_for('login'))
                     i.fa.fa-sign-in
                     = ' ' + _('Login')
 

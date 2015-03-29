@@ -1,12 +1,10 @@
 - if "ldap" in config.LOGIN_PROVIDERS and config.LDAP_REGISTER_URL
-    a.btn.btn-default(href=config.LDAP_REGISTER_URL, target="_blank")
+    a.action(href=config.LDAP_REGISTER_URL, target="_blank")
         i.fa.fa-external-link-square
-        = ' ' + _('Registration (external)')
-    = ' '
+        span= _('Registration (external)')
 
 - if "password" in config.LOGIN_PROVIDERS and config.REGISTRATIONS_ENABLED
-    a.btn.btn-default(href=url_for('register', next=request.args.get('next')))
+    a.action(href=url_for('register', next=request.args.get('next')))
         i.fa.fa-pencil
-        = " " + _('Register')
-    = ' '
+        span= _('Register')
 

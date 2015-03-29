@@ -1,38 +1,73 @@
 extends ./BASE.jade
 
 block content
-    .container
-        h2 About Dudel
+    .container.small
+        .page-header
+            h1= _("About Dudel")
 
-        h3 Sizes
+        p.
+            Dudel in a platform created to simplify scheduling meetings or other
+            dates with large groups of people. It is heavily inspired by
+            commercial services, such as doodle.com, and other open source
+            projects such as Dudle.
 
-        p
-            a.action.icon(href="#") Icon
-            a.action.small(href="#") Small
-            a.action.medium(href="#") Medium
-            a.action.large(href="#") Large
+        p.
+            Dudel is developed as an open source project. This means that the
+            code is free and available to anyone, and everybody is allowed to
+            make changes to it and publish these.
 
-        h3 Colors
+        h2 Why should I use it?
 
-        p
-            a.action(href="#") Default
-            a.action.primary(href="#") Primary
-            a.action.secondary(href="#") Secondary
-            a.action.danger(href="#") Danger
-            a.action.success(href="#") Success
+        p.
+            You can use dudel free of charge, and even put it on your own server
+            if you wish to do so. Dudel comes with a lot of cool features,
+            especially if you have an existing infrastructure such as an LDAP
+            server running for your user base.
 
-        h3 Icons
+        h2 Who created Dudel?
 
-        p
-            a.action.icon(href="#")
-                i.fa.fa-chevron-right
-                span Icon
-            a.action.small(href="#")
-                i.fa.fa-child
-                span Icon
-            a.action.medium(href="#")
-                span Icon
-                i.fa.fa-check-square
-            a.action.large(href="#")
-                i.fa.fa-plug
-                span Icon
+        p.
+            Dudel was initially created in 2013 for and by the student association of the
+            Department of Informatics of the University of Hamburg. It has since
+            gained momentum and is not an open source project with contributors
+            all across the globe.
+
+        p.
+            <a href="https://github.com/opatut/dudel" target="_blank">Help us <i class="fa fa-github"></i></a>
+            developing Dudel to make it the best open platform for
+            scheduling meetings and creating surveys.
+
+
+        //-
+            h3 Sizes
+
+            p
+                a.action.icon(href="#") Icon
+                a.action.small(href="#") Small
+                a.action.medium(href="#") Medium
+                a.action.large(href="#") Large
+
+            h3 Colors
+
+            p
+                a.action(href="#") Default
+                a.action.primary(href="#") Primary
+                a.action.secondary(href="#") Secondary
+                a.action.danger(href="#") Danger
+                a.action.success(href="#") Success
+
+            h3 Icons
+
+            p
+                a.action.icon(href="#")
+                    i.fa.fa-chevron-right
+                    span Icon
+                a.action.small(href="#")
+                    i.fa.fa-child
+                    span Icon
+                a.action.medium(href="#")
+                    span Icon
+                    i.fa.fa-check-square
+                a.action.large(href="#")
+                    i.fa.fa-plug
+                    span Icon

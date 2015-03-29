@@ -32,6 +32,7 @@ $(document).ready(function() {
             cells = $(this).closest("table").find("td");
         }
         updateCheckbox.call(cells.find(":checkbox").prop("checked", selected));
+        return false;
     });
 
     // Calendar stuff

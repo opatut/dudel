@@ -40,10 +40,10 @@ block content
                     = field_error(form.email)
 
             .form-actions
-                a.btn.btn-default(href=url_for('login', next=request.args.get('next')))
-                    i.fa.fa-arrow-left
-                    = " " + _("Back to Login")
+                a.action.default.pull-left(href=url_for('login', next=request.args.get('next')))
+                    i.fa.fa-sign-in
+                    span= _("Log into existing account")
 
-                button.btn.btn-primary(type="submit")
-                    i.fa.fa-pencil
-                    = " " + _('Register now')
+                button.action.primary(type="submit")
+                    span= _('Register now')
+                    i.fa.fa-arrow-right

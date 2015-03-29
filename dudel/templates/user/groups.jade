@@ -25,5 +25,7 @@ block content
                         = form.name(class="form-control")
                         = field_error(form.name)
 
-                    .form-group
-                        input.btn.btn-primary(type="submit", value=_('Create group'))
+                    .form-actions
+                        button.action.primary(type="submit")
+                            span= _('Create group')
+                            i.fa.fa-arrow-right

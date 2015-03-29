@@ -41,4 +41,6 @@ block content
                         p.help-block= _("You can avoid this captcha if you login.")
 
                 .form-actions
-                    input.btn.btn-primary(type="submit", value=_('Post comment'))/
+                    button.action.primary(type="submit")
+                        span= _('Post comment')
+                        i.fa.fa-arrow-right

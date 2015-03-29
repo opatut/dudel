@@ -20,8 +20,9 @@ block content
                 = field_error(form.password)
 
             .form-actions
-                include user/_registerbuttons.jade
+                .pull-left
+                    include user/_registerbuttons.jade
 
-                button.btn.btn-primary(type="submit")
+                button.action.primary(type="submit")
                     i.fa.fa-sign-in
-                    = ' ' + _('Login')
+                    span= _('Login')

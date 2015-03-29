@@ -322,6 +322,11 @@ def user_settings():
     return render_template("user/settings.jade", form=form)
 
 
+@app.route("/user/polls")
+@login_required
+def user_polls():
+    return render_template("user/poll_overview.jade")
+
 @app.route("/<slug>/", methods=("GET", "POST"))
 def poll(slug):
     return redirect(url_for("poll_overview", slug=slug))

@@ -43,14 +43,16 @@ block content
 
                                 td.choice
                                     - if edit_id == choice.id
-                                        form.form.form-inline(method="POST")
-                                            .input-group.input-group-sm
-                                                = edit_form.hidden_tag()
-                                                = form_errors(edit_form)
-                                                = edit_form.text(class="form-control", autofocus=True)
+                                        form.form(method="POST")
+                                            = edit_form.hidden_tag()
 
-                                                span.input-group-btn
-                                                    button.btn.btn-primary(type="submit")
+                                            .row
+                                                .col-xs-10
+                                                    = edit_form.text(class="form-control", autofocus=True)
+                                                    = form_errors(edit_form)
+
+                                                .col-xs-2
+                                                    button.action.primary(type="submit")
                                                         i.fa.fa-check
 
                                     - else
@@ -224,28 +226,24 @@ block content
                                             input(type="checkbox", name="datetimes[]", value=date.date()|string+" "+time.time()|string, checked=poll.has_choice_date_time(date.date(), time.time()))
 
                                     td.choice-text
-                                        input.action.small.toggle.toggle-select.toggle-row(type="button", value=_('all'))
-                                        input.action.small.toggle.toggle-deselect.toggle-row(type="button", value=_('none'))
+                                        button.action.icon.toggle.toggle-deselect.toggle-row: i.fa.fa-square-o
+                                        button.action.icon.toggle.toggle-select.toggle-row: i.fa.fa-check-square-o
 
                             tr
                                 td
                                 - if times
                                     - for time in times+[0]
                                         td.choice-text
-                                            input(type="button",
-                                                  class="action small block toggle toggle-select toggle-" + ("all" if loop.last else "column"),
-                                                  value=_('all'))/
-                                            input(type="button",
-                                                  class="action small block toggle toggle-deselect toggle" + ("all" if loop.last else "column"),
-                                                  value=_('none'))/
+                                            button(class="action icon toggle toggle-select toggle-" + ("all" if loop.last else "column")): i.fa.fa-check-square-o
+                                            button(class="action icon toggle toggle-deselect toggle" + ("all" if loop.last else "column")): i.fa.fa-square-o
                                 - else
                                     != alert("warning", _("An Error occurred, you can try to go back to fix it."))
 
                                 td
 
                     .form-actions
-                        a.btn.btn-default(href="javascript: history.back();")= _("Back")
-                        input.btn.btn-primary(type="submit", value=_('Next'))/
+                        a.action(href="javascript: history.back();")= _("Back")
+                        input.action.primary(type="submit", value=_('Next'))/
 
         - else
             != alert("error", "Cannot render poll type %s" % poll.type)

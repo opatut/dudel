@@ -115,7 +115,7 @@ h1.inline {
 }
 
 h1 { font-size: 2em; }
-h2 { font-size: 1.75em; }
+h2 { font-size: 1.7em; margin-top: 20px; }
 h3 { font-size: 1.5em; }
 h1 small { font-size: 0.6em; margin-left: 1em; }
 
@@ -357,6 +357,14 @@ footer {
 
 .container-full {
     margin: 0 40px;
+}
+
+.container.small {
+    max-width: 720px;
+}
+
+.page-header {
+    margin-top: 40px;
 }
 
 .poll-overview .fa {

@@ -117,6 +117,10 @@ nav.main-menu {
             display: block;
             position: relative;
 
+            &.separator {
+                height: 1px;
+                background: #EEE;
+            }
 
             a {
                 display: block;

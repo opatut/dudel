@@ -10,7 +10,7 @@ header#header
         .container
             ul.menu
                 li
-                    a(href="#")
+                    a(href=url_for('index'))
                         i.fa.fa-bars
                         span Menu
                         //- i.fa.fa-chevron-down
@@ -29,17 +29,25 @@ header#header
                             i.fa.fa-question-circle
                             = _("About")
 
-                - if recent_polls
+                - if current_user.is_authenticated()
+                    - set count = 5
+                    - set polls = current_user.get_poll_list(count+1)
+
                     li
-                        a(href="#")
+                        a(href=url_for("user_polls"))
                             i.fa.fa-gavel
-                            span Recent Polls
+                            span My Polls
                             //- i.fa.fa-chevron-down
 
                         ul.submenu.left
-                            - for poll in recent_polls
+                            - for poll in polls[:count]
                                 li: a(href=poll.get_url())
                                     = poll.title
+
+                            - if polls|length > count
+                                li.separator
+                                li: a(href=url_for('user_polls'))
+                                    span= _("Show more...")
 
                 li.spacing
 

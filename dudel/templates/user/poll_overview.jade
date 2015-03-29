@@ -1,0 +1,68 @@
+extends "BASE.jade"
+
+block title
+    = _("Poll overview")
+
+block content
+    .container.small
+        .page-header
+            h1= _("Poll overview")
+
+        p= _("This list shows all the polls you have participated in, either by owning them, voting on them, being invited, or watching.")
+
+        - set watches = current_user.watches.all()
+        - set polls = current_user.get_poll_list()
+
+        table.table.table-condensed.table-striped.poll-overview
+            tr
+                th Poll title
+                th Last changed
+                th(colspan="3") Tags
+
+            - for poll in polls
+                tr
+                    td: a(href=poll.get_url())= poll.title
+                    td= poll.last_changed|date(year=True)
+
+                    td(width=10)
+                        - if poll.owner == current_user
+                            span.label.label-danger
+                                i.fa.fa-pencil
+                                = _("Owner")
+
+                        - elif current_user.is_member(poll.owner)
+                            span.label.label-danger
+                                i.fa.fa-pencil
+                                = _("Owner (group)")
+
+                        - else
+                            span.label.label-default
+                                i.fa.fa-ban
+                                = _("Not owner")
+
+                    td(width=10)
+                        - if poll.get_user_votes(current_user)
+                            span.label.label-success
+                                i.fa.fa-check
+                                = _("Voted")
+
+                        - elif current_user.is_invited(poll)
+                            span.label.label-info
+                                i.fa.fa-envelope
+                                = _("Invited")
+
+                        - else
+                            span.label.label-default
+                                i.fa.fa-pencil
+                                = _("Not voted")
+
+                    td(width=10)
+                        - if poll.is_watching(current_user)
+                            span.label.label-warning
+                                i.fa.fa-eye
+                                = _("Watching")
+
+                        - else
+                            span.label.label-default
+                                i.fa.fa-eye-slash
+                                = _("Not watching")
