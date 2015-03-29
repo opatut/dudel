@@ -4,32 +4,37 @@
     = _("Values")
 
 - block content
-    .container
-        - if poll.type == PollType.numeric
+    - if poll.type == PollType.numeric
+        .container.small
+            .page-header
+                h2= _("Adjust value range")
+
             form(method="POST")
                 = form.hidden_tag()
 
-                .form-group
-                    = form.minimum.label
-                    = form.minimum(class="form-control")
-                    = field_error(form.minimum)
+                .row
+                    .col-xs-4: .form-group
+                        = form.minimum.label
+                        = form.minimum(class="form-control")
+                        = field_error(form.minimum)
 
-                .form-group
-                    = form.maximum.label
-                    = form.maximum(class="form-control")
-                    = field_error(form.maximum)
+                    .col-xs-4: .form-group
+                        = form.maximum.label
+                        = form.maximum(class="form-control")
+                        = field_error(form.maximum)
 
-                .form-group
-                    = form.step.label
-                    = form.step(class="form-control")
-                    = field_error(form.step)
+                    .col-xs-4: .form-group
+                        = form.step.label
+                        = form.step(class="form-control")
+                        = field_error(form.step)
 
                 .form-actions
                     button.action.primary(type="submit")
                         span= _('Save')
                         i.fa.fa-arrow-right
 
-        - else
+    - else
+        .container
             p= _("Here you can edit which options the voters have for each choice you give them. By default, <b>yes</b>, <b>no</b> and <b>maybe</b> are always enabled, but you can disable or change any of these. You should have at least one value in this list for the voting to make sense.")|safe
 
             p= _("Weights are factors on how the total score for a choice is calculated. These values are normally somewhere between 0 and 1. The total score is displayed both as a percentage and as the weight sum, so you are allowed to use other values if you want them to \"cancel out\".")

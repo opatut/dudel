@@ -10,6 +10,12 @@ block content
     .container
         - if poll.type in (PollType.normal, PollType.numeric)
             .halfsize
+                - if poll.type == PollType.numeric
+                    .pull-right
+                        a.action.primary(href=url_for("poll_edit_values", slug=poll.slug))
+                            span= _("Adjust value range")
+                            i.fa.fa-arrow-right
+
                 table.table
                     - if poll.choices.count()
                         tr.header
