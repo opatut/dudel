@@ -4,28 +4,35 @@ block title
     = _("Groups")
 
 block content
-    .container: .row
-        .col-md-6
+    .container.small
+        .page-header
             h1= _("My groups")
 
-            ul.list-unstyled
-                - for group in current_user.groups
-                    li: a(href=url_for('group', id=group.id))= group.name
+        table.table.table-striped
+            tr
+                th= _("Group title")
+                th(width="20%")= _("Members")
 
-        .col-md-6
-            - if config.GROUPS_ENABLED
-                h1= _("Create a group")
+            - for group in current_user.groups*5
+                tr
+                    td: a(href=url_for('group', id=group.id))= group.name
+                    td= group.users.count()
 
-                form(method="POST")
-                    = form.hidden_tag()
-                    = field_error(form.hidden_tag)
 
-                    .form-group
-                        = form.name.label
-                        = form.name(class="form-control")
-                        = field_error(form.name)
+        - if config.GROUPS_ENABLED
+            hr/
+            h2= _("Create a group")
 
-                    .form-actions
-                        button.action.primary(type="submit")
-                            span= _('Create group')
-                            i.fa.fa-arrow-right
+            form(method="POST")
+                = form.hidden_tag()
+                = field_error(form.hidden_tag)
+
+                .form-group
+                    = form.name.label
+                    = form.name(class="form-control")
+                    = field_error(form.name)
+
+                .form-actions
+                    button.action.primary(type="submit")
+                        span= _('Create group')
+                        i.fa.fa-arrow-right
