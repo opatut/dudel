@@ -46,6 +46,8 @@ nav.main-menu {
         width: 100%;
 
         > li {
+            position: relative;
+
 
             &.spacing {
                 flex-grow: 1;
@@ -78,14 +80,14 @@ nav.main-menu {
             }
 
             &:hover {
-                position: relative;
-
                 > a {
                     background: rgba(255, 255, 255, 0.1);
                 }
 
                 ul.submenu {
-                    display: block;
+                    opacity: 1;
+                    transform: translate(0, 0);
+                    pointer-events: all;
                 }
 
             }
@@ -93,11 +95,15 @@ nav.main-menu {
     }
 
     ul.submenu {
-        display: none;
         position: absolute;
         top: $nav-height;
         background: white;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+        opacity: 0;
+        transform: translate(0, -10px);
+        transition: opacity 0.1s, transform 0.1s;
+        pointer-events: none;
 
         &.left {
             left: 0;
@@ -109,6 +115,8 @@ nav.main-menu {
 
         li {
             display: block;
+            position: relative;
+
 
             a {
                 display: block;
@@ -128,6 +136,39 @@ nav.main-menu {
                     background: $silver;
                 }
             }
+
+            ul.subsubmenu {
+                position: absolute;
+                top: 0;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+                transition: opacity 0.2s, transform 0.4s;
+                opacity: 0;
+                pointer-events: none;
+
+                &.right {
+                    left: 100%;
+                    transition: translate(-10px, 0);
+                }
+            }
+
+            &:hover > ul.subsubmenu {
+                transition: translate(0, 0);
+                opacity: 1;
+                pointer-events: all;
+            }
+        }
+    }
+}
+
+@media #{$media-phone} {
+    nav.main-menu ul.menu > li > a {
+        span {
+            display: none;
+        }
+
+        i.fa:first-child {
+            margin-right: 0;
         }
     }
 }

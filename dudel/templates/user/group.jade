@@ -1,0 +1,86 @@
+- extends "BASE.jade"
+
+- block title
+    = _("Group")
+
+- block content
+    .container
+        .page-header
+            h1= group.name
+
+        - if not group.changeable
+            != alert("warning", _("This group is imported from an external source and cannot be edited from this application."))
+
+        .row
+            .col-md-6
+                h2= _("Members")
+
+                table.table.table-condensed.table-striped
+                    tr
+                        th User
+                        th Role
+                        - if group.changeable
+                            th Actions
+
+                    - for user in group.users
+                        tr
+                            td= user.displayname
+                            td
+                                - if user == group.admin
+                                    span.label-danger.label= _("Admin")
+                                - else
+                                    span.label-default.label= _("Member")
+
+                            - if group.changeable
+                                td
+                                    - if current_user == group.admin
+                                        - if user != current_user
+                                            a.action.icon(href=url_for('group_leave', id=group.id, user_id=user.id), title=_("Kick user"))
+                                                i.fa.fa-sign-out
+                                                span= _("Kick user")
+
+                                            a.action.icon(href=url_for('group_make_admin', id=group.id, user_id=user.id), title=_("Make admin"))
+                                                i.fa.fa-certificate
+                                                span= _("Make admin")
+
+                                        - else
+                                            a.action.icon.danger(href=url_for('group_disband', id=group.id), title=_("Disband group"))
+                                                i.fa.fa-trash-o
+                                                span= _("Disband group")
+
+                                    - else
+                                        - if user == current_user
+                                            a.action.icon.danger(href=url_for('group_leave', id=group.id, user_id=user.id), title=_("Leave group"))
+                                                i.fa.fa-sign-out
+                                                span= _("Leave group")
+
+                - if form and current_user == group.admin
+                    h2= _("Add a member")
+
+                    form(method="POST")
+                        = form.hidden_tag()
+                        = field_error(form.hidden_tag)
+
+                        .form-group
+                            = form.member.label
+                            = form.member(class="form-control")
+                            = field_error(form.member)
+
+                        .form-group
+                            input.action.primary(type="submit", value=_('Add to group'))/
+
+            .col-md-6
+                h2= _("Group owned polls")
+
+                table.table.table-condensed.table-striped
+                    tr
+                        th= _("Poll title")
+                        th= _("Last changed")
+
+                    - for poll in group.polls
+                        tr
+                            <td><a href="{{ poll.get_url() }}">{{ poll.title }}</a></td>
+                            <td>{{ poll.last_changed|date(year=True) }}</td>
+
+                    - if not group.polls.count()
+                        tr: td(colspan=2)= _("This group does not own any polls.")

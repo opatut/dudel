@@ -1,7 +1,38 @@
 extends ./BASE.jade
 
 block content
-    h2 About Dudel
+    .container
+        h2 About Dudel
 
-    p.
-        TODO
+        h3 Sizes
+
+        p
+            a.action.icon(href="#") Icon
+            a.action.small(href="#") Small
+            a.action.medium(href="#") Medium
+            a.action.large(href="#") Large
+
+        h3 Colors
+
+        p
+            a.action(href="#") Default
+            a.action.primary(href="#") Primary
+            a.action.secondary(href="#") Secondary
+            a.action.danger(href="#") Danger
+            a.action.success(href="#") Success
+
+        h3 Icons
+
+        p
+            a.action.icon(href="#")
+                i.fa.fa-chevron-right
+                span Icon
+            a.action.small(href="#")
+                i.fa.fa-child
+                span Icon
+            a.action.medium(href="#")
+                span Icon
+                i.fa.fa-check-square
+            a.action.large(href="#")
+                i.fa.fa-plug
+                span Icon

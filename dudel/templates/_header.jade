@@ -9,21 +9,32 @@ header#header
     nav.main-menu(role="navigation")
         .container
             ul.menu
-                - if config.HOME_URL
-                    li: a(href=config.HOME_URL, target="_blank")
-                        i.fa.fa-home
-                        = config.HOME_TEXT or "Home"
+                li
+                    a(href="#")
+                        i.fa.fa-bars
+                        span Menu
+                        //- i.fa.fa-chevron-down
 
-                li: a(href=url_for('index'))
-                    i.fa.fa-plus
-                    = _("Create poll")
+                    ul.submenu
+                        - if config.HOME_URL
+                            li: a(href=config.HOME_URL, target="_blank")
+                                i.fa.fa-home
+                                = config.HOME_TEXT or "Home"
+
+                        li: a(href=url_for('index'))
+                            i.fa.fa-plus
+                            = _("Create poll")
+
+                        li: a(href=url_for('about'))
+                            i.fa.fa-question-circle
+                            = _("About")
 
                 - if recent_polls
                     li
                         a(href="#")
                             i.fa.fa-gavel
-                            | Recent Polls
-                            i.fa.fa-chevron-down
+                            span Recent Polls
+                            //- i.fa.fa-chevron-down
 
                         ul.submenu.left
                             - for poll in recent_polls
@@ -36,9 +47,8 @@ header#header
                     a(href=url_for('user_settings'))
                         - if current_user.is_anonymous()
                             i.fa.fa-user
-
-                        | Account
-                        i.fa.fa-chevron-down
+                        span Account
+                        //- i.fa.fa-chevron-down
 
                         - if current_user.is_authenticated()
                             img(src=current_user.get_avatar(32), width=32, height=32)

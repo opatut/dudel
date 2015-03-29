@@ -1,4 +1,4 @@
-- from "_macros.html" import alert, form_errors, field_error, markdown_info
+- from "_macros.jade" import alert, form_errors, field_error, markdown_info
 - set comments = poll.get_comments()
 
 extends poll/BASE.jade
@@ -9,7 +9,7 @@ block content
             = " "
             small= _("Most recent first")
 
-        = alert("warning", "This feature has not been implemented yet. Comments are also not shown.")
+        != alert("warning", "This feature has not been implemented yet. Comments are also not shown.")
 
 
         - if poll.allow_comments
@@ -32,7 +32,7 @@ block content
                     = comment_form.text.label
                     = comment_form.text(class="form-control", rows=6)
                     = field_error(comment_form.text)
-                    = markdown_info(true)
+                    != markdown_info(true)
 
                 - if current_user.is_anonymous()
                     .form-group

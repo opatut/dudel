@@ -80,13 +80,13 @@ function updateDateTimeList() {
 
     $(".time-slots").html("");
     times.forEach(function(time) {
-        $(".time-slots").append('<li><button class="btn btn-sm btn-default time-remove-button" title="remove time" data-time="' + time + '">' + time + ' <i class="fa fa-times"></i></button></li>');
+        $(".time-slots").append('<li><button class="action time-remove-button" title="remove time" data-time="' + time + '"><span>' + time + '</span><i class="fa fa-times"></i></button></li>');
     });
 
     $("#calendar-list").html("");
     dates.forEach(function(date) {
         var formatDate = moment(date).format("ddd D MMM");
-        $("#calendar-list").append('<li><button class="btn btn-sm btn-default date-remove-button" title="remove date" data-date="' + date +'">' + formatDate + ' <i class="fa fa-times"></i></button></li> ');
+        $("#calendar-list").append('<li><button class="action date-remove-button" title="remove date" data-date="' + date +'"><span>' + formatDate + '</span><i class="fa fa-times"></i></button></li> ');
     });
 
     // $(".date-remove-button, .time-remove-button").tooltip({"placement": "right"});
@@ -221,8 +221,8 @@ function initCalendar(calendar) {
         toggleDay($(this));
         return false;
     }).on("click", "button.week", function() {
-        var off = $(this).closest("tr").find("button.day.btn-default").size() > 0;
-        var cls = off ? ".btn-default" : ".btn-success";
+        var off = $(this).closest("tr").find("button.day.default").size() > 0;
+        var cls = off ? ".default" : ".success";
 
         $(this).closest("tr").find("button.day" + cls).each(function() {
             toggleDay($(this));
@@ -280,7 +280,7 @@ function makeWeek(week) {
     if(past && !future) {
         tr.append($('<td class="left"></td>'))
     } else {
-        tr.append($('<td class="left"><button class="week btn-xs btn btn-default"><i class="fa fa-angle-double-right"></i></button></td>'))
+        tr.append($('<td class="left"><button class="week action icon default"><i class="fa fa-angle-double-right"></i></button></td>'))
     }
 
     for(var i = 0; i < 7; ++i) {
@@ -293,7 +293,7 @@ function makeWeek(week) {
             var enabled = dates.contains(datetime);
             var past = date.isBefore(moment());
             var t = (past && !enabled ? 'span' : 'button');
-            btn = '<' + t + ' class="day btn-xs ' + (enabled ? 'btn btn-success' : (past ? '' : 'btn btn-default')) + '">' + week[i] + '</' + t + '>';
+            btn = '<' + t + ' class="day ' + (enabled ? 'action icon success' : (past ? '' : 'action icon default')) + '">' + week[i] + '</' + t + '>';
         }
         tr.append($('<td>' + btn + '</td>'));
     }

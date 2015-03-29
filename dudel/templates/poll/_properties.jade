@@ -1,0 +1,30 @@
+- macro property(title, content, icon, hover=None)
+    li(title=(title + (": #{hover}" if hover else "")))
+        i(class="fa fa-#{icon}")
+        span.content= content
+
+ul.poll-details
+    != property(_("Creation date"), poll.created|date, "calendar", poll.created|datetime)
+
+    - if poll.due_date
+        != property(_("Expiration date"), poll.due_date|date, "clock-o", poll.due_date|datetime)
+
+    != property(_("Poll type"), PollType(poll.type).title, PollType(poll.type).icon)
+
+    - if poll.owner
+        != property(_("Ownership"), _("you") if poll.owner == current_user else poll.owner.displayname, "briefcase", poll.owner.displayname)
+
+    - if poll.anonymous_allowed
+        != property(_("Anonymous voting allowed"), _("anonymous voting"), "question-circle")
+
+    - if poll.public_listing
+        != property(_("Listed in public polls list"), _("public"), "list")
+
+    - if poll.require_invitation
+        != property(_("Invitation required"), _("Invitation required"), "envelope")
+    - elif poll.require_login
+        != property(_("Login required"), _("login required"), "user")
+
+    - if current_user.is_authenticated()
+        != property(_("Watching poll"), _("watching") if poll.is_watching(current_user) else _("not watching"), "eye" if poll.is_watching(current_user) else "eye-slash")
+

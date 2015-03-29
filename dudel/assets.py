@@ -7,6 +7,7 @@ assets = Environment(app)
 scss = Bundle(
     'scss/_vars.scss',
     'scss/main.scss',
+    'scss/action.scss',
     'scss/poll.scss',
     'scss/menu.scss',
     'scss/form.scss',

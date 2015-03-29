@@ -1,0 +1,37 @@
+- if not poll.is_expired and poll.has_choices
+    .noprint
+        - set user_votes = ([] if current_user.is_anonymous() else poll.get_user_votes(current_user))
+
+        - if user_votes
+            a.action.primary(href=url_for('poll_vote_edit', slug=poll.slug, vote_id=user_votes[0].id))
+                span= _("Edit vote")
+
+        - if (poll.require_login or poll.require_invitation) and current_user.is_anonymous()
+            a.action.primary(href=url_for('login', next=url_for('poll_vote', slug=poll.slug)))
+                span= _("Log in to vote")
+
+        - if current_user.is_authenticated() and poll.require_invitation and not current_user.is_invited(poll)
+            a.action.disabled(href="#")
+                span= _("Invitation required to vote")
+
+        - if (not poll.require_invitation or current_user.is_authenticated() and current_user.is_invited(poll)) and (not poll.require_login or current_user.is_authenticated()) and (not poll.one_vote_per_user or not user_votes)
+            a.action(href=url_for('poll_vote', slug=poll.slug))
+                span= _("Vote now")
+
+
+        - if current_user.is_authenticated()
+            - if poll.is_watching(current_user)
+                a.action(href=url_for('poll_watch', slug=poll.slug, mac=poll.get_mac(), watch='no'))
+                    i.fa.fa-eye-slash
+                    span= _("Unwatch poll")
+
+            - else
+                a.action(href=url_for('poll_watch', slug=poll.slug, mac=poll.get_mac(), watch='yes'))
+                    i.fa.fa-eye
+                    span= _("Watch poll")
+
+        button.action#filter-button(type="button", data-toggle="modal", data-target="#filter-modal")
+            i.fa.fa-filter
+            span= _("Filter")
+
+include poll/_filter.jade

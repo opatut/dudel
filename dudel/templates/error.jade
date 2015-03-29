@@ -7,4 +7,4 @@ block content
     #error-page
         i.fa.fa-fire
         h1= error
-        p= error.description
+        p= (error.description or error.message)

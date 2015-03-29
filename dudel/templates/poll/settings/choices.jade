@@ -64,22 +64,22 @@ block content
 
                                 td.nobr
                                     - if choice.deleted
-                                        a.action(href="?toggle=#{choice.id}")
+                                        a.action.icon(href="?toggle=#{choice.id}")
                                             i.fa.fa-undo
-                                            = " " + _("Restore")
+                                            span= _("Restore")
 
                                     - else
-                                        a.action(href="?edit=#{choice.id}")
+                                        a.action.icon(href="?edit=#{choice.id}")
                                             i.fa.fa-pencil
-                                            = " " + _("Edit")
+                                            span= _("Edit")
 
                                         = " "
 
-                                        a.action(href="?toggle=#{choice.id}")
+                                        a.action.icon(href="?toggle=#{choice.id}")
                                             i.fa.fa-trash-o
-                                            = " " + _("Delete")
+                                            span= _("Delete")
                         - else
-                            = alert("warning", "You have not yet created any choices.")
+                            != alert("warning", "You have not yet created any choices.")
 
                     tr.header
                         td
@@ -94,16 +94,15 @@ block content
                                 = form.text(class="form-control", placeholder=_("Add a choice"), size=50)
                         td
                             button.action(type="submit", form="add-form")
-                                i.fa.fa-check
-                                = " " + _("Add")
+                                span= _("Add")
 
 
 
         - elif poll.type in (PollType.datetime, PollType.date)
             - if not poll.timezone
-                = alert("info", _("This poll is using coordinated time, which means the choices are interpreted as your profile timezone (%(userzone)s). They will be displayed in the user's respective timezone for everyone else.", userzone=current_timezone))
+                != alert("info", _("This poll is using coordinated time, which means the choices are interpreted as your profile timezone (%(userzone)s). They will be displayed in the user's respective timezone for everyone else.", userzone=current_timezone))
             - elif poll.timezone != current_timezone
-                = alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone))
+                != alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone))
 
             - if poll.type == PollType.datetime
                 .visible-xs.visible-sm
@@ -136,7 +135,7 @@ block content
 
             - if step in (1, 2)
                 noscript
-                    = alert("warning", _("It's a pity you don't have <b>JavaScript</b> turned on, so you'll have to type in comma separated values in the correct format yourself, no spaces allowed. Or just stop being paranoid and enable JavaScript on this site. You'll get a certainly fancy interface for date and time input..."))
+                    != alert("warning", _("It's a pity you don't have <b>JavaScript</b> turned on, so you'll have to type in comma separated values in the correct format yourself, no spaces allowed. Or just stop being paranoid and enable JavaScript on this site. You'll get a certainly fancy interface for date and time input..."))
 
                 form#date-time-form(method="POST", action=url_for('poll_edit_choices', slug=poll.slug, step=step+1))
                     div#date-time-form-content
@@ -152,15 +151,15 @@ block content
                             = form.times(class="form-control")
 
                     - if step == 1
-                        = alert("info", _("Please select the days that you want to be able to choose. In the next step, you will select time slots."))
+                        != alert("info", _("Please select the days that you want to be able to choose. In the next step, you will select time slots."))
 
                         .script-only
                             div#calendar.calendar(data-calendar-field="#date")
                                 table.table.auto-width
                                     tr
-                                        th: button#calendar-prev-month.btn.btn-default.btn-xs &laquo;
+                                        th: button#calendar-prev-month.action.icon: i.fa.fa-caret-left
                                         th.title(colspan=6) MONTHNAME
-                                        th: button#calendar-next-month.btn.btn-default.btn-xs &raquo;
+                                        th: button#calendar-next-month.action.icon: i.fa.fa-caret-right
 
                                     tr
                                         - for day in ["", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
@@ -177,7 +176,7 @@ block content
 
                     - if step == 2
                         .script-only
-                            = alert("info", _("Please select the time slots that you want to be able to choose. In the next step, you will match them against the selected days."))
+                            != alert("info", _("Please select the time slots that you want to be able to choose. In the next step, you will match them against the selected days."))
 
                             .time-input
                                 #time-slider
@@ -190,17 +189,17 @@ block content
                                 div.form-inline#time-slider-form
                                     input#time-hour.form-control(type="text", placeholder="HH")/
                                     input#time-minute.form-control(type="text", placeholder="MM")/
-                                    input#time-add-button.btn.btn-default(type="button", value=_("Add"), style="height: 3.4em;")/
+                                    input#time-add-button.action(type="button", value=_("Add"), style="height: 3.4em;")/
 
                             .calendar-list
                                 ul.time-slots
 
                     .form-actions
-                        a.btn.btn-default(href="javascript: history.back();")= _("Back")
-                        input.btn.btn-primary(type="submit", value=_('Next'))
+                        a.action(href="javascript: history.back();")= _("Back")
+                        input.action.primary(type="submit", value=_('Next'))
 
             - if step in (3, 4)
-                = alert("info", _("Here you can select which day/time combinations are available for voting."))
+                != alert("info", _("Here you can select which day/time combinations are available for voting."))
 
                 form.form.form-inline(method="POST", action=url_for('poll_edit_choices', slug=poll.slug, step=4))
                     = form.hidden_tag()
@@ -225,8 +224,8 @@ block content
                                             input(type="checkbox", name="datetimes[]", value=date.date()|string+" "+time.time()|string, checked=poll.has_choice_date_time(date.date(), time.time()))
 
                                     td.choice-text
-                                        input.btn.btn-xs.btn-link.toggle.toggle-select.toggle-row(type="button", value=_('all'))
-                                        input.btn.btn-xs.btn-link.toggle.toggle-deselect.toggle-row(type="button", value=_('none'))
+                                        input.action.small.toggle.toggle-select.toggle-row(type="button", value=_('all'))
+                                        input.action.small.toggle.toggle-deselect.toggle-row(type="button", value=_('none'))
 
                             tr
                                 td
@@ -234,13 +233,13 @@ block content
                                     - for time in times+[0]
                                         td.choice-text
                                             input(type="button",
-                                                  class="btn btn-block btn-xs btn-link toggle toggle-select toggle-" + ("all" if loop.last else "column"),
+                                                  class="action small block toggle toggle-select toggle-" + ("all" if loop.last else "column"),
                                                   value=_('all'))/
                                             input(type="button",
-                                                  class="btn btn-block btn-xs btn-link toggle toggle-deselect toggle" + ("all" if loop.last else "column"),
+                                                  class="action small block toggle toggle-deselect toggle" + ("all" if loop.last else "column"),
                                                   value=_('none'))/
                                 - else
-                                    = alert("warning", _("An Error occurred, you can try to go back to fix it."))
+                                    != alert("warning", _("An Error occurred, you can try to go back to fix it."))
 
                                 td
 
@@ -249,4 +248,4 @@ block content
                         input.btn.btn-primary(type="submit", value=_('Next'))/
 
         - else
-            = alert("error", "Cannot render poll type %s" % poll.type)
+            != alert("error", "Cannot render poll type %s" % poll.type)

@@ -1,0 +1,23 @@
+- extends "poll/BASE.jade"
+
+- block polltitle
+    = _("Delete poll")
+
+- block content
+    .danger-zone
+        h2
+            i.fa.fa-exclamation-triangle
+            = _("Warning!")
+
+        p= _("You are about to permanently delete the poll <b>%(title)s</b>. Are you sure you want to continue?", title=poll.title)|safe
+
+        hr/
+
+        p
+            a.action.success(href=url_for('poll_edit', slug=poll.slug))
+                i.fa.fa-arrow-left
+                span= _("Back to safety")
+
+            a.action.danger.pull-right(href=(url_for('poll_delete', slug=poll.slug) + "?confirm"))
+                span= _("Yes, delete it")
+                i.fa.fa-arrow-right

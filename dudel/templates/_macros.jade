@@ -1,0 +1,39 @@
+- macro alert(category, message)
+    - set replace = {"message":"info", "error":"danger"}
+    - set c = replace[category] if category in replace else category
+
+    - set icons = {"info": "exclamation-circle", "warning":"warning", "success":"check", "danger": "times"}
+
+    div(class="alert alert-#{c}")
+        .container
+            i(class="fa fa-#{icons[c]}")
+            != message
+
+- macro form_errors(form)
+    - if form.errors
+        - for field_name in form.errors
+            - for error in form.errors[field_name]
+                - if error is mapping
+                    - for key, val in error.iteritems()
+                        != alert("danger", ": ".join([form[field_name].label.text, key, ", ".join(val)]))
+                - else
+                    != alert("danger", form[field_name].label.text + ": " + error)
+
+- macro field_error(field)
+    - if field.errors
+        .form-errors
+            - for error in field.errors
+                - if error is mapping
+                    - for key, val in error.iteritems()
+                        != alert("danger", key + ": " + ", ".join(val))
+
+                - else
+                    != alert("danger", error)
+
+- macro markdown_info(helpBlock)
+    - set content = _('You can use <a href="%(link)s" target="_blank">Markdown</a> syntax for formatting.', link="http://daringfireball.net/projects/markdown/")|safe
+
+    - if helpBlock
+        p.help-block= content
+    - else
+        = content

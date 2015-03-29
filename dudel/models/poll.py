@@ -39,7 +39,7 @@ class PollType(str, Enum):
     def title(self):
         return {
             PollType.datetime: lazy_gettext("Date and Time"),
-            PollType.date:     lazy_gettext("Date and Time"),
+            PollType.date:     lazy_gettext("Date"),
             PollType.normal:   lazy_gettext("Normal Poll"),
             PollType.numeric:  lazy_gettext("Numeric")
         }[self]
@@ -273,7 +273,7 @@ class Poll(db.Model):
                 return False
         return True
 
-    # Weird algorithm. Required for poll.html and vote.html
+    # Weird algorithm. Required for poll.jade and vote.jade
     def get_choice_group_matrix(self):
         matrix = [choice.get_hierarchy() for choice in self.get_choices()]
         matrix = [[[item, 1, 1] for item in row] for row in matrix]
@@ -413,7 +413,10 @@ class Poll(db.Model):
     def get_choice_range(self):
         values = [choice.value for choice in self.get_choices()]
         if not values: return None, None
-        return min(values), max(values)
+        out = min(values), max(values)
+        if self.type == PollType.datetime:
+            out = [v.datetime for v in out]
+        return out
 
     def get_mac(self, user_id=None):
         """

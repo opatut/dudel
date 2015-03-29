@@ -1,0 +1,62 @@
+- extends "poll/BASE.jade"
+
+- block polltitle
+    = _("Invitations")
+
+- block content
+    .container
+        .row
+            .col-md-6
+                h2= _("Invitations")
+
+                table.table.table-hover.table-condensed.table-striped
+                    tr
+                        th(width="10")
+                        th= _("User")
+                        th= _("Invited")
+                        th(width="10")= _("Actions")
+
+                    - for invitation in poll.invitations
+                        tr
+                            td(title=(_('Voted') if invitation.voted else _('Vote pending')))
+                                i(class=cx('fa', 'fa-' + ('check' if invitation.voted else 'envelope-o')))
+
+                            td= invitation.user.displayname
+                            td=  invitation.created|datetime
+                            td
+                                a.action.icon(href=url_for('poll_invitation_resend', slug=poll.slug, id=invitation.id), title=_('Resend invitation'))
+                                    i.fa.fa-refresh
+
+                                a.action.icon(href=url_for('poll_invitation_delete', slug=poll.slug, id=invitation.id), title=_('Remove invitation'))
+                                    i.fa.fa-trash-o
+
+                hr/
+
+                a.action(href=url_for('poll_invitations_resend_all', slug=poll.slug))
+                    i.fa.fa-refresh
+                    span= _("Resend all invitations")
+
+            .col-md-6
+                h2= _("Send invitations")
+
+                form(method="POST")
+                    = form.hidden_tag()
+                    = field_error(form.hidden_tag)
+
+                    .form-group
+                        = form.member.label
+                        = form.member(class="form-control")
+                        = field_error(form.member)
+
+                    .form-group
+                        ul.help-list
+                            li= _("Enter the username or group title of the user or group of users you want to invite.")
+                            li= _("You can enter multiple users or groups.")
+                            li= _("Duplicates are ignored automatically.")
+                            li= _("Group invitations are resolved immediately, so adding more members to a group later will not invite those new members, unless you re-invite the group.")
+
+                    .form-actions
+                        button.action.primary(type="submit")
+                            span= _("Invite")
+                            i.fa.fa-envelope
+

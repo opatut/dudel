@@ -1,5 +1,7 @@
 @import "vars";
 
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,700,300,100,900);
+
 .form-control, .btn, .input-addon, .input-addon-btn, .alert {
     border-radius: 0;
 }
@@ -304,11 +306,12 @@ footer {
 }
 
 .danger-zone {
-    background: #FCB;
-    border: 1px solid #F64;
+    border: 10px solid #A00;
+    border-width: 10px 0;
+    background: $silver;
     padding: 32px;
     max-width: 500px;
-    margin: 16px auto;
+    margin: 64px auto;
 
     & > :first-child {
         margin-top: 0;
@@ -316,6 +319,16 @@ footer {
 
     & > :last-child {
         margin-bottom: 0;
+    }
+
+    h2 {
+        i.fa {
+            margin-right: 10px;
+        }
+    }
+
+    hr {
+        border-color: #BBB;
     }
 }
 
@@ -325,7 +338,7 @@ footer {
 
 
 #error-page {
-    max-width: 300px;
+    max-width: 360px;
     text-align: center;
     margin: 100px auto;
 
@@ -371,32 +384,3 @@ section.flashes .alert:last-child {
     margin-bottom: 1px;
 }
 
-.action {
-    background: transparent;
-    padding: 5px 10px;
-    border: 1px solid #DDD;
-
-    i.fa {
-        font-size: 14px;
-        margin-right: 4px;
-    }
-
-    &, &:hover, &:focus, &:active, &:disabled {
-        color: #666;
-        text-decoration: none;
-    }
-
-    &:hover {
-        background: #EEE;
-    }
-
-    &:active {
-        background: #FFF;
-    }
-}
-
-.action-highlight {
-    &, &:hover, &:focus, &:active, &:disabled {
-        background: #000;
-    }
-}

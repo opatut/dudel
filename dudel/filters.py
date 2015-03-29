@@ -1,6 +1,8 @@
 from json import dumps
 import datetime as dt
 
+import collections
+
 from flask.ext.login import current_user
 from flask.ext.babel import format_date, format_time, get_locale
 import pytz
@@ -22,6 +24,25 @@ def get_timezone(ref):
     elif ref == current_user:
         return default_timezone
     return None
+
+# ClassSet, similar to https://facebook.github.io/react/docs/class-name-manipulation.html
+def cx(*items):
+    classes = []
+
+    for item in items:
+        if isinstance(item, dict):
+            for key, value in item.items():
+                if value:
+                    classes.append(key)
+        elif isinstance(item, str):
+            classes.append(item)
+        elif isinstance(item, collections.Iterable):
+            for item in item:
+                classes.append(item)
+        else:
+            raise TypeError("ClassSet (cx) requires list or dict type.")
+
+    return classes
 
 
 @app.template_filter()
@@ -94,5 +115,6 @@ def inject():
         current_timezone=get_current_timezone(),
         default_timezone=default_timezone,
         PollType=PollType,
-        recent_polls=recent_polls
+        recent_polls=recent_polls,
+        cx=cx
         )

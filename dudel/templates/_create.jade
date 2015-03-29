@@ -1,4 +1,4 @@
-- from "_macros.html" import field_error, form_errors
+- from "_macros.jade" import field_error, form_errors
 
 section.section.create-poll: .container:.halfsize
     h1= _("Create a poll")
@@ -41,21 +41,28 @@ section.section.create-poll: .container:.halfsize
             script= "var RANDOM_SLUGS = " + ("true" if config.RANDOM_SLUGS else "false") + ";"
             .form-group#slug
                 - if config.ALLOW_CUSTOM_SLUGS
-                    = form.slug.label
+                    div(style="float: right;")
+                        button.action.small#slug-randomize
+                            i.fa.fa-random
+                            span= _("Randomize")
+
+                    = form.slug.label(style="margin-top: 2px;")
 
                     .input-group
                         span.input-group-addon= url_for('poll', slug='', _external=True)
                         = form.slug(class="form-control", id="slug-input")
-                        span.input-group-btn
-                            button.action#slug-randomize(title=_("Randomize"))
-                                i.fa.fa-random
 
                 = field_error(form.slug)
 
 
         .form-group.text-center
-            input.action.action-highlight(type="submit", value=_('Create'))/
+            a.action#advanced-toggle(href="#")
+                span.more
+                    i.fa.fa-plus-square-o
+                    span= _("More options")
+                span.less.hidden
+                    i.fa.fa-minus-square-o
+                    span= _("Less options")
 
-        #advanced-closed.text-center
-            a#advanced-toggle(href="#")
-                = " " + _("More options")
+            input.action.primary(type="submit", value=_('Create'))/
+

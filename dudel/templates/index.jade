@@ -54,4 +54,4 @@ block content
                         li: a(href=poll.get_url())= poll.title
 
             - else
-                = alert("info", _("There are currently no public polls."))
+                != alert("info", _("There are currently no public polls."))

@@ -1,0 +1,90 @@
+- extends "poll/BASE.jade"
+
+- block polltitle
+    = _("Copy")
+
+- block content
+    .container
+        h3= _("Copy poll")
+
+        form(method="POST")
+            = form.hidden_tag()
+            = field_error(form.hidden_tag)
+
+            .row
+                .col-md-6
+                    .form-group
+                        = form.title.label
+                        = form.title(class="form-control", **{"data-slug-field": "#slug"})
+                        = field_error(form.title)
+
+                    .form-group
+                        = form.slug.label
+
+                        .pull-right
+                            input#randomize-slug(type="checkbox", checked=True)
+                            label(for="randomize-slug", style="font-weight: normal; margin: 0; vertical-align: top;")= _("randomize")
+
+                        .input-group
+                            span.input-group-addon= url_for('poll', slug='', _external=True)
+                            = form.slug(class="form-control")
+
+                        = field_error(form.slug)
+
+                        noscript
+                            span.help-block= _("This would be automatically generated for you if you had not blocked javascript.")
+
+                .col-md-6
+                    label= _("Settings to copy")
+
+                    .checkbox
+                        = form.copy_choices()
+                        = form.copy_choices.label
+                        = field_error(form.copy_choices)
+
+                    .checkbox
+                        = form.copy_invitations()
+                        = form.copy_invitations.label
+                        = field_error(form.copy_invitations)
+
+                    .checkbox
+                        = form.create_invitations_from_votes()
+                        = form.create_invitations_from_votes.label
+                        = field_error(form.create_invitations_from_votes)
+
+                    .checkbox
+                        = form.copy_choice_values()
+                        = form.copy_choice_values.label
+                        = field_error(form.copy_choice_values)
+
+                    .checkbox
+                        = form.reset_ownership()
+                        = form.reset_ownership.label
+                        = field_error(form.reset_ownership)
+
+                    - if poll.type in (PollType.datetime, PollType.date) and poll.get_choices()
+                        .form-group
+                            = form.date_offset.label
+                            = form.date_offset(class="form-control dateoffset-input")
+                            = field_error(form.date_offset)
+
+                        - set range = poll.get_choice_range()
+                        - if poll.type == "day"
+                            - set range = range[0].datetime, range[1].datetime
+
+                        div#dateoffset-preview(data-from=range[0]|timestamp, data-to=range[1]|timestamp)
+                            .current
+                                = _('Current Range: %(from)s - %(to)s', from='<div class="from"></div>'|safe, to='<div class="to"></div>'|safe)|safe
+                            .new
+                                = _('New Range: %(from)s - %(to)s', from='<div class="from"></div>'|safe, to='<div class="to"></div>'|safe)|safe
+
+            hr/
+
+            .form-group
+                a.action(href=poll.get_url())
+                    i.fa.fa-arrow-left
+                    span= _("Back to poll")
+
+                button.action.primary(type="submit")
+                    span= _("Copy")
+                    i.fa.fa-arrow-right

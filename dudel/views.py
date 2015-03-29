@@ -8,6 +8,7 @@ from flask import redirect, abort, request, render_template, flash, url_for, \
     g, Response
 from flask.ext.babel import gettext
 from flask.ext.login import current_user, login_required
+from werkzeug.exceptions import InternalServerError
 
 import hmac
 
@@ -106,7 +107,7 @@ def index():
 
 @app.route("/about")
 def about():
-    return render_template("about.jade", asdf="omg")
+    return render_template("about.jade")
 
 
 @app.route("/login", methods=("GET", "POST"))
@@ -226,7 +227,7 @@ def group(id):
             flash(gettext("The user was added to the group."), "success")
             return redirect(url_for("group", id=group.id))
 
-    return render_template("user/group.html", group=group, form=form)
+    return render_template("user/group.jade", group=group, form=form)
 
 
 @app.route("/groups/<int:id>/disband")
@@ -460,7 +461,7 @@ def poll_invitations(slug):
         # return redirect(poll.get_url())
         return redirect(url_for("poll_invitations", slug=poll.slug))
 
-    return render_template("poll/settings/invitations.html", poll=poll, form=form)
+    return render_template("poll/settings/invitations.jade", poll=poll, form=form)
 
 
 @app.route("/<slug>/invitations/<int:id>/delete")
@@ -777,7 +778,7 @@ def poll_edit_values(slug):
                 return redirect(url_for("poll_edit_values", slug=poll.slug))
             args["form"] = form
 
-    return render_template("poll/settings/values.html", poll=poll, **args)
+    return render_template("poll/settings/values.jade", poll=poll, **args)
 
 
 @app.route("/<slug>/delete", methods=("POST", "GET"))
@@ -790,7 +791,7 @@ def poll_delete(slug):
         flash(gettext("The poll was deleted."), "success")
         return redirect(url_for("index"))
 
-    return render_template("poll/settings/delete.html", poll=poll)
+    return render_template("poll/settings/delete.jade", poll=poll)
 
 
 @app.route("/<slug>/vote", methods=("POST", "GET"))
@@ -888,7 +889,7 @@ def poll_vote(slug):
             avg = min_ + (max_ - min_) / 2 if min_ != max_ else 0
             subform.amount.data = avg
 
-    return render_template("poll/vote/edit.html", poll=poll, form=form)
+    return render_template("poll/vote/edit.jade", poll=poll, form=form)
 
 
 @app.route("/<slug>/vote/<int:vote_id>/assign", methods=("POST", "GET"))
@@ -938,7 +939,7 @@ def poll_vote_assign(slug, vote_id):
         flash(gettext("You assigned this vote to %(user)s.", user=user.displayname), "success")
         return redirect(poll.get_url())
 
-    return render_template("poll/vote/assign.html", poll=poll, vote=vote, form=form)
+    return render_template("poll/vote/assign.jade", poll=poll, vote=vote, form=form)
 
 
 @app.route("/<slug>/vote/<int:vote_id>/edit", methods=("POST", "GET"))
@@ -1026,7 +1027,7 @@ def poll_vote_edit(slug, vote_id):
             subform.comment.data = vote_choice.comment if vote_choice else ""
             subform.amount.data = vote_choice.amount
 
-    return render_template("poll/vote/edit.html", poll=poll, form=form, vote=vote)
+    return render_template("poll/vote/edit.jade", poll=poll, form=form, vote=vote)
 
 
 @app.route("/<slug>/vote/<int:vote_id>/delete", methods=("POST", "GET"))
@@ -1129,7 +1130,7 @@ def poll_copy(slug):
         form.reset_ownership.data = not poll.user_can_administrate(
             current_user)
 
-    return render_template("poll/settings/copy.html", poll=poll, form=form)
+    return render_template("poll/settings/copy.jade", poll=poll, form=form)
 
 
 @app.errorhandler(PollExpiredException)
@@ -1166,7 +1167,14 @@ def root(locale):
 @app.errorhandler(400)
 def error(err):
     # if it is not a simple 4xx send a message to sentry
-    if sentry and (not hasattr(err, 'code') or err.code not in [404, 403, 401, 400]):
-        sentry.captureException()
+    if (not hasattr(err, 'code') or err.code not in [404, 403, 401, 400]):
+        if sentry:
+            sentry.captureException()
+
+        err = InternalServerError()
 
     return render_template("error.jade", error=err), err.code if hasattr(err, 'code') else 500
+
+# also register on every exception in production mode
+if not app.config["DEBUG"]:
+    error = app.errorhandler(Exception)(error)

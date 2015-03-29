@@ -1,5 +1,5 @@
-- from "_macros.html" import alert, form_errors, field_error, markdown_info
-- from "admin/_macros.html" import poll_table, user_table, group_table
+- from "_macros.jade" import alert, form_errors, field_error, markdown_info
+- from "admin/_macros.jade" import poll_table, user_table, group_table
 
 doctype html
 html
@@ -18,7 +18,7 @@ html
         nav.navbar.navbar-default.navbar-inverse(role="navigation") Admin
 
         .container
-            include _flashes.html
+            include _flashes.jade
             block content
 
         footer

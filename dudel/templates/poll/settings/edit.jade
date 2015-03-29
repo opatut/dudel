@@ -43,7 +43,7 @@ block content
                         = form.description.label
                         = form.description(class="form-control monospace", rows=6)
                         = field_error(form.description)
-                        = markdown_info(true)
+                        != markdown_info(true)
 
                 .col-md-5.col-md-offset-1
                     label= _("Additional settings")

@@ -1,0 +1,97 @@
+- from "_macros.jade" import alert
+
+- macro user_link(user)
+    a(href=url_for('admin_user', id=user.id))= user.displayname
+
+- macro group_link(group)
+    a(href=url_for('admin_group', id=group.id))= group.name
+
+- macro poll_table(polls)
+    - if polls
+        .table-responsive.table-scroll
+            table.table
+                tr
+                    th
+                    th Title
+                    th Link name
+                    th Last changed
+                    th Author
+                    th Due date
+                    th Votes
+                    th Flags
+
+                - for poll in polls
+                    tr
+                        td: i(class="fa fa-#{PollType(poll.type).icon}", title="Type: #{PollType(poll.type).title}}")
+                        td: a(href=url_for('admin_poll', id=poll.id))= poll.title
+                        td: a(href=poll.get_url())= "/#{poll.slug}/"
+                        td= poll.last_changed|datetime
+                        td= poll.owner.displayname if poll.owner else "-"
+                        td= (poll.due_date|datetime) if poll.due_date else "-"
+                        td= poll.votes.count()
+                        td
+                            - if poll.deleted
+                                span.label.label-danger
+                                    i.fa.fa-times
+                                    span Deleted
+
+                            - elif poll.should_auto_delete
+                                span.label.label-warning
+                                    i.fa.fa-exclamation-triangle
+                                    span Autodelete
+
+                            - elif poll.is_expired
+                                span.label.label-info
+                                    i.fa.fa-clock-o
+                                    span Expired
+
+    - else
+        != alert("info", "No polls found")
+
+- macro user_table(users)
+    - if users
+        .table-responsive.table-scroll
+            table.table
+                tr
+                    th Display Name
+                    th Login
+                    th First Name
+                    th Last Name
+                    th Email
+                    th Source
+
+                - for user in users
+                    tr
+                        td
+                            = user_link(user)
+                            - if user.is_admin
+                                span.label.label-danger ADMIN
+                        td= user.username
+                        td= user.firstname
+                        td= user.lastname
+                        td= user.email
+                        td
+                            span.label.label-default= user.source
+
+    - else
+        != alert("info", "No users found")
+
+- macro group_table(groups)
+    - if groups
+        .table-responsive.table-scroll
+            table.table
+                tr
+                    th Name
+                    th Identifier
+                    th Members
+                    th Source
+
+                - for group in groups
+                    tr
+                        td= group_link(group)
+                        td= group.identifier
+                        td= group.users.count()
+                        td: span.label.label-default= group.source
+
+    - else
+        != alert("info", "No groups found")

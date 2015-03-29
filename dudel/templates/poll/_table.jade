@@ -1,0 +1,256 @@
+- from "_macros.jade" import alert
+
+- macro voteTooltip(vote)
+    = vote.created|datetime
+
+    - if vote.comment
+        .comment= vote.comment|forceescape|forceescape
+
+    - if vote.assigned_by
+        .assigned= _('Assigned after voting by %(user)s', user=vote.assigned_by.displayname|forceescape|forceescape)
+
+
+- macro voteChoiceTooltip(vote, vote_choice, numeric)
+    = vote.displayname | forceescape | forceescape
+
+    - if not numeric and vote_choice.comment
+        .comment
+            = vote_choice.comment|forceescape|forceescape
+
+- macro statsTooltip(poll, counts, scores, choice)
+    - for choice_value in poll.get_choice_values()
+        .value
+            = counts[choice][choice_value]|forceescape|forceescape
+            i.fa.fa-times
+            span.label.choice-sum-value-label(style="background-color: ##{choice_value.color};")
+                i(class=cx("fa", "fa-#{choice_value.icon}"))
+            = choice_value.title|forceescape|forceescape
+
+    .score= _('Score') + ":" + ("%.f" % scores[choice])
+
+
+- macro renderVote(vote)
+    - if show_votes or (not current_user.is_anonymous() and vote.user == current_user)
+        tr(class=cx('vote', {'mine': not current_user.is_anonymous() and vote.user == current_user}),
+            data-author=(vote.displayname|forceescape|forceescape))
+
+            td.author(data-toggle="popover",
+                    data-trigger="hover",
+                    data-container="body",
+                    data-title=(vote.displayname|forceescape|forceescape),
+                    data-content=voteTooltip(vote))
+
+                - if vote.comment or vote.assigned
+                    .pull-left(style="margin-right: 0.4em;")
+                        - if vote.comment
+                            i.fa.fa-comment-o
+
+                        - if vote.assigned
+                            i.fa.fa-tag
+
+                = vote.displayname
+
+            - for choice in choices
+                - set vote_choice = poll.get_vote_choice(vote, choice)
+                - set numeric = (poll.type == PollType.numeric)
+
+                - if numeric or (vote_choice and not vote_choice.value.deleted)
+                    td(class=cx('vote-choice', 'text-center', {
+                            'numeric': numeric,
+                            'none': (not numeric and not vote_choice.value),
+                            'comment': vote_choice.comment
+                        }),
+                        style=("background-color: ##{vote_choice.value.color};" if not numeric else ""),
+                        data-toggle="popover",
+                        data-trigger="hover",
+                        data-container="body",
+                        data-placement="bottom",
+                        data-title=(choice.title|forceescape|forceescape),
+                        data-content=voteChoiceTooltip(vote, vote_choice, numeric),
+                        data-choice-value=(choice.amount if numeric else vote_choice.value_id))
+
+                        - if numeric
+                            - if vote_choice.amount
+                                = (poll.numeric_format() % vote_choice.amount)
+                            - else
+                                | &ndash;
+
+                        - else
+                            i(class=cx("fa", "fa-#{vote_choice.value.icon if vote_choice.value else 'question'}"))
+
+                - else
+                    td.vote-choice.text-center.none
+                        i.fa.fa-question
+
+            td.noprint.vote-actions
+                - if vote.user_can_edit(current_user)
+                    a.action.icon(href=url_for('poll_vote_edit', slug=poll.slug, vote_id=vote.id), title=_('Edit vote'))
+                        i.fa.fa-pencil
+
+                - if vote.user_can_delete(current_user)
+                    a.action.icon(href=url_for('poll_vote_delete', slug=poll.slug, vote_id=vote.id), title=_('Delete vote'))
+                        i.fa.fa-trash-o
+
+                - if not vote.anonymous and not vote.user and poll.user_can_administrate(current_user)
+                    a.action.icon(href=url_for('poll_vote_assign', slug=poll.slug, vote_id=vote.id), title=_('Assign a user'))
+                        i.fa.fa-user
+
+
+- macro renderInvitation(invitation)
+    tr.invitation
+        td.author(data-toggle="popover",
+                data-trigger="hover",
+                data-container="body",
+                data-title=invitation.user.displayname|forceescape|forceescape,
+                data-content=_('This user was invited on %(date)s at %(time)s to vote in this poll.', date=invitation.created|date, time=invitation.created|time))
+
+            div.pull-left(style="margin-right: 0.4em;")
+                i.fa.fa-envelope
+
+            = invitation.user.displayname
+
+        - for choice in choices
+            td.vote-choice.text-center.none
+                i.fa.fa-question
+
+        td.noprint.vote-actions
+            - if invitation.user == current_user
+                a.action.icon(title=_('Vote now'), href=url_for('poll_vote', slug=poll.slug))
+                    i.fa.fa-pencil
+
+            - if poll.user_can_edit(current_user)
+                a.action.icon(href=url_for('poll_invitations', slug=poll.slug), title=_('Manage invitations'))
+                    i.fa.fa-ellipsis-h
+
+- set show_votes = poll.show_votes(current_user)
+- set show_summary = poll.show_summary(current_user)
+
+- if poll.show_results != "complete" and poll.user_can_administrate(current_user)
+    != alert("info", _("You as an admin of this poll will always see full results, no matter what you select under 'Results display'. Log out to see the poll as a normal visitor."))
+
+- if (poll.votes and poll.has_choices) and (show_votes or show_summary or poll.get_user_votes(current_user))
+    - if poll.type in (PollType.datetime, PollType.date)
+        - if not poll.timezone
+            != alert("info", _("This poll is using coordinated time, which means the choices are displayed as your profile timezone (%(userzone)s), and may be different for other users.", userzone=current_timezone))
+        - elif poll.timezone != current_timezone
+            != alert("info", _("The choices on this poll are local time, which is set to %(timezone)s for this poll. This differs from the timezone you set in your profile (%(userzone)s).", timezone=poll.timezone, userzone=current_timezone))
+
+    .table-padding
+        - set choices = poll.get_choices()
+        - set matrix = poll.get_choice_group_matrix()|transpose
+
+        .table-noscroll-y
+            .table-scroll-x(style="padding-bottom: 100px;")
+                table.table.poll.auto-width#poll
+                    thead
+                        - for row in matrix
+                            tr
+                                th
+                                - for item in row
+                                    - if item[0] != None
+                                        th.choice-group(colspan=item[2], rowspan=item[1])
+                                            = item[0] | group_title(poll)
+                                th.noprint
+
+                    tbody
+                        - for vote in poll.votes
+                            = renderVote(vote)|safe
+
+                        - if show_votes and poll.show_invitations
+                            - for invitation in poll.invitations
+                                - if not invitation.voted
+                                    = renderInvitation(invitation)|safe
+
+                        - if not show_votes
+                            tr
+                                td
+                                td.info(colspan=poll.get_choices() | length)
+                                    - if show_summary
+                                        - set count = poll.votes.count() - poll.get_user_votes(current_user)|length
+                                        = _("%(count)d votes are hidden from you.", count=count)
+
+                                    - else
+                                        = _("Some votes may be hidden from you.")
+
+                                    - if current_user.is_anonymous()
+                                        = _('<a href="%(link)s">Log in</a> to display your own vote.</a>', link=url_for('login', next=request.url)) | safe
+
+                                td.noprint
+
+                    - if show_summary
+                        tfoot
+                            - if poll.type == PollType.numeric
+                                - set totals, counts, averages = poll.get_stats()
+                                tr.scores
+                                    th(data-trigger="hover",
+                                        data-toggle="popover",
+                                        data-container="body",
+                                        data-content="based on the number of people who voted in each category, not number of total votes")
+
+                                        b= _("Average")
+
+                                    - for choice in choices
+                                        td.choice-sum
+                                            = (poll.numeric_format(2) % averages[choice])
+
+                                tr.scores
+                                    th
+                                        b= _("Total")
+
+                                    - for choice in choices
+                                        td.choice-sum(data-score=averages[choice])
+                                            = (poll.numeric_format() % totals[choice])
+
+                            - else
+                                tr#scores
+                                    - set total = poll.votes.count()
+
+                                    th
+                                        span.print-only: b
+                                            = _("Percent")
+                                            <br/>
+                                            = _("Score")
+
+                                    - set scores, counts, totals, max_score = poll.get_stats()
+
+                                    - for choice in choices
+                                        - set tooltip = statsTooltip(poll, counts, scores, choice)
+
+                                        th(class=cx('choice-sum', {'maximum': scores[choice] == max_score}),
+                                            data-toggle="popover",
+                                            data-trigger="hover",
+                                            data-container="body",
+                                            data-title=choice.title|forceescape|forceescape,
+                                            data-content=tooltip,
+                                            data-placement="top",
+                                            data-score=(scores[choice]*1.0/totals[choice] if totals[choice] != 0 else 1))
+
+                                            - if totals[choice] != 0
+                                                = ("%.f %%" % (scores[choice]*100.0/totals[choice]))
+                                            - else
+                                                N/A
+
+                                            span.print-only
+                                                = ("%.f" % scores[choice])
+
+                                    th.noprint
+
+- else
+    - if not poll.has_choices
+        #error-page
+            i.fa.fa-frown-o
+            h1= _("No choices")
+            p= _("This poll does not have any choices, so no votes can be cast. If this is your poll, please fix that by clicking the \"choices\" button on the top.")
+
+    - elif poll.votes
+        != alert("info", _("The results of this poll are currently hidden."))
+
+    - elif poll.is_expired
+        #error-page
+            i.fa.fa-frown-o
+            h1= _("No votes")
+            p= _("This poll has expired, but nobody voted.")
+
+    - else
+        p.text-muted.text-center
+            = _("No-one voted yet. Be the first!")
