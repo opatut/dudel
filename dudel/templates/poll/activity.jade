@@ -4,16 +4,25 @@
 extends poll/BASE.jade
 
 block content
-    .container
-        h3= _("Recent activity")
-            = " "
+    .container.small
+        .page-title
+        h1= _("Poll Activity")
             small= _("Most recent first")
 
-        != alert("warning", "This feature has not been implemented yet. Comments are also not shown.")
+        .activities
+            - set day = None
+            - set groups = poll.get_activity_groups()
+            - for activity_group in groups
+                - set activity = activity_group[0]
 
+                - if not day or (activity.created|in_timezone_of).date() != (day|in_timezone_of).date()
+                    - set day = activity.created
+                    h3.day-header= day|date
+
+                != activity.render(activity_group)
 
         - if poll.allow_comments
-            h3= _("Post a comment")
+            h2= _("Post a comment")
 
             form.form(method="POST")
                 = comment_form.hidden_tag()

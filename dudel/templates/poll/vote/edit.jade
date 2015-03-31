@@ -111,5 +111,5 @@ block content
             p= _("You can delete this vote if it has been cast accidentally. Note that we log who uses this, just to make sure.")
 
             a.action.danger.small(href=url_for('poll_vote_delete', slug=poll.slug, vote_id=vote.id))
-                i.fa.fa-trash-o
+                i.fa.fa-times
                 span= _("Delete vote")

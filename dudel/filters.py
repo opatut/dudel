@@ -46,7 +46,7 @@ def cx(*items):
 
 
 @app.template_filter()
-def in_timezone_of(datetime, ref):
+def in_timezone_of(datetime, ref=current_user):
     timezone = get_timezone(ref)
     return pytz.utc.localize(datetime).astimezone(timezone) if timezone else datetime
 

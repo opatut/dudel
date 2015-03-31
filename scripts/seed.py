@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dudel import app, db
-from dudel.models import Vote, User, Poll, PollType, Choice, VoteChoice
+from dudel.models import Vote, User, Poll, PollType, Choice, VoteChoice, Comment, VoteCreatedActivity
 from datetime import datetime, timedelta
 import random
 
@@ -12,11 +12,16 @@ consonants = "bcdfghjklmnprstvw"
 def random_name():
     length = random.randint(5, 10)
     offset = random.randint(0, 100)
-    return "".join([random.choice([vowels, consonants, consonants][(offset+i)%3]) for i in range(length)]).title()
+    return "".join([random.choice([vowels, consonants, consonants][(offset+i)%3]) for i in range(length)]).capitalize()
+
+def lorem(length):
+    return (" ".join(random_name() for i in range(length)) + ".").title()
 
 def random_votes(poll, n):
+    votes = []
     for x in range(n):
         vote = Vote()
+        votes.append(vote)
         # vote.name = "Voter %d" % (x+1)
         vote.name = random_name()
         poll.votes.append(vote)
@@ -26,6 +31,8 @@ def random_votes(poll, n):
             vote_choice.vote = vote
             vote_choice.choice = choice
             vote_choice.value = random.choice(poll.choice_values.all())
+
+    return votes
 
 def add_choices(poll, choices):
     for choice in choices:
@@ -82,5 +89,24 @@ poll_owner.owner = user2
 db.session.add(poll_owner)
 add_choices(poll_owner, ["Left", "Right", "Middle"])
 random_votes(poll_owner, 20)
+
+print("Creating poll: activities")
+poll_activities = Poll("Test: Activities", "test-activities", PollType.normal)
+db.session.add(poll_activities)
+
+for i in range(10):
+    rnd = random.random() * 2
+    activity = None
+    if rnd < 1:
+        activity = Comment()
+        activity.text = lorem(20)
+    else: # vote created
+        vote = random_votes(poll_activities, 1)[0]
+        activity = VoteCreatedActivity()
+        activity.vote = vote
+
+    poll_activities.post_activity(activity, random.choice([user, user2]))
+    activity.created += timedelta(minutes=-i*251)
+
 
 db.session.commit()

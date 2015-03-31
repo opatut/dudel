@@ -6,7 +6,8 @@ $variants: (
     (".secondary", #444),
     (".danger", #C20),
     (".success", #2A1),
-    (".text", transparent)
+    (".text", transparent),
+    (".link", transparent)
 );
 
 .action {
@@ -17,6 +18,7 @@ $variants: (
     border: none;
     border-radius: 2px;
     display: inline-block;
+    margin: 0;
     margin-right: 2px;
     text-align: center;
     text-shadow: 0 -1px 0px rgba(0, 0, 0, 0.2);
@@ -66,6 +68,21 @@ $variants: (
         line-height: $size;
     }
 
+    &.tiny {
+        padding: 0 4px;
+        height: 16px;
+        line-height: 16px;
+        font-size: 0.8em;
+
+        &.text, &.link {
+            padding: 0;
+        }
+
+        i.fa {
+            font-size: 12px;
+        }
+    }
+
     &.icon {
         $size: 24px;
         padding: 0;
@@ -96,6 +113,17 @@ $variants: (
         }
     }
 
+    &.text {
+        &, &:hover, &:active, &:focus {
+            text-shadow: none;
+            color: $primary-color;
+        }
+
+        &:hover {
+            color: lighten($primary-color, 20%);
+            text-decoration: underline;
+        }
+    }
 
     i.fa {
         font-size: 14px;

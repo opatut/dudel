@@ -1,0 +1,119 @@
+@import "vars";
+
+$offset: 30px;
+$avatarSize: 40px;
+
+.activities {
+    margin-left: $offset + 1px;
+    border-left: 2px solid #CCC;
+
+    .activity, .day-header, .comment {
+        margin: 10px 0px;
+        margin-left: -($offset + 1px);
+        display: flex;
+
+        > :first-child {
+            flex: 0 0 $offset*2;
+            text-align: center;
+        }
+
+        > .content {
+            flex-grow: 1;
+        }
+
+        > .time {
+            flex: 0 0 60px;
+            text-align: right;
+            padding: 10px;
+            color: #AAA;
+        }
+    }
+
+    .activity {
+        align-items: center;
+
+        .icon {
+            width: 32px;
+            height: 32px;
+            line-height: 28px;
+            border: 2px solid #CCC;
+            background: white;
+            // background: #D0D8D8;
+            border-radius: 50%;
+            overflow: hidden;
+            text-align: center;
+            display: inline-block;
+        }
+    }
+
+    .day-header {
+        background: $silver;
+        padding: $offset/2 $offset;
+        border-bottom: 2px solid #CCC;
+        margin-top: 40px;
+    }
+
+    .comment {
+        border: 1px solid transparent; //#CCC;
+        // background: $silver;
+
+        .avatar {
+            align-self: stretch;
+            overflow: hidden;
+            position: relative;
+
+            img {
+                margin-top: 10px;
+                width: $avatarSize;
+                height: $avatarSize;
+                border-radius: $avatarSize/2;
+                z-index: 2;
+                position: absolute;
+                left: 9px;
+                background: white;
+                border: 2px solid #CCC;
+                padding: 2px;
+            }
+
+            .line {
+                width: 2px;
+                background: #CCC;
+                height: 100%;
+                position: absolute;
+                left: 28px;
+                z-index: 1;
+            }
+        }
+
+        .content {
+            padding: 10px 0;
+
+            .meta {
+                // margin-bottom: 5px;
+                // padding-bottom: 5px;
+                // border-bottom: 1px solid #CCC;
+                font-size: 0.8em;
+                color: #888;
+                font-weight: bold;
+                // text-transform: uppercase;
+            }
+
+            > .text {
+                > :last-child {
+                    margin-bottom: 0;
+                }
+            }
+
+            .actions {
+                background: $silver;
+                // border-top: 1px solid #DDD;
+                padding: 5px 10px;
+                margin-top: 5px;
+
+                .action {
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+}

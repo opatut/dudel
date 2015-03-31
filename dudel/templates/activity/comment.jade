@@ -1,0 +1,26 @@
+- set comment = activity
+
+a.anchor(name="activity-#{comment.id}")
+
+.comment
+    .avatar
+        .line
+        img(src=comment.get_avatar(64))
+
+    .content
+        .meta
+            span= comment.get_user_link()
+            span= " commented:"
+
+        .text
+            != comment.text|markdown
+
+
+        - if comment.user_can_edit(current_user)
+            .actions
+                a.action.tiny.text(href=url_for('poll_delete_comment', slug=comment.poll.slug, id=comment.id))
+                    i.fa.fa-times
+                    span= _("Delete")
+
+    .time
+        span= comment.created|time

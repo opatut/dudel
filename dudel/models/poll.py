@@ -16,7 +16,7 @@ from enum import Enum
 from dudel import db, mail, app
 from dudel.models.choice import Choice
 from dudel.models.choicevalue import ChoiceValue
-from dudel.models.comment import Comment
+from dudel.models.activity import Comment
 from dudel.models.pollwatch import PollWatch
 from dudel.models.vote import Vote
 from dudel.models.invitation import Invitation
@@ -94,7 +94,7 @@ class Poll(db.Model):
     choices = db.relationship("Choice", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
     choice_values = db.relationship("ChoiceValue", backref="poll", lazy="dynamic")
     watchers = db.relationship("PollWatch", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
-    comments = db.relationship("Comment", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
+    activities = db.relationship("Activity", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
     votes = db.relationship("Vote", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
     invitations = db.relationship("Invitation", backref="poll", cascade="all, delete-orphan", lazy="dynamic")
 
@@ -118,6 +118,10 @@ class Poll(db.Model):
             self.choice_values.append(ChoiceValue("yes", "check", "9C6", 1.0))
             self.choice_values.append(ChoiceValue("no", "ban", "F96", 0.0))
             self.choice_values.append(ChoiceValue("maybe", "question", "FF6", 0.5))
+
+    @property
+    def comments(self):
+        return self.activities.filter_by(type="comment")
 
     @property
     def is_expired(self):
@@ -185,8 +189,8 @@ class Poll(db.Model):
     def has_choices(self):
         return len(self.get_choices()) > 0
 
-    def get_url(self):
-        return url_for("poll", slug=self.slug)
+    def get_url(self, subpage=None, **kwargs):
+        return url_for("poll" + (("_%s" % subpage) if subpage else ""), slug=self.slug, **kwargs)
 
     def get_vote_choice(self, vote, choice):
         if not self._vote_choice_map:
@@ -394,8 +398,8 @@ class Poll(db.Model):
         for vote in self.votes:
             dates.append(vote.created)
 
-        for comment in self.comments:
-            dates.append(comment.created)
+        for activity in self.activities:
+            dates.append(activity.created)
 
         dates = [date for date in dates if date]
 
@@ -432,3 +436,36 @@ class Poll(db.Model):
             user_id = current_user.id
         to_sign = '{}/{}'.format(self.slug, user_id)
         return hmac.new(app.config['SECRET_KEY'], to_sign).hexdigest()
+
+    def post_activity(self, activity, user):
+        activity.poll = self
+        activity.created = datetime.utcnow()
+
+        if user.is_authenticated():
+            activity.user = user
+        elif isinstance(user, str):
+            activity.name = user
+
+        db.session.add(activity)
+
+    def get_activity_groups(self, ref=current_user):
+        activities = self.activities.order_by('created DESC')
+
+        from dudel.filters import in_timezone_of
+
+        mergeable = ['vote_created']
+        groups = []
+
+        for activity in activities:
+
+            # create a new group
+            if (not groups) or \
+                (activity.type not in mergeable) or \
+                (groups[-1][0].type != activity.type) or \
+                (in_timezone_of(groups[-1][0].created, ref).date() != in_timezone_of(activity.created, ref).date()):
+
+                groups.append([])
+
+            groups[-1].append(activity)
+
+        return groups

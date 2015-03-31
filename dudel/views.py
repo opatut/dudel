@@ -345,18 +345,14 @@ def poll_activity(slug):
 
     if poll.allow_comments and comment_form.validate_on_submit():
         comment = Comment()
-        comment.created = datetime.utcnow()
         comment.text = comment_form.text.data.strip()
 
-        if current_user.is_anonymous():
-            comment.name = comment_form.name.data
-        else:
-            comment.user = current_user
+        user = comment_form.name.data if current_user.is_anonymous() else current_user
+        poll.post_activity(comment, user)
 
-        poll.comments.append(comment)
         flash(gettext("Your comment was saved."), "success")
         db.session.commit()
-        return redirect(poll.get_url() + "#comment-" + str(comment.id))
+        return redirect(poll.get_url("activity") + "#activity-" + str(comment.id))
 
     return render_template("poll/activity.jade", poll=poll, comment_form=comment_form)
 
@@ -1036,11 +1032,12 @@ def poll_vote_edit(slug, vote_id):
 
     if not request.method == "POST":
         poll.fill_vote_form(form)
+
         for subform in form.vote_choices:
             vote_choice = VoteChoice.query.filter_by(
                 vote_id=vote.id, choice_id=subform.choice_id.data).first()
             subform.comment.data = vote_choice.comment if vote_choice else ""
-            subform.amount.data = vote_choice.amount
+            subform.amount.data = vote_choice.amount if vote_choice else 0
 
     return render_template("poll/vote/edit.jade", poll=poll, form=form, vote=vote)
 

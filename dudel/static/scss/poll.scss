@@ -217,34 +217,28 @@ tr.choice td {
 
 .poll-details {
     list-style: none;
-    margin: 4px -8px;
-    margin-bottom: 8px;
+    margin: 8px -8px;
     padding: 0;
 
     li {
         display: block;
         color: #666;
-        padding: 4px 8px;
+        padding: 0 8px;
 
         .title {
             display: inline-block;
         }
 
         .content {
-            font-weight: bold;
+            // font-weight: bold;
         }
 
-        i {
+        i.fa {
             display: inline-block;
-            width: 16px;
-            text-align: center;
+            width: 20px;
+            text-align: left;
+            font-size: 14px;
         }
-    }
-}
-
-@media(min-width: 786px) {
-    .poll-details li {
-        display: inline-block;
     }
 }
 
@@ -312,8 +306,19 @@ header.poll {
         margin: 0;
     }
 
-    .poll-actions {
-        float: right;
+    .poll-data {
+        display: flex;
+        width: 100%;
+
+        > * {
+            flex: 1 1 auto;
+        }
+
+        .poll-actions {
+            text-align: right;
+            align-self: flex-end;
+            padding-bottom: 1px;
+        }
     }
 }
 
@@ -325,7 +330,7 @@ header.poll {
     align-items: flex-end;
 
     li {
-        flex: 1 1 auto;
+        flex: 1 1 100px;
         margin: 0 4px;
         padding: 0;
 
@@ -363,6 +368,12 @@ header.poll {
                 border-radius: 100px !important;
                 font-size: 9pt;
             }
+
+            .badge {
+                position: absolute;
+                right: 10px;
+                top: 10px;
+            }
         }
 
         &.active a, &.active a:hover {
@@ -379,10 +390,45 @@ header.poll {
 
         i.fa {
             margin: 0;
+            font-size: 20px;
         }
 
         span {
             display: none;
         }
+    }
+
+    header.poll .poll-data .poll-actions .action {
+        display: block;
+        margin: 0;
+        margin-bottom: 2px;
+    }
+}
+
+@media #{$media-tablet-desktop} {
+    .poll-details li {
+        display: inline-block;
+    }
+}
+
+@media #{$media-phone-tablet} {
+    .poll-tabs li a .badge {
+        display: none;
+    }
+
+    header.poll .poll-data {
+        display: block;
+
+        .poll-actions {
+            text-align: left;
+
+        }
+    }
+}
+
+
+@media #{$media-desktop} {
+    .poll-details {
+        margin-bottom: 0;
     }
 }

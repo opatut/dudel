@@ -43,7 +43,7 @@ block content
                             tr(class=("choice" + (" deleted" if choice.deleted else "") + (" editing" if edit_id == choice.id else "")))
                                 td
                                     - if choice.deleted
-                                        i.fa.fa-trash-o
+                                        i.fa.fa-times
                                     - else
                                         i.fa.fa-check
 
@@ -84,7 +84,7 @@ block content
                                         = " "
 
                                         a.action.icon(href="?toggle=#{choice.id}&_csrf_token=#{CSRF}")
-                                            i.fa.fa-trash-o
+                                            i.fa.fa-times
                                             span= _("Delete")
 
                         - else

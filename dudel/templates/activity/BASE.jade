@@ -1,0 +1,13 @@
+a(name="activity-#{activity.id}")
+
+.activity
+    div
+        .icon
+            block icon
+
+    .content
+        block content
+
+    .time
+        span= activity.created|time
+

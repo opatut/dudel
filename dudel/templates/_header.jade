@@ -12,22 +12,22 @@ header#header
                 li
                     a(href=url_for('index'))
                         i.fa.fa-bars
-                        span Menu
+                        span= _("Menu")
                         //- i.fa.fa-chevron-down
 
                     ul.submenu
                         - if config.HOME_URL
                             li: a(href=config.HOME_URL, target="_blank")
                                 i.fa.fa-home
-                                = config.HOME_TEXT or "Home"
+                                span= config.HOME_TEXT or _("Home")
 
                         li: a(href=url_for('index'))
                             i.fa.fa-plus
-                            = _("Create poll")
+                            span= _("Create poll")
 
                         li: a(href=url_for('about'))
                             i.fa.fa-question-circle
-                            = _("About")
+                            span= _("About")
 
                 - if current_user.is_authenticated()
                     - set count = 5
@@ -36,13 +36,13 @@ header#header
                     li
                         a(href=url_for("user_polls"))
                             i.fa.fa-gavel
-                            span My Polls
+                            span= _("My Polls")
                             //- i.fa.fa-chevron-down
 
                         ul.submenu.left
                             - for poll in polls[:count]
                                 li: a(href=poll.get_url())
-                                    = poll.title
+                                    span= poll.title
 
                             - if polls|length > count
                                 li.separator
@@ -55,8 +55,7 @@ header#header
                     a(href=url_for('user_settings'))
                         - if current_user.is_anonymous()
                             i.fa.fa-user
-                        span Account
-                        //- i.fa.fa-chevron-down
+                        span= _("Account")
 
                         - if current_user.is_authenticated()
                             img(src=current_user.get_avatar(32), width=32, height=32)
@@ -66,27 +65,27 @@ header#header
                             - if config.REGISTRATIONS_ENABLED
                                 li: a(href=url_for('register'))
                                     i.fa.fa-pencil
-                                    = _('Register')
+                                    span= _('Register')
 
                             li: a(href=url_for('login'))
                                 i.fa.fa-sign-in
-                                = _('Login')
+                                span= _('Login')
 
                         - else
                             li: a(href=url_for('user_settings'))
                                 i.fa.fa-cogs
-                                | Settings
+                                span= _('Settings')
 
                             - if config.GROUPS_ENABLED or current_user.groups
                                 li: a(href=url_for('groups'))
                                     i.fa.fa-users
-                                    | Groups
+                                    span= _('Groups')
 
                             - if current_user.is_admin
                                 li: a(href=url_for('admin_index'))
                                     i.fa.fa-cogs
-                                    | Admin panel
+                                    span= _('Admin panel')
 
                             li: a(href=url_for('logout', next=request.url))
                                 i.fa.fa-sign-out
-                                | Logout
+                                span= _('Logout')

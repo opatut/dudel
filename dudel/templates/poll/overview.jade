@@ -11,5 +11,11 @@ block content
             != poll.description|markdown
             hr/
 
+        .text-right(style="margin-bottom: 10px;")
+            button.action#filter-button(type="button", data-toggle="modal", data-target="#filter-modal")
+                i.fa.fa-filter
+                span= _("Filter")
+
         include poll/_table.jade
 
+    include poll/_filter.jade

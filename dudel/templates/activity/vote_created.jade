@@ -1,0 +1,19 @@
+extend activity/BASE.jade
+
+block icon
+    i.fa.fa-check
+
+block content
+    - set len = group|length
+
+    - for activity in group
+        span.user= activity.get_user_link()
+        - if (len-1)|string == loop.index|string
+            = " and "
+        - elif not loop.last
+            = ", "
+
+    - if len > 1
+        = " have voted"
+    - else
+        = " has voted"

@@ -13,6 +13,7 @@ scss = Bundle(
     'scss/form.scss',
     'scss/calendar.scss',
     'scss/iconpreview.scss',
+    'scss/activities.scss',
     'scss/timeinput.scss',
     'scss/slider.scss',
     filters='scss',

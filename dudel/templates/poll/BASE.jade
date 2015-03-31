@@ -6,14 +6,17 @@ block title
 block header
     header.poll
         .container
-            .poll-actions
-                block actions
+            .poll-data
+                .poll-title
+                    h1= poll.title
+                        small
+                            block polltitl
 
-            h1= poll.title
-                small
-                    block polltitle
+                    include poll/_properties.jade
 
-            include poll/_properties.jade
+                .poll-actions
+                    block actions
+
 
             nav: ul.poll-tabs
                 li(class=("active" if request.endpoint in ("poll_overview",) else ""))
@@ -23,9 +26,14 @@ block header
 
                 li(class=("active" if request.endpoint in ("poll_activity",) else ""))
                     a(href=url_for('poll_activity', slug=poll.slug), data-shortcut="g a")
-                        i.fa.fa-comments-o
+                        i.fa.fa-heartbeat
                         span= _("Activity")
-                        //- b.label.label-info 5
+
+                        - set comment_count = poll.comments.count()
+                        - if comment_count
+                            div.badge
+                                i.fa.fa-comments
+                                span= comment_count
 
                 - if poll.user_can_edit(current_user)
                     li(class=("active" if request.endpoint in ("poll_edit", "poll_edit_values") else ""))

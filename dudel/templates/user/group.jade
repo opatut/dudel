@@ -44,8 +44,8 @@
                                                 span= _("Make admin")
 
                                         - else
-                                            a.action.icon.danger(href=url_for('group_disband', id=group.id, _csrf_token=CSRF), title=_("Disband group"))
-                                                i.fa.fa-trash-o
+                                            a.action.icon.danger(href=url_for('group_disband', id=group.id), title=_("Disband group"))
+                                                i.fa.fa-times
                                                 span= _("Disband group")
 
                                     - else
