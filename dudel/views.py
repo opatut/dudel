@@ -558,18 +558,13 @@ def poll_edit_choices(slug, step=1):
 
     localization_context = poll.localization_context
 
-    choices_before = poll.choices[:]
+    choices_deleted_before = {choice: choice.deleted for choice in poll.choices}
     def post_update_activity():
-        choices_after = poll.choices
-
         activity = ChoicesUpdatedActivity()
 
-        for choice in choices_before:
-            if not choice in choices_after:
-                activity.choices_removed.append(choice)
-        for choice in choices_after:
-            if not choice in choices_before:
-                activity.choices_added.append(choice)
+        for choice in poll.choices:
+            if choice.deleted != choices_deleted_before[choice]:
+                (activity.choices_removed if choice.deleted else activity.choices_added).append(choice)
 
         poll.post_activity(activity)
 

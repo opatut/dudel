@@ -12,8 +12,7 @@ block icon
 block content
     span.user= activity.get_user_link()
 
-    - set added = activity.choices_added.all()
-    - set removed = activity.choices_removed.all()
+    - set added, removed = activity.perform_grouping(group)
 
     - set a = (" added the choices " + format_choice_added|map(added)|join(" ")) if added else ""
     - set r = (" removed the choices " + format_choice_removed|map(removed)|join(" ")) if removed else ""

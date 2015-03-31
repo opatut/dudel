@@ -13,6 +13,9 @@ class Activity(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     __mapper_args__ = { 'polymorphic_identity': 'activity', 'polymorphic_on': type }
 
+    groupable = False
+    notifiable = False
+
     def get_user_link(self):
         if self.user:
             return self.user.displayname
@@ -30,7 +33,7 @@ class Activity(db.Model):
 
     def render(self, group):
         # TODO: sanitize path
-        return render_template("activity/" + self.type + ".jade", activity=self, group=group)
+        return render_template("activity/%s.jade" % self.type, activity=self, group=group)
 
 
 class PollCreatedActivity(Activity):
@@ -42,6 +45,8 @@ class VoteCreatedActivity(Activity):
     id = db.Column(db.Integer, db.ForeignKey('activity.id'), primary_key=True)
     vote_id = db.Column(db.Integer, db.ForeignKey('vote.id'))
     __mapper_args__ = { 'polymorphic_identity': 'vote_created' }
+    groupable = True
+    notifiable = True
 
 
 choices_updated_added = db.Table('choices_updated_added', db.metadata,
@@ -59,6 +64,26 @@ class ChoicesUpdatedActivity(Activity):
     __mapper_args__ = { 'polymorphic_identity': 'choices_updated' }
     choices_added = db.relationship("Choice", backref="added_in_activity", lazy="dynamic", secondary="choices_updated_added")
     choices_removed = db.relationship("Choice", backref="removed_in_activity", lazy="dynamic", secondary="choices_updated_removed")
+    groupable = True #TODO
+    notifiable = True
+
+    def perform_grouping(self, group):
+        added = []
+        removed = []
+
+        for a in reversed(group):
+            for c in a.choices_added:
+                if c in removed:
+                    removed.remove(c)
+                else:
+                    added.append(c)
+            for c in a.choices_removed:
+                if c in added:
+                    added.remove(c)
+                else:
+                    removed.append(c)
+
+        return added, removed
 
 
 class Comment(Activity):
@@ -66,6 +91,7 @@ class Comment(Activity):
     text = db.Column(db.Text)
     deleted = db.Column(db.Boolean, default=False)
     __mapper_args__ = { 'polymorphic_identity': 'comment' }
+    notifiable = True
 
     def user_can_edit(self, user):
         if not self.user: return True

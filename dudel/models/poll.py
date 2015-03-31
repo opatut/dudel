@@ -458,14 +458,13 @@ class Poll(db.Model):
 
         from dudel.filters import in_timezone_of
 
-        mergeable = ['vote_created']
         groups = []
 
         for activity in activities:
 
             # create a new group
             if (not groups) or \
-                (activity.type not in mergeable) or \
+                (not activity.groupable) or \
                 (groups[-1][0].type != activity.type) or \
                 (in_timezone_of(groups[-1][0].created, ref).date() != in_timezone_of(activity.created, ref).date()):
 

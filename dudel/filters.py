@@ -94,6 +94,9 @@ def group_title(obj, poll):
 
 @app.template_filter()
 def natural_enumerate(items, between=",", last=" and "):
+    # remove empty items (None, "", ...)
+    items = filter(lambda x: x, items)
+
     if not items:
         return ""
     elif len(items) == 1:
