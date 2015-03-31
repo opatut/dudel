@@ -6,16 +6,12 @@ from dudel import db, gravatar
 
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(40))
     created = db.Column(db.DateTime)
     poll_id = db.Column(db.Integer, db.ForeignKey("poll.id"))
     name = db.Column(db.String(80))
-    type = db.Column(db.String(40))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'activity',
-        'polymorphic_on': type
-    }
+    __mapper_args__ = { 'polymorphic_identity': 'activity', 'polymorphic_on': type }
 
     def get_user_link(self):
         if self.user:
@@ -37,23 +33,39 @@ class Activity(db.Model):
         return render_template("activity/" + self.type + ".jade", activity=self, group=group)
 
 
+class PollCreatedActivity(Activity):
+    id = db.Column(db.Integer, db.ForeignKey('activity.id'), primary_key=True)
+    __mapper_args__ = { 'polymorphic_identity': 'poll_created' }
+
+
 class VoteCreatedActivity(Activity):
     id = db.Column(db.Integer, db.ForeignKey('activity.id'), primary_key=True)
     vote_id = db.Column(db.Integer, db.ForeignKey('vote.id'))
+    __mapper_args__ = { 'polymorphic_identity': 'vote_created' }
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'vote_created'
-    }
+
+choices_updated_added = db.Table('choices_updated_added', db.metadata,
+    db.Column('choice_id', db.Integer, db.ForeignKey('choice.id')),
+    db.Column('activity_id', db.Integer, db.ForeignKey('activity.id'))
+)
+
+choices_updated_removed = db.Table('choices_updated_removed', db.metadata,
+    db.Column('choice_id', db.Integer, db.ForeignKey('choice.id')),
+    db.Column('activity_id', db.Integer, db.ForeignKey('activity.id'))
+)
+
+class ChoicesUpdatedActivity(Activity):
+    id = db.Column(db.Integer, db.ForeignKey('activity.id'), primary_key=True)
+    __mapper_args__ = { 'polymorphic_identity': 'choices_updated' }
+    choices_added = db.relationship("Choice", backref="added_in_activity", lazy="dynamic", secondary="choices_updated_added")
+    choices_removed = db.relationship("Choice", backref="removed_in_activity", lazy="dynamic", secondary="choices_updated_removed")
 
 
 class Comment(Activity):
     id = db.Column(db.Integer, db.ForeignKey('activity.id'), primary_key=True)
     text = db.Column(db.Text)
     deleted = db.Column(db.Boolean, default=False)
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'comment'
-    }
+    __mapper_args__ = { 'polymorphic_identity': 'comment' }
 
     def user_can_edit(self, user):
         if not self.user: return True

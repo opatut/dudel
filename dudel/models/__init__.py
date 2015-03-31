@@ -1,6 +1,7 @@
 from .choice import Choice
 from .choicevalue import ChoiceValue
-from .activity import Activity, Comment, VoteCreatedActivity
+from .activity import Activity, Comment, VoteCreatedActivity, \
+    PollCreatedActivity, ChoicesUpdatedActivity
 from .group import Group
 from .member import Member
 from .poll import Poll, PollType

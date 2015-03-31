@@ -1,0 +1,8 @@
+extend activity/BASE.jade
+
+block icon
+    i.fa.fa-birthday-cake
+
+block content
+    span.user= activity.get_user_link()
+    = " created the poll"

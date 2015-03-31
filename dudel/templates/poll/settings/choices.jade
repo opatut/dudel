@@ -7,107 +7,106 @@ block foot
     script(src=url_for('static', filename='js/poll_edit_choices.js'), type="text/javascript", lang="javascript")
 
 block content
-    .container
-        - if poll.type in (PollType.normal, PollType.numeric)
-            .halfsize
-                - if poll.type == PollType.numeric
-                    .pull-right
-                        a.action.primary(href=url_for("poll_edit_values", slug=poll.slug))
-                            span= _("Adjust value range")
-                            i.fa.fa-arrow-right
+    - if poll.type in (PollType.normal, PollType.numeric)
+        .container.small
+            - if poll.type == PollType.numeric
+                .pull-right
+                    a.action.primary(href=url_for("poll_edit_values", slug=poll.slug))
+                        span= _("Adjust value range")
+                        i.fa.fa-arrow-right
 
-                table.table
-                    - if poll.choices.count()
-                        tr.header
-                            td
-                            td(colspan=3)= _("Active choices")
 
-                        tr
-                            th(width=10)
-                            th.nobr= _("Choice")
-                            th.nobr(width=10)= _("Votes cast")
-                            th.nobr(width=10)= _("Actions")
+            - if not poll.choices.count()
+                != alert("warning", "You have not yet created any choices.")
 
-                        - set total_votes = poll.votes.count()
-
-                        - set deleted_header_shown = False
-
-                        - for choice in poll.choices|sort()
-                            - if not deleted_header_shown and choice.deleted
-                                tr.header
-                                    td
-                                    td(colspan=3) Deleted choices
-
-                                - set deleted_header_shown = True
-
-                            tr(class=("choice" + (" deleted" if choice.deleted else "") + (" editing" if edit_id == choice.id else "")))
-                                td
-                                    - if choice.deleted
-                                        i.fa.fa-times
-                                    - else
-                                        i.fa.fa-check
-
-                                td.choice
-                                    - if edit_id == choice.id
-                                        form.form(method="POST")
-                                            = edit_form.hidden_tag()
-
-                                            .row
-                                                .col-xs-10
-                                                    = edit_form.text(class="form-control", autofocus=True)
-                                                    = form_errors(edit_form)
-
-                                                .col-xs-2
-                                                    button.action.primary(type="submit")
-                                                        i.fa.fa-check
-
-                                    - else
-                                        = choice.title
-
-                                - set vote_count = choice.vote_choices.count()
-
-                                td.nobr(class=("color " + ("green" if vote_count >= total_votes else ("red" if vote_count == 0 else "orange"))))
-                                    strong= vote_count
-                                    | / #{total_votes}
-
-                                td.nobr
-                                    - if choice.deleted
-                                        a.action.icon(href="?toggle=#{choice.id}&_csrf_token=#{CSRF}")
-                                            i.fa.fa-undo
-                                            span= _("Restore")
-
-                                    - else
-                                        a.action.icon(href="?edit=#{choice.id}")
-                                            i.fa.fa-pencil
-                                            span= _("Edit")
-
-                                        = " "
-
-                                        a.action.icon(href="?toggle=#{choice.id}&_csrf_token=#{CSRF}")
-                                            i.fa.fa-times
-                                            span= _("Delete")
-
-                        - else
-                            != alert("warning", "You have not yet created any choices.")
-
+            table.table
+                - if poll.choices.count()
                     tr.header
                         td
-                        td(colspan=3)= _("Add a choice")
+                        td(colspan=3)= _("Active choices")
 
                     tr
-                        td
-                        td(colspan=2)
-                            form.form(method="POST", id="add-form")
-                                = form_errors(form)
-                                = form.hidden_tag()
-                                = form.text(class="form-control", placeholder=_("Add a choice"), size=50)
-                        td
-                            button.action(type="submit", form="add-form")
-                                span= _("Add")
+                        th(width=10)
+                        th.nobr= _("Choice")
+                        th.nobr(width=10)= _("Votes cast")
+                        th.nobr(width=10)= _("Actions")
+
+                    - set total_votes = poll.votes.count()
+
+                    - set deleted_header_shown = False
+
+                    - for choice in poll.choices|sort()
+                        - if not deleted_header_shown and choice.deleted
+                            tr.header
+                                td
+                                td(colspan=3) Deleted choices
+
+                            - set deleted_header_shown = True
+
+                        tr(class=("choice" + (" deleted" if choice.deleted else "") + (" editing" if edit_id == choice.id else "")))
+                            td
+                                - if choice.deleted
+                                    i.fa.fa-times
+                                - else
+                                    i.fa.fa-check
+
+                            td.choice
+                                - if edit_id == choice.id
+                                    form.form(method="POST")
+                                        = edit_form.hidden_tag()
+
+                                        .row
+                                            .col-xs-10
+                                                = edit_form.text(class="form-control", autofocus=True)
+                                                = form_errors(edit_form)
+
+                                            .col-xs-2
+                                                button.action.primary(type="submit")
+                                                    i.fa.fa-check
+
+                                - else
+                                    = choice.title
+
+                            - set vote_count = choice.vote_choices.count()
+
+                            td.nobr(class=("color " + ("green" if vote_count >= total_votes else ("red" if vote_count == 0 else "orange"))))
+                                strong= vote_count
+                                | / #{total_votes}
+
+                            td.nobr
+                                - if choice.deleted
+                                    a.action.icon(href="?toggle=#{choice.id}&_csrf_token=#{CSRF}")
+                                        i.fa.fa-undo
+                                        span= _("Restore")
+
+                                - else
+                                    a.action.icon(href="?edit=#{choice.id}")
+                                        i.fa.fa-pencil
+                                        span= _("Edit")
+
+                                    a.action.icon(href="?toggle=#{choice.id}&_csrf_token=#{CSRF}")
+                                        i.fa.fa-times
+                                        span= _("Delete")
+
+                tr.header
+                    td
+                    td(colspan=3)= _("Add a choice")
+
+                tr
+                    td
+                    td(colspan=2)
+                        form.form(method="POST", id="add-form")
+                            = form_errors(form)
+                            = form.hidden_tag()
+                            = form.text(class="form-control", placeholder=_("Add a choice"), size=50)
+                    td
+                        button.action(type="submit", form="add-form")
+                            span= _("Add")
 
 
 
-        - elif poll.type in (PollType.datetime, PollType.date)
+    - elif poll.type in (PollType.datetime, PollType.date)
+        .container
             - if not poll.timezone
                 != alert("info", _("This poll is using coordinated time, which means the choices are interpreted as your profile timezone (%(userzone)s). They will be displayed in the user's respective timezone for everyone else.", userzone=current_timezone))
             - elif poll.timezone != current_timezone

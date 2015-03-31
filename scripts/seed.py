@@ -2,7 +2,8 @@ import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dudel import app, db
-from dudel.models import Vote, User, Poll, PollType, Choice, VoteChoice, Comment, VoteCreatedActivity
+from dudel.models import Vote, User, Poll, PollType, Choice, VoteChoice, \
+    Comment, VoteCreatedActivity, ChoicesUpdatedActivity, PollCreatedActivity
 from datetime import datetime, timedelta
 import random
 
@@ -13,6 +14,11 @@ def random_name():
     length = random.randint(5, 10)
     offset = random.randint(0, 100)
     return "".join([random.choice([vowels, consonants, consonants][(offset+i)%3]) for i in range(length)]).capitalize()
+
+def random_subset(items):
+    shuffled = items[:]
+    random.shuffle(shuffled)
+    return shuffled[:random.randint(0, len(shuffled))]
 
 def lorem(length):
     return (" ".join(random_name() for i in range(length)) + ".").title()
@@ -92,15 +98,22 @@ random_votes(poll_owner, 20)
 
 print("Creating poll: activities")
 poll_activities = Poll("Test: Activities", "test-activities", PollType.normal)
+add_choices(poll_activities, ["One", "Two", "Three", "Four", "Five", "Six"])
 db.session.add(poll_activities)
 
-for i in range(10):
-    rnd = random.random() * 2
+for i in range(20):
+    rnd = random.random() * 3
     activity = None
-    if rnd < 1:
+    if i == 19:
+        activity = PollCreatedActivity()
+    elif rnd < 1:
         activity = Comment()
         activity.text = lorem(20)
-    else: # vote created
+    elif rnd < 2:
+        activity = ChoicesUpdatedActivity()
+        activity.choices_added = random_subset(poll_activities.choices)
+        activity.choices_removed = random_subset(poll_activities.choices)
+    else:
         vote = random_votes(poll_activities, 1)[0]
         activity = VoteCreatedActivity()
         activity.vote = vote

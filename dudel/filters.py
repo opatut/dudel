@@ -93,6 +93,25 @@ def group_title(obj, poll):
 
 
 @app.template_filter()
+def natural_enumerate(items, between=",", last=" and "):
+    if not items:
+        return ""
+    elif len(items) == 1:
+        return items[0]
+    else:
+        return between.join(items[:-1]) + last + items[-1]
+
+@app.template_filter()
+def join(items, between=""):
+    return between.join(items)
+
+
+@app.template_filter('map')
+def map_(fn, *items):
+    return map(fn, *items)
+
+
+@app.template_filter()
 def transpose(matrix):
     return [list(i) for i in zip(*matrix)]
 

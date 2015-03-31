@@ -30,7 +30,8 @@ from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, \
     AmountRangeForm
 from dudel.login import get_user, force_login, logout as dudel_logout
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, \
-    Comment, PollWatch, Member, Group, Invitation, PollType, VoteCreatedActivity
+    Comment, PollWatch, Member, Group, Invitation, PollType, \
+    VoteCreatedActivity, PollCreatedActivity, ChoicesUpdatedActivity
 from dudel.util import PollExpiredException, PollActionException, \
     random_string, get_slug, DateTimePart, PartialDateTime, \
     LocalizationContext
@@ -88,6 +89,11 @@ def index():
 
         if success:
             db.session.add(poll)
+
+            # Post the PollCreatedActivity
+            activity = PollCreatedActivity()
+            poll.post_activity(activity, current_user if current_user.is_authenticated() else None)
+
             db.session.commit()
             flash(gettext("Poll created"))
             return redirect(url_for("poll_edit_choices", slug=poll.slug))
@@ -552,6 +558,21 @@ def poll_edit_choices(slug, step=1):
 
     localization_context = poll.localization_context
 
+    choices_before = poll.choices[:]
+    def post_update_activity():
+        choices_after = poll.choices
+
+        activity = ChoicesUpdatedActivity()
+
+        for choice in choices_before:
+            if not choice in choices_after:
+                activity.choices_removed.append(choice)
+        for choice in choices_after:
+            if not choice in choices_before:
+                activity.choices_added.append(choice)
+
+        poll.post_activity(activity)
+
     if poll.type == PollType.datetime:
         form = DateTimeSelectForm()
         args["form"] = form
@@ -602,6 +623,8 @@ def poll_edit_choices(slug, step=1):
                         poll.choices.append(choice)
                         db.session.add(choice)
 
+                post_update_activity()
+
                 db.session.commit()
                 flash(gettext("The choices list has been updated."), "success")
                 return redirect(poll.get_url())
@@ -630,6 +653,8 @@ def poll_edit_choices(slug, step=1):
                         choice.date = date
                         poll.choices.append(choice)
                         db.session.add(choice)
+
+                post_update_activity()
 
                 db.session.commit()
                 flash(gettext("The choices list has been updated."), "success")
@@ -661,6 +686,8 @@ def poll_edit_choices(slug, step=1):
                 poll.choices.append(choice)
                 db.session.add(choice)
 
+            post_update_activity()
+
             db.session.commit()
 
             if choice.deleted:
@@ -679,6 +706,8 @@ def poll_edit_choices(slug, step=1):
             if not choice.deleted and not poll.choice_groups_valid(choice.get_hierarchy(), choice.id):
                 flash(gettext("You cannot undelete this choice due to grouping conflicts."), "error")
                 return redirect(url_for("poll_edit_choices", slug=poll.slug))
+
+            post_update_activity()
 
             db.session.commit()
             if choice.deleted:
@@ -704,6 +733,7 @@ def poll_edit_choices(slug, step=1):
                     if not poll.choice_groups_valid(choice.get_hierarchy(), choice.id):
                         flash(gettext("This choice text is not allowed due to grouping conflicts."), "error")
                     else:
+                        # post_update_activity()
                         db.session.commit()
                         flash(gettext("The choice was edited."), "success")
                         return redirect(url_for("poll_edit_choices", slug=poll.slug))
@@ -1141,6 +1171,10 @@ def poll_copy(slug):
             flash(gettext("You have invited %(count)d users.", count=len(invited)), "success")
         if failed:
             flash(gettext("%(count)d users could not be invited.", count=len(failed)), "info")
+
+        # Post the PollCreatedActivity
+        activity = PollCreatedActivity()
+        new_poll.post_activity(activity, current_user if current_user.is_authenticated() else None)
 
         db.session.commit()
         return redirect(new_poll.get_url())

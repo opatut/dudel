@@ -9,17 +9,21 @@ block content
         h1= _("Poll Activity")
             small= _("Most recent first")
 
-        .activities
-            - set day = None
-            - set groups = poll.get_activity_groups()
-            - for activity_group in groups
-                - set activity = activity_group[0]
+        - set groups = poll.get_activity_groups()
 
-                - if not day or (activity.created|in_timezone_of).date() != (day|in_timezone_of).date()
-                    - set day = activity.created
-                    h3.day-header= day|date
+        - if groups and groups[0]
+            .activities
+                - set day = None
+                - for activity_group in groups
+                    - set activity = activity_group[0]
 
-                != activity.render(activity_group)
+                    - if not day or (activity.created|in_timezone_of).date() != (day|in_timezone_of).date()
+                        - set day = activity.created
+                        h3.day-header= day|date
+
+                    != activity.render(activity_group)
+        - else
+            != alert("info", _("No activity has been recorded on this poll yet."))
 
         - if poll.allow_comments
             h2= _("Post a comment")

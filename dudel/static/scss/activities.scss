@@ -6,6 +6,7 @@ $avatarSize: 40px;
 .activities {
     margin-left: $offset + 1px;
     border-left: 2px solid #CCC;
+    margin-bottom: 40px;
 
     .activity, .day-header, .comment {
         margin: 10px 0px;
@@ -15,6 +16,8 @@ $avatarSize: 40px;
         > :first-child {
             flex: 0 0 $offset*2;
             text-align: center;
+            margin-bottom: 0;
+            line-height: 0;
         }
 
         > .content {
@@ -24,7 +27,7 @@ $avatarSize: 40px;
         > .time {
             flex: 0 0 60px;
             text-align: right;
-            padding: 10px;
+            padding: 0 10px;
             color: #AAA;
         }
     }
@@ -43,14 +46,36 @@ $avatarSize: 40px;
             overflow: hidden;
             text-align: center;
             display: inline-block;
+            color: #AAA;
         }
     }
 
+    > :last-child {
+        margin-bottom: -10px !important;
+    }
+
     .day-header {
-        background: $silver;
-        padding: $offset/2 $offset;
-        border-bottom: 2px solid #CCC;
-        margin-top: 40px;
+        // padding: $offset/2 $offset;
+        // background: $silver;
+        margin-top: 10px;
+        font-size: 2em;
+        padding: $offset/2 ($offset - 2px);
+        background: white;
+        margin-left: 0;
+        position: relative;
+
+        &:before {
+            $size: 14px;
+            position: absolute;
+            content: " ";
+            background: #CCC;
+            width: $size;
+            height: $size;
+            border-radius: 100%;
+            left: -($size/2 + 1px);
+            top: 50%;
+            margin-top: -$size/2;
+        }
     }
 
     .comment {

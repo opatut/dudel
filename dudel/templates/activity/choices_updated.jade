@@ -1,0 +1,21 @@
+extend activity/BASE.jade
+
+block icon
+    i.fa.fa-list
+
+- macro format_choice_added(choice)
+    span.label.label-success= choice.title
+
+- macro format_choice_removed(choice)
+    span.label.label-danger= choice.title
+
+block content
+    span.user= activity.get_user_link()
+
+    - set added = activity.choices_added.all()
+    - set removed = activity.choices_removed.all()
+
+    - set a = (" added the choices " + format_choice_added|map(added)|join(" ")) if added else ""
+    - set r = (" removed the choices " + format_choice_removed|map(removed)|join(" ")) if removed else ""
+
+    != [a, r]|natural_enumerate

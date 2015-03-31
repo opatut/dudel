@@ -437,16 +437,19 @@ class Poll(db.Model):
         to_sign = '{}/{}'.format(self.slug, user_id)
         return hmac.new(app.config['SECRET_KEY'], to_sign).hexdigest()
 
-    def post_activity(self, activity, user):
+    def post_activity(self, activity, user=None):
         activity.poll = self
         activity.created = datetime.utcnow()
 
-        if isinstance(user, str) or isinstance(user, unicode):
-            activity.name = user
-        elif user and hasattr(user, 'is_authenticated') and user.is_authenticated():
-            activity.user = user
-        else:
-            print("No idea what to make of", user)
+        if user:
+            if isinstance(user, str) or isinstance(user, unicode):
+                activity.name = user
+            elif user and hasattr(user, 'is_authenticated') and user.is_authenticated():
+                activity.user = user
+            else:
+                print("No idea what to make of", user)
+        elif current_user.is_authenticated():
+            activity.user = current_user
 
         db.session.add(activity)
 
