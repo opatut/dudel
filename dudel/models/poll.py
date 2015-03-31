@@ -441,10 +441,12 @@ class Poll(db.Model):
         activity.poll = self
         activity.created = datetime.utcnow()
 
-        if user.is_authenticated():
-            activity.user = user
-        elif isinstance(user, str):
+        if isinstance(user, str) or isinstance(user, unicode):
             activity.name = user
+        elif user and hasattr(user, 'is_authenticated') and user.is_authenticated():
+            activity.user = user
+        else:
+            print("No idea what to make of", user)
 
         db.session.add(activity)
 

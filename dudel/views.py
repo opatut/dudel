@@ -30,7 +30,7 @@ from dudel.forms import CreatePollForm, DateTimeSelectForm, AddChoiceForm, \
     AmountRangeForm
 from dudel.login import get_user, force_login, logout as dudel_logout
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, \
-    Comment, PollWatch, Member, Group, Invitation, PollType
+    Comment, PollWatch, Member, Group, Invitation, PollType, VoteCreatedActivity
 from dudel.util import PollExpiredException, PollActionException, \
     random_string, get_slug, DateTimePart, PartialDateTime, \
     LocalizationContext
@@ -881,6 +881,13 @@ def poll_vote(slug):
 
             flash(gettext("You have voted."), "success")
 
+            # create the corresponding activity
+            activity = VoteCreatedActivity()
+            activity.vote = vote
+            activity_user = (form.name.data if current_user.is_anonymous() else current_user)
+            poll.post_activity(activity, activity_user)
+
+            # send mail to watchers (TODO: refactor into activity)
             poll.send_watchers("[Dudel] New vote: " + poll.title,
                                "email/poll_voted.txt", voter=vote.displayname)
 
