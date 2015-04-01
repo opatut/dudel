@@ -34,6 +34,7 @@ assets.register('css_all', css_all)
 # CoffeeScript
 coffee = Bundle(
     'coffee/gettext.coffee',
+    'coffee/common.coffee',
     'coffee/create.coffee',
     'coffee/datetime.coffee',
     'coffee/dateoffset.coffee',
@@ -59,6 +60,7 @@ js_libs = Bundle(
     # 'js/lib/date-en-US.js',
     'js/lib/jquery.colorpicker.js',
     'js/lib/moment.min.js',
+    'js/lib/mousetrap.min.js',
     output='gen/jslibs.js'
 )
 assets.register('js_libs', js_libs)

@@ -1,5 +1,37 @@
 @import "vars";
 
+#poll-container {
+    &.fullscreen {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: white;
+        z-index: 11000;
+        overflow: auto;
+
+        #fullscreen-header {
+            display: block;
+        }
+
+        .table-padding {
+            margin: 20px;
+        }
+    }
+
+    #fullscreen-header {
+        display: none;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: #EEE;
+
+        h1 {
+            margin: 0;
+        }
+    }
+}
+
 table.poll td, table.poll th, table.poll tr {
     border: none !important;
 }
