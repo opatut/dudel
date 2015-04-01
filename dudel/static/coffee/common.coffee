@@ -20,5 +20,8 @@ $ ->
 
     $('[data-shortcut]').each ->
         $element = $(this)
-        Mousetrap.bind $element.data('shortcut'), ->
-            $element.click()
+        shortcuts = $element.data('shortcut').split("|")
+
+        Mousetrap.bind shortcuts, ->
+            $element[0].click()
+
