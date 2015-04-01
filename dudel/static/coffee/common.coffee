@@ -1,18 +1,24 @@
 $ ->
-    $("[data-toggle-class]").click (e) ->
+    $("[data-toggle-class], [data-remove-class], [data-add-class]").click (e) ->
         target = $(this).data("target")
         $target = if target then $(target) else $(this)
 
-        classname = $(this).data("toggle-class")
+        if $(this).data('toggle-class')
+            $target.toggleClass($(this).data('toggle-class'))
 
-        $target.toggleClass(classname)
+        if $(this).data('add-class')
+            $target.addClass($(this).data('add-class'))
+
+        if $(this).data('remove-class')
+            $target.removeClass($(this).data('remove-class'))
 
         e.preventDefault()
 
-    Mousetrap.bind 'escape', ->
-        $("#poll-container").removeClass("fullscreen")
+    # Mousetrap.bind 'f', ->
+    #     console.log 'triggereds'
+    #     $("#poll-container").toggleClass("fullscreen")
 
-    Mousetrap.bind 'f', ->
-        console.log 'triggereds'
-        $("#poll-container").toggleClass("fullscreen")
-
+    $('[data-shortcut]').each ->
+        $element = $(this)
+        Mousetrap.bind $element.data('shortcut'), ->
+            $element.click()
