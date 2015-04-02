@@ -50,7 +50,7 @@
                             <a href="?edit={{ value.id }}" class="btn btn-default btn-xs" title="{{ _('Edit') }}">
                                 <i class="fa fa-edit"></i>
                             </a>
-                            <a href="?toggle={{ value.id }}" class="btn btn-default btn-xs" title="{{ _('Recover' if value.deleted else 'Delete') }}">
+                            <a href="?toggle={{ value.id }}&_csrf_token={{ CSRF }}" class="btn btn-default btn-xs" title="{{ _('Recover' if value.deleted else 'Delete') }}">
                                 {% if value.deleted %}
                                     <i class="fa fa-undo"></i>
                                 {% else %}

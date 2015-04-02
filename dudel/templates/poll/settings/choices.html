@@ -49,7 +49,7 @@
                                         <i class="fa fa-edit"></i>
                                     </a>
 
-                                    <a href="?toggle={{ choice.id }}" class="btn btn-default btn-xs">
+                                    <a href="?toggle={{ choice.id }}&_csrf_token={{ CSRF }}" class="btn btn-default btn-xs">
                                     {% if choice.deleted %}
                                         <i class="fa fa-undo"></i>
                                     {% else %}

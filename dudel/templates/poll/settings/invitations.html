@@ -26,8 +26,8 @@
                             {{ invitation.created|datetime }}
                         </td>
                         <td>
-                            <a href="{{ url_for('poll_invitation_resend', slug=poll.slug, id=invitation.id) }}" title="{{ _('Resend invitation') }}" class="btn btn-xs btn-default"><i class="fa fa-refresh"></i></a>
-                            <a href="{{ url_for('poll_invitation_delete', slug=poll.slug, id=invitation.id) }}" title="{{ _('Remove invitation') }}" class="btn btn-xs btn-default"><i class="fa fa-trash-o"></i></a>
+                            <a href="{{ url_for('poll_invitation_resend', slug=poll.slug, id=invitation.id, _csrf_token=CSRF) }}" title="{{ _('Resend invitation') }}" class="btn btn-xs btn-default"><i class="fa fa-refresh"></i></a>
+                            <a href="{{ url_for('poll_invitation_delete', slug=poll.slug, id=invitation.id, _csrf_token=CSRF) }}" title="{{ _('Remove invitation') }}" class="btn btn-xs btn-default"><i class="fa fa-trash-o"></i></a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -61,6 +61,6 @@
         <hr />
 
         <a href="{{ poll.get_url() }}" class="btn btn-default"><span class="fa fa-arrow-left"></span> {{ _("Back to poll") }}</a>
-        <a href="{{ url_for('poll_invitations_resend_all', slug=poll.slug) }}" class="btn btn-default"><span class="fa fa-refresh"></span> {{ _("Resend all invitations") }}</a>
+        <a href="{{ url_for('poll_invitations_resend_all', slug=poll.slug, _csrf_token=CSRF) }}" class="btn btn-default"><span class="fa fa-refresh"></span> {{ _("Resend all invitations") }}</a>
     </form>
 {% endblock %}

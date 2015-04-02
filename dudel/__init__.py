@@ -22,6 +22,10 @@ if app.config.get('SENTRY_DSN', None):
 else:
     sentry = None
 
+from .csrf import Protector
+csrf = Protector(app, abort_code=403)
+csrf.inject_as('CSRF') # make token available in template
+
 gravatar = Gravatar(app, size=48, rating='g', default='identicon', force_default=False, use_ssl=True, base_url=None)
 babel = Babel(app)
 supported_languages = ['en', 'de']

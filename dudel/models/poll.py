@@ -1,11 +1,15 @@
 from datetime import datetime, timedelta
+
 import hmac
 
 from flask import url_for, render_template
 from flask.ext.babel import lazy_gettext
 from flask.ext.login import current_user
 from flask.ext.mail import Message
+
 from pytz import timezone
+
+from enum import Enum
 
 from dudel import db, mail, app
 from dudel.models.choice import Choice

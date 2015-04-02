@@ -36,14 +36,14 @@
                 <td>
                     {% if current_user == group.admin %}
                         {% if user != current_user %}
-                            <a class="btn btn-default btn-xs" href="{{ url_for('group_leave', id=group.id, user_id=user.id) }}">Kick</a>
-                            <a class="btn btn-danger btn-xs" href="{{ url_for('group_make_admin', id=group.id, user_id=user.id) }}">Make admin</a>
+                            <a class="btn btn-default btn-xs" href="{{ url_for('group_leave', id=group.id, user_id=user.id, _csrf_token=CSRF) }}">Kick</a>
+                            <a class="btn btn-danger btn-xs" href="{{ url_for('group_make_admin', id=group.id, user_id=user.id, _csrf_token=CSRF) }}">Make admin</a>
                         {% else %}
-                            <a class="btn btn-danger btn-xs" href="{{ url_for('group_disband', id=group.id) }}">Disband group</a>
+                            <a class="btn btn-danger btn-xs" href="{{ url_for('group_disband', id=group.id, _csrf_token=CSRF) }}">Disband group</a>
                         {% endif %}
                     {% else %}
                         {% if user == current_user %}
-                            <a class="btn btn-danger btn-xs" href="{{ url_for('group_leave', id=group.id, user_id=user.id) }}">Leave</a>
+                            <a class="btn btn-danger btn-xs" href="{{ url_for('group_leave', id=group.id, user_id=user.id, _csrf_token=CSRF) }}">Leave</a>
                         {% endif %}
                     {% endif %}
                 </td>

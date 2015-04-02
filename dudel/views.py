@@ -8,7 +8,7 @@ from dateutil import parser
 import re
 from sqlalchemy import func
 
-from dudel import app, db, babel, supported_languages, sentry
+from dudel import app, db, babel, supported_languages, sentry, csrf
 from dudel.models import Poll, User, Vote, VoteChoice, Choice, ChoiceValue, Comment, PollWatch, Member, Group, \
     Invitation
 from dudel.login import get_user
@@ -211,6 +211,7 @@ def group(id):
 
 @app.route("/groups/<int:id>/disband")
 @login_required
+@csrf.protect()
 def group_disband(id):
     group = Group.query.filter_by(id=id).first_or_404()
     if not group.changeable: abort(404)
@@ -228,6 +229,7 @@ def group_disband(id):
 
 @app.route("/groups/<int:id>/make-admin/<int:user_id>")
 @login_required
+@csrf.protect()
 def group_make_admin(id, user_id):
     group = Group.query.filter_by(id=id).first_or_404()
     if not group.changeable: abort(404)
@@ -245,6 +247,7 @@ def group_make_admin(id, user_id):
 
 @app.route("/groups/<int:id>/leave/<int:user_id>")
 @login_required
+@csrf.protect()
 def group_leave(id, user_id):
     group = Group.query.filter_by(id=id).first_or_404()
     if not group.changeable: abort(404)
@@ -322,6 +325,7 @@ def poll(slug):
 
 
 @app.route("/<slug>/comment/delete/<int:id>", methods=("POST", "GET"))
+@csrf.protect()
 def poll_delete_comment(slug, id):
     poll = get_poll(slug)
     comment = Comment.query.filter_by(id=id, poll=poll).first_or_404()
@@ -424,6 +428,7 @@ def poll_invitations(slug):
 
 @app.route("/<slug>/invitations/<int:id>/delete")
 @login_required
+@csrf.protect()
 def poll_invitation_delete(slug, id):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -440,6 +445,7 @@ def poll_invitation_delete(slug, id):
 
 @app.route("/<slug>/invitations/<int:id>/resend")
 @login_required
+@csrf.protect()
 def poll_invitation_resend(slug, id):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -455,6 +461,7 @@ def poll_invitation_resend(slug, id):
 
 @app.route("/<slug>/invitations/resend")
 @login_required
+@csrf.protect()
 def poll_invitations_resend_all(slug):
     poll = get_poll(slug)
     poll.check_edit_permission()
@@ -609,6 +616,7 @@ def poll_edit_choices(slug, step=1):
             return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
         if "toggle" in request.args:
+            csrf.check_or_abort()
             tid = request.args.get("toggle")
             choice = Choice.query.filter_by(id=tid, poll_id=poll.id).first_or_404()
             choice.deleted = not choice.deleted
@@ -659,6 +667,7 @@ def poll_edit_values(slug):
     args = {}
 
     if "toggle" in request.args:
+        csrf.check_or_abort()
         value = ChoiceValue.query.filter_by(id=request.args["toggle"]).first_or_404()
         if value.poll != poll: abort(404)
         value.deleted = not value.deleted
@@ -708,6 +717,7 @@ def poll_delete(slug):
     poll = get_poll(slug)
 
     if "confirm" in request.args:
+        csrf.check_or_abort()
         poll.deleted = True
         db.session.commit()
         flash(gettext("The poll was deleted."), "success")
@@ -921,6 +931,7 @@ def poll_vote_edit(slug, vote_id):
 
 
 @app.route("/<slug>/vote/<int:vote_id>/delete", methods=("POST", "GET"))
+@csrf.protect()
 def poll_vote_delete(slug, vote_id):
     poll = get_poll(slug)
     poll.check_expiry()

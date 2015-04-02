@@ -29,6 +29,14 @@ user.set_password("hunter2")
 user.email = "test@localhost"
 db.session.add(user)
 
+user2 = User()
+user2.username = "14musterm"
+user2.firstname = "Moritz"
+user2.lastname = "Mustermann"
+user2.set_password("hunter2")
+user2.email = "test2@localhost"
+db.session.add(user2)
+
 poll = Poll()
 poll.title = "What is the best Coffee"
 poll.due_date = datetime.utcnow() + timedelta(days=5)
