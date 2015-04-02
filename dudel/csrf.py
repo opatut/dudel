@@ -21,9 +21,9 @@ class Protector(object):
         self.consume = consume
 
         if app:
-            self.initialize(app)
+            self.init_app(app)
 
-    def initialize(self, app):
+    def init_app(self, app):
         self.app = app
 
         @self.app.before_request

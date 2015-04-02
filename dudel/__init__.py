@@ -23,7 +23,7 @@ else:
     sentry = None
 
 from .csrf import Protector
-csrf = Protector(app, abort_code=403)
+csrf = Protector(app, abort_code=403, consume=app.config.get('CSRF_CONSUME', False))
 csrf.inject_as('CSRF') # make token available in template
 
 gravatar = Gravatar(app, size=48, rating='g', default='identicon', force_default=False, use_ssl=True, base_url=None)

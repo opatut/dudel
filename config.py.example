@@ -90,3 +90,7 @@ RECAPTCHA_USE_SSL = True
 RECAPTCHA_PUBLIC_KEY = "..."
 RECAPTCHA_PRIVATE_KEY = "..."
 RECAPTCHA_OPTIONS = {"theme_name": "white"}
+
+# CSRF protection: Should the CSRF token be consumed when checked? This prevents
+# sensible actions that are protected against CSRF in multiple tabs.
+CSRF_CONSUME = False
