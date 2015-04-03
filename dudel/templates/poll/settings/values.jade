@@ -73,7 +73,7 @@
                                     a.action.icon(href="?edit=#{value.id}", title=_('Edit'))
                                         i.fa.fa-pencil
 
-                                    a.action.icon(href="?toggle=#{value.id}", title=_('Recover' if value.deleted else 'Delete'))
+                                    a.action.icon(href="?toggle=#{value.id}&_csrf_token=#{CSRF}", title=_('Recover' if value.deleted else 'Delete'))
                                         - if value.deleted
                                             i.fa.fa-undo
                                         - else

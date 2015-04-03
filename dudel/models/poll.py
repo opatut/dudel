@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 import hmac
 
 from enum import Enum
@@ -9,6 +10,8 @@ from flask.ext.login import current_user
 from flask.ext.mail import Message
 
 from pytz import timezone
+
+from enum import Enum
 
 from dudel import db, mail, app
 from dudel.models.choice import Choice

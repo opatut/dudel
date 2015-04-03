@@ -35,22 +35,22 @@
                                 td
                                     - if current_user == group.admin
                                         - if user != current_user
-                                            a.action.icon(href=url_for('group_leave', id=group.id, user_id=user.id), title=_("Kick user"))
+                                            a.action.icon(href=url_for('group_leave', id=group.id, user_id=user.id, _csrf_token=CSRF), title=_("Kick user"))
                                                 i.fa.fa-sign-out
                                                 span= _("Kick user")
 
-                                            a.action.icon(href=url_for('group_make_admin', id=group.id, user_id=user.id), title=_("Make admin"))
+                                            a.action.icon(href=url_for('group_make_admin', id=group.id, user_id=user.id, _csrf_token=CSRF), title=_("Make admin"))
                                                 i.fa.fa-certificate
                                                 span= _("Make admin")
 
                                         - else
-                                            a.action.icon.danger(href=url_for('group_disband', id=group.id), title=_("Disband group"))
+                                            a.action.icon.danger(href=url_for('group_disband', id=group.id, _csrf_token=CSRF), title=_("Disband group"))
                                                 i.fa.fa-trash-o
                                                 span= _("Disband group")
 
                                     - else
                                         - if user == current_user
-                                            a.action.icon.danger(href=url_for('group_leave', id=group.id, user_id=user.id), title=_("Leave group"))
+                                            a.action.icon.danger(href=url_for('group_leave', id=group.id, user_id=user.id, _csrf_token=CSRF), title=_("Leave group"))
                                                 i.fa.fa-sign-out
                                                 span= _("Leave group")
 

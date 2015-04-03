@@ -18,6 +18,6 @@
                 i.fa.fa-arrow-left
                 span= _("Back to safety")
 
-            a.action.danger.pull-right(href=(url_for('poll_delete', slug=poll.slug) + "?confirm"))
+            a.action.danger.pull-right(href=(url_for('poll_delete', slug=poll.slug, _csrf_token=CSRF, confirm=True)))
                 span= _("Yes, delete it")
                 i.fa.fa-arrow-right

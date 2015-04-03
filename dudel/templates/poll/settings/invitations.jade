@@ -24,15 +24,15 @@
                             td= invitation.user.displayname
                             td=  invitation.created|datetime
                             td
-                                a.action.icon(href=url_for('poll_invitation_resend', slug=poll.slug, id=invitation.id), title=_('Resend invitation'))
+                                a.action.icon(href=url_for('poll_invitation_resend', slug=poll.slug, id=invitation.id, _csrf_token=CSRF), title=_('Resend invitation'))
                                     i.fa.fa-refresh
 
-                                a.action.icon(href=url_for('poll_invitation_delete', slug=poll.slug, id=invitation.id), title=_('Remove invitation'))
+                                a.action.icon(href=url_for('poll_invitation_delete', slug=poll.slug, id=invitation.id, _csrf_token=CSRF), title=_('Remove invitation'))
                                     i.fa.fa-trash-o
 
                 hr/
 
-                a.action(href=url_for('poll_invitations_resend_all', slug=poll.slug))
+                a.action(href=url_for('poll_invitations_resend_all', slug=poll.slug, _csrf_token=CSRF))
                     i.fa.fa-refresh
                     span= _("Resend all invitations")
 
