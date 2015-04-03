@@ -383,6 +383,17 @@ header.poll {
     }
 }
 
+.choices-popover-list {
+    font-size: 0.7em;
+    color: #666;
+
+    li {
+        display: inline-block;
+        margin-right: 10px;
+        width: 40%;
+    }
+}
+
 @media #{$media-phone} {
     .poll-tabs li a {
         text-align: center;

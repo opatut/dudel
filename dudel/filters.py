@@ -93,7 +93,7 @@ def group_title(obj, poll):
 
 
 @app.template_filter()
-def natural_enumerate(items, between=",", last=" and "):
+def natural_enumerate(items, between=", ", last=" and "):
     # remove empty items (None, "", ...)
     items = filter(lambda x: x, items)
 
@@ -111,6 +111,9 @@ def join(items, between=""):
 
 @app.template_filter('map')
 def map_(fn, *items):
+    if isinstance(fn, str) or isinstance(fn, unicode):
+        fname = fn
+        fn = lambda x: getattr(x, str(fname))
     return map(fn, *items)
 
 

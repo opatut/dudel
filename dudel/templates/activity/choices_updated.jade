@@ -9,12 +9,35 @@ block icon
 - macro format_choice_removed(choice)
     span.label.label-danger= choice.title
 
+- macro choices_popover_content(choices)
+    ul.choices-popover-list
+        - for choice in choices
+            li= choice.title
+
+
+- macro choices_popover(choices)
+    span(data-toggle="popover",
+        data-placement="bottom",
+        data-trigger="hover",
+        data-content=choices_popover_content(choices)|forceescape)
+
+        i.fa.fa-info-circle
+
 block content
     span.user= activity.get_user_link()
 
     - set added, removed = activity.perform_grouping(group)
 
-    - set a = (" added the choices " + format_choice_added|map(added)|join(" ")) if added else ""
-    - set r = (" removed the choices " + format_choice_removed|map(removed)|join(" ")) if removed else ""
+    - if added|length > 10
+        - set tooltip = "title"|map(added)|join("")
+        - set a = ' added ' + added|length|string + ' choices ' + choices_popover(added)
+    - else
+        - set a = (" added the choices " + format_choice_added|map(added)|join(" ")) if added else ""
+
+    - if removed|length > 10
+        - set tooltip = "title"|map(removed)|join("")
+        - set r = ' removed ' + removed|length|string + ' choices ' + choices_popover(removed)
+    - else
+        - set r = (" removed the choices " + format_choice_removed|map(removed)|join(" ")) if removed else ""
 
     != [a, r]|natural_enumerate

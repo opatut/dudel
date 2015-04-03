@@ -563,7 +563,8 @@ def poll_edit_choices(slug, step=1):
         activity = ChoicesUpdatedActivity()
 
         for choice in poll.choices:
-            if choice.deleted != choices_deleted_before[choice]:
+            was_deleted = (not choice in choices_deleted_before) or choices_deleted_before[choice]
+            if choice.deleted != was_deleted:
                 (activity.choices_removed if choice.deleted else activity.choices_added).append(choice)
 
         poll.post_activity(activity)
