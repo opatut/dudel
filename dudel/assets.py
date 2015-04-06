@@ -71,6 +71,7 @@ js_all = Bundle(
     coffee,
     'js/util.js',
     'js/main.js',
+    'js/custom-select.jquery.js',
     # 'js/poll_edit_choices.js',
     output='gen/app.js'
 )

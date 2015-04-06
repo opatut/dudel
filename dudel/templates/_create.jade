@@ -19,7 +19,7 @@ section.section.create-poll: .container:.halfsize
 
             .script-only: ul.type-choices#create-type-list
                 - for key, type in form.type.choices
-                    li(data-key=key)
+                    li(data-value=key)
                         .icon: i.fa(class="fa-#{type.icon}")
                         .text
                             .title= type.title
