@@ -2,8 +2,8 @@ from flask import render_template
 from flask.ext.login import current_user, login_required
 
 from dudel import app, db
-from dudel.models import Poll, User, Group
-
+from dudel.models import Poll, User, Group, PollType
+from dudel.filters import cx
 
 @app.route("/admin/")
 @login_required

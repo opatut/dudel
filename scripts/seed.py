@@ -44,27 +44,32 @@ db.session.add(user2)
 
 print("Creating poll: normal")
 poll_normal = Poll("Test: Type Normal", "test-normal", PollType.normal)
+poll_normal.owner = user
 db.session.add(poll_normal)
 add_choices(poll_normal, ["Foo", "Bar", "Baz", "Foobar", "Bazfoo"])
 random_votes(poll_normal, 8)
 
 print("Creating poll: datetime")
 poll_datetime = Poll("Test: Type Datetime", "test-datetime", PollType.datetime)
+poll_datetime.owner = user
 db.session.add(poll_datetime)
 
 print("Creating poll: date")
 poll_date = Poll("Test: Type Date", "test-date", PollType.date)
+poll_date.owner = user
 db.session.add(poll_date)
 add_choices(poll_date, [datetime.today() + timedelta(days=x) for x in range(5)])
 
 print("Creating poll: large")
 poll_large = Poll("Test: Large Poll", "test-large", PollType.normal)
+poll_large.owner = user
 db.session.add(poll_large)
 add_choices(poll_large, [random_name() for i in range(40)])
 random_votes(poll_large, 40)
 
 print("Creating poll: autodelete")
 poll_autodelete = Poll("Test: Autodelete", "test-autodelete", PollType.normal)
+poll_autodelete.owner = user
 poll_autodelete.created = datetime.utcnow() - timedelta(days=91)
 db.session.add(poll_autodelete)
 
@@ -73,6 +78,7 @@ poll_numeric = Poll("Test: Type Numeric", "test-numeric", PollType.numeric, crea
 poll_numeric.amount_minimum = 0
 poll_numeric.amount_maximum = 2
 poll_numeric.amount_step = 0.5
+poll_numeric.owner = user
 add_choices(poll_numeric, ["Penguins", "Gnus", "Dromedaries", "Pythons"])
 db.session.add(poll_numeric)
 

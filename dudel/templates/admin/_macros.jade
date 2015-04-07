@@ -24,7 +24,7 @@
                     tr
                         td: i(class="fa fa-#{PollType(poll.type).icon}", title="Type: #{PollType(poll.type).title}}")
                         td: a(href=url_for('admin_poll', id=poll.id))= poll.title
-                        td: a(href=poll.get_url())= "/#{poll.slug}/"
+                        td: a(href=poll.get_url()) /#{poll.slug}/
                         td= poll.last_changed|datetime
                         td= poll.owner.displayname if poll.owner else "-"
                         td= (poll.due_date|datetime) if poll.due_date else "-"
@@ -63,7 +63,7 @@
                 - for user in users
                     tr
                         td
-                            = user_link(user)
+                            != user_link(user)
                             - if user.is_admin
                                 span.label.label-danger ADMIN
                         td= user.username
@@ -88,7 +88,7 @@
 
                 - for group in groups
                     tr
-                        td= group_link(group)
+                        td!= group_link(group)
                         td= group.identifier
                         td= group.users.count()
                         td: span.label.label-default= group.source

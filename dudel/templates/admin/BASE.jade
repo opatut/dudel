@@ -1,5 +1,5 @@
-- from "_macros.jade" import alert, form_errors, field_error, markdown_info
-- from "admin/_macros.jade" import poll_table, user_table, group_table
+- from "_macros.jade" import alert, form_errors, field_error, markdown_info with context
+- from "admin/_macros.jade" import poll_table, user_table, group_table with context
 
 doctype html
 html
@@ -10,7 +10,7 @@ html
         title dudel admin
 
         - for filename in ["bootstrap.css", "bootstrap-theme.css", "admin.css", "font-awesome.css"]
-            link(href=url_for('static', filename='css/#{filename}.css'), rel="stylesheet", media="screen")
+            link(href=url_for('static', filename='css/#{filename}'), rel="stylesheet", media="screen")
 
         block head
 
@@ -23,7 +23,7 @@ html
 
         footer
             .container
-                a(href=url_for('index'))= Main Site
+                a(href=url_for('index'))= _("Main Site")
                 | &mdash; Find
                 a(href="http://github.com/opatut/dudel") Dudel on Github
 
