@@ -52,9 +52,17 @@ header#header
                 li.spacing
 
                 li
+                    - set invitation_count = current_user.get_open_invitations().count() if current_user.is_authenticated() else 0
+
                     a(href=url_for('user_settings'))
                         - if current_user.is_anonymous()
                             i.fa.fa-user
+
+                        - if invitation_count
+                            span.label.label-info
+                                //- i.fa.fa-envelope
+                                = invitation_count
+
                         span Account
                         //- i.fa.fa-chevron-down
 
@@ -86,6 +94,13 @@ header#header
                                 li: a(href=url_for('admin_index'))
                                     i.fa.fa-cogs
                                     | Admin panel
+
+                            li: a(href=url_for('user_invitations'))
+                                i.fa.fa-envelope
+                                = _("Invitations")
+                                - if invitation_count
+                                    span.label.label-info= invitation_count
+
 
                             li: a(href=url_for('logout', next=request.url))
                                 i.fa.fa-sign-out

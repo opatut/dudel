@@ -77,6 +77,11 @@ nav.main-menu {
                     margin-left: 8px;
                     vertical-align: middle;
                 }
+
+                > .label {
+                    vertical-align: 2px;
+                    margin-right: 10px;
+                }
             }
 
             &:hover {
@@ -138,6 +143,12 @@ nav.main-menu {
 
                 &:hover {
                     background: $silver;
+                }
+
+                > .label {
+                    vertical-align: 2px;
+                    margin-left: 20px;
+                    margin-right: -20px;
                 }
             }
 

@@ -152,3 +152,6 @@ class User(Member):
 
     def is_invited(self, poll):
         return self.invitations.filter_by(poll_id=poll.id).count() > 0
+
+    def get_open_invitations(self):
+        return self.invitations.filter_by(vote=None)
