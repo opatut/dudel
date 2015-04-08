@@ -70,27 +70,12 @@ def index():
     if form.validate_on_submit():
         poll = Poll(form.type.data != PollType.numeric)
         form.populate_obj(poll)
-
         poll.timezone_name = str(get_current_timezone())
 
-        success = True
-        if not app.config["ALLOW_CUSTOM_SLUGS"] or not form.slug.data:
-            if app.config["RANDOM_SLUGS"]:
-                poll.slug = random_string()
-            else:
-                poll.slug = get_slug(poll.title)
-
-            # check if poll with that slug exists
-            if Poll.query.filter_by(slug=poll.slug, deleted=False).first():
-                form.slug.errors = [
-                    gettext("A poll with this URL name already exists.")]
-                success = False
-
-        if success:
-            db.session.add(poll)
-            db.session.commit()
-            flash(gettext("Poll created"))
-            return redirect(url_for("poll_edit_choices", slug=poll.slug))
+        db.session.add(poll)
+        db.session.commit()
+        flash(gettext("Poll created"))
+        return redirect(url_for("poll_edit_choices", slug=poll.slug))
 
     polls = Poll.query.filter_by(deleted=False, public_listing=True) \
         .filter(not Poll.due_date or Poll.due_date >= datetime.utcnow()) \

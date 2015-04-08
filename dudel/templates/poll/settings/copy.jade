@@ -7,32 +7,36 @@
     .container
         h3= _("Copy poll")
 
+        script= "var RANDOM_SLUGS = " + ("true" if config.RANDOM_SLUGS else "false") + ";"
         form(method="POST")
             = form.hidden_tag()
             = field_error(form.hidden_tag)
 
             .row
                 .col-md-6
+
                     .form-group
                         = form.title.label
-                        = form.title(class="form-control", **{"data-slug-field": "#slug"})
+                        = form.title(class="form-control", id="title-input", autocomplete="off", placeholder=form.title.label.text)
                         = field_error(form.title)
 
-                    .form-group
-                        = form.slug.label
+                    - if config.ALLOW_CUSTOM_SLUGS
+                        .form-group
+                            div(style="float: right;")
+                                button.action.small#slug-randomize
+                                    i.fa.fa-random
+                                    span= _("Randomize")
 
-                        .pull-right
-                            input#randomize-slug(type="checkbox", checked=True)
-                            label(for="randomize-slug", style="font-weight: normal; margin: 0; vertical-align: top;")= _("randomize")
+                            = form.slug.label(style="margin-top: 2px;")
 
-                        .input-group
-                            span.input-group-addon= url_for('poll', slug='', _external=True)
-                            = form.slug(class="form-control")
+                            .input-group
+                                span.input-group-addon= url_for('poll', slug='', _external=True)
+                                = form.slug(class="form-control", id="slug-input")
 
-                        = field_error(form.slug)
+                            = field_error(form.slug)
 
-                        noscript
-                            span.help-block= _("This would be automatically generated for you if you had not blocked javascript.")
+                            noscript
+                                span.help-block= _("This would be automatically generated for you if you had not blocked javascript.")
 
                 .col-md-6
                     label= _("Settings to copy")

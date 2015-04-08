@@ -6,7 +6,7 @@ section.section.create-poll: .container:.halfsize
 
     form.form(method="POST")
         = form.hidden_tag()
-        = field_error(form.hidden_tag)
+        != field_error(form.hidden_tag)
 
         .form-step
             .number Step 1
@@ -15,7 +15,7 @@ section.section.create-poll: .container:.halfsize
         .form-group
             //- = form.type.label
             = form.type(class="form-control script-hidden", id="create-type-field")
-            = field_error(form.type)
+            != field_error(form.type)
 
             .script-only: ul.type-choices#create-type-list
                 - for key, type in form.type.choices
@@ -31,9 +31,9 @@ section.section.create-poll: .container:.halfsize
 
         .form-group
             = form.title(class="form-control", id="title-input", autocomplete="off", placeholder=form.title.label.text)
-            = field_error(form.title)
+            != field_error(form.title)
 
-        #advanced-open.hidden
+        #advanced-open(class=("" if form.slug.errors else "hidden"))
             .form-step
                 .number Step 3
                 .title Advanced Settings
@@ -52,7 +52,7 @@ section.section.create-poll: .container:.halfsize
                         span.input-group-addon= url_for('poll', slug='', _external=True)
                         = form.slug(class="form-control", id="slug-input")
 
-                = field_error(form.slug)
+                != field_error(form.slug)
 
 
         .form-group.text-center

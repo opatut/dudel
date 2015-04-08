@@ -13,10 +13,11 @@ from wtforms.ext.dateutil.fields import DateTimeField
 from wtforms.validators import Required, Length, Regexp, Optional, NoneOf, \
     EqualTo, Email, ValidationError, StopValidation
 
-from dudel import default_timezone
+from dudel import app, default_timezone
 from dudel.login import try_login
 from dudel.models.poll import Poll, PollType
 from dudel.models.group import Group
+from dudel.util import random_string, get_slug
 
 
 LANGUAGES = [('en', 'English'), ('de', 'Deutsch')]
@@ -98,12 +99,47 @@ class OptionalIf(object):
             print("This is optional because of condition")
             raise StopValidation()
 
+class SlugGenerator(object):
+    def __init__(self, title_field):
+        self.title_field = title_field
+        self.message_in_use = lazy_gettext("This slug is already in use.")
+
+    def __call__(self, form, field):
+        slug = field.data.strip()
+
+        def generate(iteration=0):
+            if app.config["RANDOM_SLUGS"]:
+                return random_string()
+            else:
+                title = form[self.title_field].data.strip()
+                if iteration > 0:
+                    title += " %s" % (iteration + 1)
+                return get_slug(title)
+
+        # no custom slugs allowed
+        # -> generate until valid slug found
+        if not app.config["ALLOW_CUSTOM_SLUGS"]:
+            i = 0
+            while True:
+                slug = generate(i)
+                if not Poll.query.filter_by(slug=slug, deleted=False).first():
+                    break
+                i += 1
+
+        # no slug entered, but customization allowed
+        # -> generate once, fail if in use and show form field
+        elif not slug:
+            slug = generate()
+
+        field.data = slug
+
+
 
 # ###############################################################################
 
 class PollForm(MultiForm):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
-    slug = TextField(lazy_gettext("URL name"), validators=[Optional(),
+    slug = TextField(lazy_gettext("URL name"), validators=[SlugGenerator("title"),
                                                            Length(min=3, max=80),
                                                            Regexp(r"^[a-zA-Z0-9_-]*$",
                                                                   message=lazy_gettext("Invalid character.")),
