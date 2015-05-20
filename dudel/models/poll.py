@@ -368,12 +368,6 @@ class Poll(db.Model):
                                   body=render_template(template, poll=self, user=user, **kwargs))
                     conn.send(msg)
 
-            for m in outbox:
-                print(m.subject)
-                print("===========================")
-                print(m.body)
-                print("===========================")
-
     def to_dict(self):
         dictify = lambda l, f=(lambda x: True): {i.id: i.to_dict() for i in l if f(i)}
 
