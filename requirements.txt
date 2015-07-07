@@ -17,3 +17,4 @@ raven
 scrypt
 enum34
 pyjade
+WTForms
