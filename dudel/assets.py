@@ -1,5 +1,6 @@
 from dudel import app
 from flask.ext.assets import Environment, Bundle
+from webassets.filter import get_filter
 
 assets = Environment(app)
 
@@ -15,7 +16,7 @@ scss = Bundle(
     'scss/iconpreview.scss',
     'scss/timeinput.scss',
     'scss/slider.scss',
-    filters='scss',
+    filters=get_filter('scss', load_paths='.'),
     output='gen/scss.css')
 assets.register('scss', scss)
 
