@@ -8,6 +8,7 @@ Make a virtual environment, activate it, run:
 
     pip install -r requirements.txt
 
+This needs the development packages of some libraries, in particular: libpq, libldap, libsasl2.
 Make sure you also have `scss` and `coffee` (from coffeescript) installed.
 
 Copy `config.py.example` to `config.py` and adjust your settings.
