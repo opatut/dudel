@@ -1,4 +1,5 @@
 blinker
+click
 flask
 flask-assets
 flask-babel
@@ -9,6 +10,7 @@ flask-markdown
 flask-migrate
 flask-sqlalchemy
 flask-wtf
+itsdangerous
 psycopg2
 python-dateutil
 python-ldap
@@ -17,4 +19,5 @@ raven
 scrypt
 enum34
 pyjade
+Werkzeug
 WTForms
