@@ -3,8 +3,8 @@ import datetime as dt
 
 import collections
 
-from flask.ext.login import current_user
-from flask.ext.babel import format_date, format_time, get_locale
+from flask_login import current_user
+from flask_babel import format_date, format_time, get_locale
 import pytz
 
 from dudel import app, ICONS, default_timezone
@@ -81,7 +81,7 @@ def json(string):
 
 
 def get_current_timezone():
-    return current_user.timezone if current_user.is_authenticated() else default_timezone
+    return current_user.timezone if current_user.is_authenticated else default_timezone
 
 
 @app.template_filter()

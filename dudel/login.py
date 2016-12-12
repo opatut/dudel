@@ -1,5 +1,5 @@
 from dudel import app, login_manager
-from flask.ext.login import login_user, logout_user
+from flask_login import login_user, logout_user
 
 _login_providers = {}
 

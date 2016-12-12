@@ -35,7 +35,7 @@ THIS FILE IS CURRENTLY NOT IN USE
             {{ comment_form.hidden_tag() }}
             <div class="form-group">
                 {{ comment_form.name.label }}
-                {% if current_user.is_anonymous() %}
+                {% if current_user.is_anonymous %}
                     {{ comment_form.name(class="form-control") }}
                 {% else %}
                     <input type="text" disabled="DISABLED" value="{{ current_user.displayname }}" class="form-control" />
@@ -48,7 +48,7 @@ THIS FILE IS CURRENTLY NOT IN USE
                 {{ field_error(comment_form.text) }}
                 {{ markdown_info(true) }}
             </div>
-            {% if current_user.is_anonymous() %}
+            {% if current_user.is_anonymous %}
             <div class="form-group">
                 {{ comment_form.captcha }}
                 {{ field_error(comment_form.captcha) }}

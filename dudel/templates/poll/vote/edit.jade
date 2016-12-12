@@ -8,7 +8,7 @@ block polltitle
 
 block content
     .container
-        - if not vote and not current_user.is_anonymous() and poll.get_user_votes(current_user)
+        - if not vote and not current_user.is_anonymous and poll.get_user_votes(current_user)
             != alert("warning", _("You have already voted on this poll. Maybe instead of voting again you'd rather edit your choices?"))
 
         - if vote
@@ -76,7 +76,7 @@ block content
                 tr
                     td(colspan=(matrix[0]|length if matrix else 1))= form.name.label
                     td(colspan=3)
-                        - if (not vote and current_user.is_anonymous()) or (vote and not vote.user)
+                        - if (not vote and current_user.is_anonymous) or (vote and not vote.user)
                             = form.name(class="form-control", id="nameInput")
                         - else
                             input.form-control(type="text", disabled="DISABLED", value=current_user.displayname)/

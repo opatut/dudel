@@ -1,5 +1,5 @@
 from dudel import app
-from flask.ext.assets import Environment, Bundle
+from flask_assets import Environment, Bundle
 from webassets.filter import get_filter
 
 assets = Environment(app)

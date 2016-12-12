@@ -4,12 +4,12 @@ block header
     include _create.jade
 
 block content
-    - if not current_user.is_authenticated()
+    - if not current_user.is_authenticated
         include _login.jade
 
     .container: .row.padded-cells
         .col-md-4
-            - if current_user.is_authenticated()
+            - if current_user.is_authenticated
                 h4= _("My polls")
 
                 p= _("You can find a list of all the polls in which you have participated on your profile page.")
