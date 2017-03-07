@@ -35,11 +35,13 @@ db.drop_all()
 db.create_all()
 
 print("Creating user")
-user = User("13musterm", "Max", "Mustermann", "test@example.com", "hunter2")
+user = User()
+user.create("13musterm", "Max", "Mustermann", "test@example.com", "hunter2")
 db.session.add(user)
 
 print("Creating another user")
-user2 = User("14musterf", "Minna", "Musterfrau", "test2@example.com", "hunter2")
+user2 = User()
+user.create("14musterf", "Minna", "Musterfrau", "test2@example.com", "hunter2")
 db.session.add(user2)
 
 print("Creating poll: normal")
