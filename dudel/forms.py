@@ -1,8 +1,8 @@
 from flask import request, Markup
-from flask.ext.babel import gettext, lazy_gettext
-from flask.ext.wtf import Form, RecaptchaField
-from flask.ext.wtf.recaptcha.validators import Recaptcha as RecaptchaValidator
-from flask.ext.login import current_user
+from flask_babel import gettext, lazy_gettext
+from flask_wtf import Form, RecaptchaField
+from flask_wtf.recaptcha.validators import Recaptcha as RecaptchaValidator
+from flask_login import current_user
 
 from pytz import common_timezones
 

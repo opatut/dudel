@@ -21,7 +21,7 @@ block content
                 .form-group
                     = comment_form.name.label
 
-                    - if current_user.is_anonymous()
+                    - if current_user.is_anonymous
                         = comment_form.name(class="form-control")
                     - else
                         input.form-control(type="text", disabled=True, value=current_user.displayname)/
@@ -34,7 +34,7 @@ block content
                     = field_error(comment_form.text)
                     != markdown_info(true)
 
-                - if current_user.is_anonymous()
+                - if current_user.is_anonymous
                     .form-group
                         = comment_form.captcha
                         = field_error(comment_form.captcha)

@@ -1,13 +1,13 @@
 from raven.contrib.flask import Sentry
 from flask import Flask
-from flask.ext.babel import Babel
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.markdown import Markdown
-from flask.ext.login import LoginManager
-from flask.ext.gravatar import Gravatar
-from flask.ext.migrate import Migrate, MigrateCommand
-from flask.ext.script import Manager
-from flask.ext.mail import Mail
+from flask_babel import Babel
+from flask_sqlalchemy import SQLAlchemy
+from flaskext.markdown import Markdown
+from flask_login import LoginManager
+from flask_gravatar import Gravatar
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager
+from flask_mail import Mail
 import pytz
 
 app = Flask(__name__)

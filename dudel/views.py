@@ -6,8 +6,8 @@ from dateutil import parser
 
 from flask import redirect, abort, request, render_template, flash, url_for, \
     g, Response
-from flask.ext.babel import gettext
-from flask.ext.login import current_user, login_required
+from flask_babel import gettext
+from flask_login import current_user, login_required
 from werkzeug.exceptions import InternalServerError
 
 import hmac
@@ -42,7 +42,7 @@ def get_poll(slug):
 
 @babel.localeselector
 def get_locale():
-    if current_user.is_authenticated() and current_user.preferred_language:
+    if current_user.is_authenticated and current_user.preferred_language:
         return current_user.preferred_language
     elif request.cookies.get("lang"):
         return request.cookies.get("lang")
@@ -115,7 +115,7 @@ def register():
     if not "password" in app.config["LOGIN_PROVIDERS"] or \
             not app.config["REGISTRATIONS_ENABLED"]:
         abort(404)
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         flash(gettext("You are already logged in."), "success")
         return redirect(request.args.get("next") or url_for("index"))
     form = RegisterForm()
@@ -137,7 +137,7 @@ def register():
 
 @app.route("/logout")
 def logout():
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         flash(gettext("You were logged out, %(name)s. Goodbye!",
                       name=current_user.displayname), "success")
         dudel_logout()
@@ -152,7 +152,7 @@ def user_change_language():
     if form.validate_on_submit():
         lang = form.language.data
         if lang in supported_languages:
-            if current_user.is_authenticated():
+            if current_user.is_authenticated:
                 current_user.preferred_language = lang
                 db.session.commit()
             else:
@@ -338,7 +338,7 @@ def poll_activity(slug):
         comment.created = datetime.utcnow()
         comment.text = comment_form.text.data.strip()
 
-        if current_user.is_anonymous():
+        if current_user.is_anonymous:
             comment.name = comment_form.name.data
         else:
             comment.user = current_user
@@ -379,7 +379,7 @@ def poll_edit(slug):
 
     localization_context = LocalizationContext(current_user, None)
 
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         form.owner_id.choices = [(0, gettext("Nobody")),
                                  (current_user.id, current_user.displayname)]
         for group in current_user.groups:
@@ -805,12 +805,12 @@ def poll_vote(slug):
     poll.check_expiry()
 
     # Check if user needs to log in
-    if (poll.require_login or poll.require_invitation) and current_user.is_anonymous():
+    if (poll.require_login or poll.require_invitation) and current_user.is_anonymous:
         flash(gettext("You need to login to vote on this poll."), "error")
         return redirect(url_for("login", next=url_for("poll_vote", slug=poll.slug)))
 
     # Check if user voted already
-    if poll.one_vote_per_user and not current_user.is_anonymous() and poll.get_user_votes(current_user):
+    if poll.one_vote_per_user and not current_user.is_anonymous and poll.get_user_votes(current_user):
         flash(gettext(
             "You can only vote once on this poll. Please edit your choices by clicking the edit button on the right."),
             "error")
@@ -836,7 +836,7 @@ def poll_vote(slug):
 
         if form.validate_on_submit():
             vote = Vote()
-            if current_user.is_anonymous():
+            if current_user.is_anonymous:
                 vote.name = form.name.data
             else:
                 vote.user = current_user
@@ -867,7 +867,7 @@ def poll_vote(slug):
                 vote_choice.choice = choice
                 db.session.add(vote_choice)
 
-            if current_user.is_authenticated():
+            if current_user.is_authenticated:
                 invitation = Invitation.query.filter_by(
                     user_id=current_user.id, poll_id=poll.id).first()
                 if invitation:
@@ -880,7 +880,7 @@ def poll_vote(slug):
 
             db.session.commit()
 
-            if current_user.is_authenticated() and current_user.autowatch:
+            if current_user.is_authenticated and current_user.autowatch:
                 return redirect(url_for("poll_watch", slug=poll.slug, watch="yes", next=poll.get_url()))
             else:
                 return redirect(poll.get_url())
@@ -956,12 +956,12 @@ def poll_vote_edit(slug, vote_id):
     if vote.poll != poll:
         abort(404)
 
-    if vote.user and current_user.is_anonymous():
+    if vote.user and current_user.is_anonymous:
         flash(gettext("This vote was created by a logged in user. If that was you, please log in to edit the vote."),
               "error")
         return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
 
-    if vote.user and not current_user.is_anonymous() and vote.user != current_user:
+    if vote.user and not current_user.is_anonymous and vote.user != current_user:
         flash(gettext(
             "This vote was created by someone else. You cannot edit their choices."), "error")
         return redirect(poll.get_url())
@@ -969,7 +969,7 @@ def poll_vote_edit(slug, vote_id):
     form = CreateVoteForm(obj=vote)
 
     # Check if user is logged in
-    if (poll.require_login or poll.require_invitation) and current_user.is_anonymous():
+    if (poll.require_login or poll.require_invitation) and current_user.is_anonymous:
         flash(gettext("You need to login to edit votes on this poll."), "error")
         return redirect(url_for("login", next=url_for("poll_vote_edit", slug=poll.slug, vote_id=vote_id)))
 
@@ -1148,7 +1148,7 @@ def poll_expired(e):
 
 @app.errorhandler(PollActionException)
 def poll_action(e):
-    if current_user.is_anonymous():
+    if current_user.is_anonymous:
         flash(gettext("You do not have permission to %(action)s this poll. Please log in and try again.",
                       action=e.action), "error")
         return redirect(url_for("login", next=request.url))

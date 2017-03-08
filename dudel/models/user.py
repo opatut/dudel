@@ -64,7 +64,7 @@ class User(Member):
         'polymorphic_identity': 'user',
     }
 
-    def __init__(self, username=None, firstname=None, lastname=None, email=None, password=None):
+    def create(self, username=None, firstname=None, lastname=None, email=None, password=None):
         self.username = username
         self.firstname = firstname
         self.lastname = lastname
@@ -88,12 +88,15 @@ class User(Member):
     def get_id(self):
         return self.username
 
+    @property
     def is_active(self):
         return True
 
+    @property
     def is_anonymous(self):
         return False
 
+    @property
     def is_authenticated(self):
         return True
 
@@ -102,7 +105,7 @@ class User(Member):
         return "ADMINS" in app.config and self.username in app.config["ADMINS"]
 
     def require_admin(self):
-        if not self.is_authenticated() or not self.is_admin:
+        if not self.is_authenticated or not self.is_admin:
             abort(403)
 
     def set_password(self, password):

@@ -3,7 +3,7 @@ header#header
     //-     .container
     //-         h1 Dudel
 
-    //-         - if current_user.is_authenticated()
+    //-         - if current_user.is_authenticated
     //-             = "Logged in as " + current_user.displayname
 
     nav.main-menu(role="navigation")
@@ -29,7 +29,7 @@ header#header
                             i.fa.fa-question-circle
                             = _("About")
 
-                - if current_user.is_authenticated()
+                - if current_user.is_authenticated
                     - set count = 5
                     - set polls = current_user.get_poll_list(count+1)
 
@@ -52,10 +52,10 @@ header#header
                 li.spacing
 
                 li
-                    - set invitation_count = current_user.get_open_invitations().count() if current_user.is_authenticated() else 0
+                    - set invitation_count = current_user.get_open_invitations().count() if current_user.is_authenticated else 0
 
                     a(href=url_for('user_settings'))
-                        - if current_user.is_anonymous()
+                        - if current_user.is_anonymous
                             i.fa.fa-user
 
                         - if invitation_count
@@ -66,11 +66,11 @@ header#header
                         span Account
                         //- i.fa.fa-chevron-down
 
-                        - if current_user.is_authenticated()
+                        - if current_user.is_authenticated
                             img(src=current_user.get_avatar(32), width=32, height=32)
 
                     ul.submenu.right
-                        - if current_user.is_anonymous()
+                        - if current_user.is_anonymous
                             - if config.REGISTRATIONS_ENABLED
                                 li: a(href=url_for('register'))
                                     i.fa.fa-pencil

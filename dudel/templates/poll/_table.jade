@@ -30,8 +30,8 @@
 
 
 - macro renderVote(vote)
-    - if show_votes or (not current_user.is_anonymous() and vote.user == current_user)
-        tr(class=cx('vote', {'mine': not current_user.is_anonymous() and vote.user == current_user}),
+    - if show_votes or (not current_user.is_anonymous and vote.user == current_user)
+        tr(class=cx('vote', {'mine': not current_user.is_anonymous and vote.user == current_user}),
             data-author=(vote.displayname|forceescape|forceescape))
 
             td.author(data-toggle="popover",
@@ -180,7 +180,7 @@
                                     - else
                                         = _("Some votes may be hidden from you.")
 
-                                    - if current_user.is_anonymous()
+                                    - if current_user.is_anonymous
                                         = _('<a href="%(link)s">Log in</a> to display your own vote.</a>', link=url_for('login', next=request.url)) | safe
 
                                 td.noprint
@@ -236,7 +236,7 @@
                                             - if totals[choice] != 0
                                                 = ("%.f %%" % (scores[choice]*100.0/totals[choice]))
                                             - else
-                                                N/A
+                                                | N/A
 
                                             span.print-only
                                                 = ("%.f" % scores[choice])

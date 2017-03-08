@@ -5,9 +5,9 @@ import hmac
 from enum import Enum
 
 from flask import url_for, render_template
-from flask.ext.babel import lazy_gettext
-from flask.ext.login import current_user
-from flask.ext.mail import Message
+from flask_babel import lazy_gettext
+from flask_login import current_user
+from flask_mail import Message
 
 from pytz import timezone
 
@@ -142,7 +142,7 @@ class Poll(db.Model):
         invitation = Invitation()
         invitation.user = user
         invitation.poll = self
-        if current_user.is_authenticated():
+        if current_user.is_authenticated:
             invitation.creator = current_user
 
         vote = Vote.query.filter_by(poll_id=self.id, user_id=user.id).first()
@@ -222,9 +222,9 @@ class Poll(db.Model):
 
     def user_can_administrate(self, user):
         # Owners may administrate
-        if self.owner and user.is_authenticated() and user.is_member(self.owner): return True
+        if self.owner and user.is_authenticated and user.is_member(self.owner): return True
         # Admins may administrate
-        if (user.is_authenticated() and user.is_admin): return True
+        if (user.is_authenticated and user.is_admin): return True
         # Everyone else may not
         return False
 
@@ -232,14 +232,14 @@ class Poll(db.Model):
         # If no owner is set, everyone may edit
         if not self.owner: return True
         # Owners may edit
-        if user.is_authenticated() and user.is_member(self.owner): return True
+        if user.is_authenticated and user.is_member(self.owner): return True
         # Admins may edit
-        if user.is_authenticated() and user.is_admin: return True
+        if user.is_authenticated and user.is_admin: return True
         # Everyone else may not
         return False
 
     def get_user_votes(self, user):
-        return [] if user.is_anonymous() else Vote.query.filter_by(poll = self, user = user).all()
+        return [] if user.is_anonymous else Vote.query.filter_by(poll = self, user = user).all()
 
     def check_expiry(self):
         if self.is_expired:

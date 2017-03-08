@@ -32,7 +32,7 @@ class LocalizationContext(object):
             return self.poll.timezone
 
         # If there is a user, use that user's timezone
-        if self.user and self.user.is_authenticated():
+        if self.user and self.user.is_authenticated:
             return self.user.timezone
 
         # Use the default timezone for unauthenticated users, or contexts without a user

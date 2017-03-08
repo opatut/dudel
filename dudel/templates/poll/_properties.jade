@@ -25,6 +25,6 @@ ul.poll-details
     - elif poll.require_login
         != property(_("Login required"), _("login required"), "user")
 
-    - if current_user.is_authenticated()
+    - if current_user.is_authenticated
         != property(_("Watching poll"), _("watching") if poll.is_watching(current_user) else _("not watching"), "eye" if poll.is_watching(current_user) else "eye-slash")
 

@@ -33,7 +33,7 @@ block header
                             i.fa.fa-wrench
                             span= _("Settings")
 
-                    - if current_user.is_authenticated()
+                    - if current_user.is_authenticated
                         li(class=("active" if request.endpoint in ("poll_invitations",) else ""))
                             a(href=url_for('poll_invitations', slug=poll.slug), data-shortcut="g i")
                                 i.fa.fa-envelope

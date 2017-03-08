@@ -1,7 +1,7 @@
 from dudel import db, mail
 from datetime import datetime
-from flask.ext.mail import Message
-from flask.ext.babel import gettext
+from flask_mail import Message
+from flask_babel import gettext
 from flask import render_template
 
 
