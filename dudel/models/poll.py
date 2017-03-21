@@ -151,7 +151,7 @@ class Poll(db.Model):
 
     def show_summary(self, user):
         return self.user_can_administrate(user) \
-            or self.show_votes \
+            or self.show_votes(user) \
             or self.show_results == "summary" \
             or (self.show_results == "summary_after_vote" and self.is_expired)
 
