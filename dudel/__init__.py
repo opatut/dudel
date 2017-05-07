@@ -1,49 +1,34 @@
-from raven.contrib.flask import Sentry
 from flask import Flask
-from flask_babel import Babel
-from flask_sqlalchemy import SQLAlchemy
-from flaskext.markdown import Markdown
-from flask_login import LoginManager
 from flask_gravatar import Gravatar
-from flask_migrate import Migrate, MigrateCommand
-from flask_script import Manager
 from flask_mail import Mail
-import pytz
+from flask_migrate import Migrate
+from flask_restful import Api
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+import click
 
-app = Flask(__name__)
+app = Flask('dudel')
 app.config.from_pyfile("../config.py.example", silent=True)
 app.config.from_pyfile("../config.py", silent=True)
-app.jinja_env.add_extension('pyjade.ext.jinja.PyJadeExtension')
-manager = Manager(app)
-db = SQLAlchemy(app)
-markdown = Markdown(app, safe_mode="escape")
-login_manager = LoginManager(app)
-if app.config.get('SENTRY_DSN', None):
-    sentry = Sentry(app)
-else:
-    sentry = None
 
-from .csrf import Protector
-csrf = Protector(app, abort_code=403, consume=app.config.get('CSRF_CONSUME', False))
-csrf.inject_as('CSRF') # make token available in template
+api = Api(app)
+
+db = SQLAlchemy(app)
+ma = Marshmallow(app)
+
+migrate = Migrate(app, db)
 
 gravatar = Gravatar(app, size=48, rating='g', default='identicon', force_default=False, use_ssl=True, base_url=None)
-babel = Babel(app)
-supported_languages = ['en', 'de']
-migrate = Migrate(app, db)
-manager.add_command("db", MigrateCommand)
 mail = Mail(app)
-default_timezone = pytz.timezone(app.config["DEFAULT_TIMEZONE"])
 
-from dudel.util import load_icons
-ICONS = load_icons("dudel/icons.txt")
-
-import dudel.assets
+from dudel.login import auth
+from dudel.commands import init, cron, test, seed
 import dudel.models
 import dudel.forms
-import dudel.filters
-import dudel.views
-import dudel.admin
-import dudel.plugins.ldapauth
+import dudel.routes
 
-login_manager.login_view = "login"
+app.cli.command()(init)
+app.cli.command()(cron)
+app.cli.command()(seed)
+app.cli.command(with_appcontext=False)(test)
+

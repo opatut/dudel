@@ -1,60 +1,43 @@
-from dudel import app, login_manager
-from flask_login import login_user, logout_user
+from flask import has_request_context, request, g
+from werkzeug.local import LocalProxy
 
-_login_providers = {}
-
-
-class login_provider(object):
-    """decorator to register login providers"""
-    def __init__(self, mode):
-        self.mode = mode
-
-    def __call__(self, func):
-        """
-        func(username, password) should return of of
-        - a User object, on success
-        - None, if the User was not found or the password is wrong
-        - an error string, if an error occurred
-        """
-        _login_providers[self.mode] = func
-        return func
+from dudel.models import AccessToken
 
 
-def try_login(username, password):
-    if not app.config["LOGIN_PROVIDERS"]:
-        return "Login is disabled."
+class Auth(object):
+    def __init__(self, user, token):
+        self.user = user
+        self.token = token
 
-    for provider in app.config["LOGIN_PROVIDERS"]:
-        if not provider in _login_providers:
-            return None, "Invalid login provider: %s." % provider
+_no_login = Auth(None, None)
 
-        result = _login_providers[provider](username, password)
+def _get_auth():
+    if g.get('auth', None) is None:
+        _load_auth()
 
-        from dudel.models.user import User
-        if isinstance(result, User):
-            # do the login
-            login_user(result)
-            return result, None
-        elif isinstance(result, str):
-            print("Login error: " + result)
-            return None, result
-        elif result == False or result == None:
-            # User not found
-            continue
-
-    return None, None
+    auth = g.get('auth', None)
+    return auth
 
 
-def force_login(user):
-    login_user(user)
+def _load_auth():
+    token = request.headers.get('Authorization', None)
 
+    if token:
+        token_type, token_value = token.split(' ', 1)
 
-def logout():
-    logout_user()
+        if token_type and token_type.lower() == 'bearer':
+            access_token = AccessToken.query.get(token_value)
 
+            if access_token:
+                g.auth = Auth(access_token.user, access_token)
+                return
 
-@login_manager.user_loader
-def get_user(username):
-    from dudel.models.user import User
-    return User.query.filter_by(username=username).first()
+    g.auth = _no_login
 
+def set_auth(user, token):
+    g.auth = Auth(user, token)
+
+### 
+
+auth = LocalProxy(_get_auth)
+all = ['auth']

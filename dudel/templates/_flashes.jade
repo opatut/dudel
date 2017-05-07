@@ -1,6 +1,0 @@
-- set messages = get_flashed_messages(with_categories=True)
-
-- if messages
-    section.section.flashes:.container
-        - for category, message in messages
-            != alert(category, message)

@@ -1,5 +1,0 @@
-{% extends "email/base_poll.txt" %}
-
-{% block content -%}
-A new vote has been posted by {{ voter }}.
-{%- endblock %}

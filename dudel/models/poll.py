@@ -5,7 +5,6 @@ import hmac
 from enum import Enum
 
 from flask import url_for, render_template
-from flask_babel import lazy_gettext
 from flask_login import current_user
 from flask_mail import Message
 
@@ -20,7 +19,6 @@ from dudel.models.comment import Comment
 from dudel.models.pollwatch import PollWatch
 from dudel.models.vote import Vote
 from dudel.models.invitation import Invitation
-from dudel.util import PollExpiredException, PollActionException, LocalizationContext
 
 
 class PollType(str, Enum):
@@ -28,36 +26,6 @@ class PollType(str, Enum):
     date = "day"
     normal = "normal"
     numeric = "numeric"
-
-    @property
-    def icon(self):
-        return {
-            PollType.datetime: "clock-o",
-            PollType.date:     "calendar",
-            PollType.normal:   "list",
-            PollType.numeric:  "sliders"
-        }[self]
-
-    @property
-    def title(self):
-        return {
-            PollType.datetime: lazy_gettext("Date and Time"),
-            PollType.date:     lazy_gettext("Date"),
-            PollType.normal:   lazy_gettext("Normal Poll"),
-            PollType.numeric:  lazy_gettext("Numeric")
-        }[self]
-
-    @property
-    def description(self):
-        return {
-            PollType.datetime: lazy_gettext("Schedule date and time for an event"),
-            PollType.date:     lazy_gettext("Schedule an all-day event"),
-            PollType.normal:   lazy_gettext("Retrieve opinions on various choices"),
-            PollType.numeric:  lazy_gettext("Rate each choice in a numeric range")
-        }[self]
-
-    def __str__(self):
-        return str(self.title)
 
 
 class Poll(db.Model):
@@ -243,11 +211,11 @@ class Poll(db.Model):
 
     def check_expiry(self):
         if self.is_expired:
-            raise PollExpiredException(self)
+            raise Exception("this poll is expired")
 
     def check_edit_permission(self):
         if not self.user_can_edit(current_user):
-            raise PollActionException(self, lazy_gettext("edit"))
+            raise Exception("cannot edit this poll")
 
     # returns a list of groups
     # each group is sorted
@@ -394,14 +362,6 @@ class Poll(db.Model):
         dates = [date for date in dates if date]
 
         return max(dates)
-
-    @property
-    def timezone(self):
-        return timezone(self.timezone_name) if self.timezone_name else None
-
-    @property
-    def localization_context(self):
-        return LocalizationContext(current_user, self)
 
     @property
     def should_auto_delete(self):

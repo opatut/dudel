@@ -1,57 +1,14 @@
 # SQL-Alchemy Settings
 SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/dudel.db" # DO NOT USE RELATIVE PATHS IF USING MIGRATION!!!
 SQLALCHEMY_ECHO = False
-
-# Home button in menu bar
-BRAND_TEXT = "Dudel"
-HOME_URL = "https://example.com/"
-HOME_TEXT = "Home"
-FOOTER_LINKS = [
-    ('Imprint', '/imprint')
-]
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Debug mode, set to False in productive environment
 DEBUG = True
+THREADED = True
 
 # Secret key, required for cookies etc.
 SECRET_KEY = "change me!!!"
-
-# Select which authentication method to use.
-LOGIN_PROVIDERS = ["password", "ldap"]
-
-# Used only if "password" in LOGIN_PROVIDERS
-REGISTRATIONS_ENABLED = True
-
-# Enable group features (create/edit)
-GROUPS_ENABLED = True
-
-# Used only if "ldap" in LOGIN_PROVIDERS
-LDAP = dict(
-    HOST = 'ldap://localhost',
-    BASE_DN = 'dc=example,dc=com',
-    GLOBAL = dict(
-        BIND_DN = 'cn=dudel,dc=example,dc=com',
-        PASSWORD = '123456'
-    ),
-    GROUP = dict(
-        ATTRIBUTES = dict(
-            IDENTIFIER = 'id',
-            NAME = 'cn',
-            MEMBERS = 'members'
-        ),
-        DN = 'ou=groups,dc=example,dc=com',
-        FILTER = '(objectClass=posixGroup)'
-    ),
-    USER = dict(
-        BIND_DN = 'uid={username},ou=people,dc=example,dc=com',
-        DN = 'uid={username},ou=people,dc=example,dc=com'
-    ),
-    REGISTER_URL = "https://example.com/register"
-)
-
-# Sentry settings
-# The Sentry DSN, if it is not set or False Sentry is disabled
-# SENTRY_DSN = "https://user:password@sentry.host.tld/X"
 
 MAIL_SERVER = None
 MAIL_PORT = None
@@ -62,34 +19,3 @@ MAIL_USERNAME = None
 MAIL_PASSWORD = None
 MAIL_DEFAULT_SENDER = "Dudel <dudel@%s>" % MAIL_SERVER
 TESTING = True
-
-# How user's display name is created
-# May contain fields: firstname, lastname, username, email
-NAME_FORMAT = "%(firstname)s (%(username)s)"
-
-# Allow customization of slugs
-ALLOW_CUSTOM_SLUGS = True
-
-# Generate random slugs by default
-RANDOM_SLUGS = False
-
-# Usernames of administrators
-# e.g. ["13musterm", "14musterf"]
-ADMINS = []
-
-# Timezone
-DEFAULT_TIMEZONE = "Europe/Berlin"
-
-# Locale
-BABEL_DEFAULT_LOCALE = "en"
-BABEL_DEFAULT_TIMEZONE = DEFAULT_TIMEZONE
-
-# recaptcha
-RECAPTCHA_USE_SSL = True
-RECAPTCHA_PUBLIC_KEY = "..."
-RECAPTCHA_PRIVATE_KEY = "..."
-RECAPTCHA_OPTIONS = {"theme_name": "white"}
-
-# CSRF protection: Should the CSRF token be consumed when checked? This prevents
-# sensible actions that are protected against CSRF in multiple tabs.
-CSRF_CONSUME = False

@@ -1,7 +1,6 @@
 from dudel import db, mail
 from datetime import datetime
 from flask_mail import Message
-from flask_babel import gettext
 from flask import render_template
 
 
@@ -28,7 +27,7 @@ class Invitation(db.Model):
         if reminder:
             template = "email/invitation_reminder.txt"
 
-        subject = gettext("[Dudel] Poll Invitation: %(title)s", title=self.poll.title)
+        subject = "[Dudel] Poll Invitation: {title}".format(title=self.poll.title)
 
         # For debugging
         with mail.record_messages() as outbox:
