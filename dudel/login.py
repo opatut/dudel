@@ -3,7 +3,6 @@ from werkzeug.local import LocalProxy
 
 from dudel.models import AccessToken
 
-
 class Auth(object):
     def __init__(self, user, token):
         self.user = user
@@ -36,6 +35,20 @@ def _load_auth():
 
 def set_auth(user, token):
     g.auth = Auth(user, token)
+
+def check_access(rule):
+    attributes = (auth.user.attributes if auth.user else []) \
+            + (auth.token.attributes if auth.token else [])
+    return rule.matches(attributes)
+
+def require_access(rule):
+    def wrapper(fn):
+        @wraps(fn)
+        def fn2(*args, **kwargs):
+            if not check_access(rule): abort(403)
+            return fn(*args, **kwargs)
+        return fn2
+    return wrapper
 
 ### 
 

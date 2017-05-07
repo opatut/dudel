@@ -1,4 +1,5 @@
 from dudel import api, auth, db
+from dudel.login import set_auth
 from functools import wraps
 from flask_restful import Resource, reqparse
 from dudel.models import User
@@ -57,7 +58,14 @@ class UserList(Resource):
 
         db.session.add(user)
         db.session.commit()
-        return UserSchema().dump(user).data, 201
+
+        token = user.generate_access_token()
+        db.session.add(user)
+        db.session.commit()
+
+        set_auth(user, token)
+
+        return UserSchema(only=UserSchema.get_only(user)).dump(user).data, 201
 
     def get(self):
         users = User.query.all()

@@ -62,7 +62,7 @@ class TestCase(unittest.TestCase):
         db.session.add(user)
         db.session.commit()
 
-        access_token = dudel.models.AccessToken.generate(user)
+        access_token = user.generate_access_token()
         db.session.add(access_token)
         db.session.commit()
 
@@ -79,4 +79,5 @@ class TestCase(unittest.TestCase):
     delete = _request('delete')
 
 from .users import *
+from .access import *
 

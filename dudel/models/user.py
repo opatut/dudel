@@ -1,10 +1,13 @@
 from dudel import app, db, gravatar
 from flask import abort
+from uuid import uuid4
+from datetime import datetime, timedelta
 import scrypt, random, pytz
 from .member import Member
 from .invitation import Invitation
 from .group import Group
 from .vote import Vote
+from .accesstoken import AccessToken
 
 class User(Member):
     id = db.Column(db.Integer, db.ForeignKey("member.id"), primary_key=True)
@@ -47,3 +50,29 @@ class User(Member):
 
     def get_avatar(self, size):
         return gravatar(self.email, size)
+
+    @property
+    def attributes(self):
+        lst = [
+            ('login', True),
+            ('user', self.id),
+            ('scope', '*'),
+        ]
+
+        if self.login in app.config.get('ADMINS', []):
+            lst.append(('admin'))
+
+        lst += [('poll_owner', poll.id) for poll in self.polls]
+
+        return lst
+
+
+    def generate_access_token(self, application=None, scope=None, ttl=3600):
+        return AccessToken(
+                id=str(uuid4()),
+                application_id=application.id if hasattr(application, 'id') else application,
+                user_id=self.id,
+                scope=scope,
+                created_at=datetime.utcnow(),
+                expires_at=datetime.utcnow() + timedelta(seconds=ttl),
+        )

@@ -21,7 +21,8 @@ migrate = Migrate(app, db)
 gravatar = Gravatar(app, size=48, rating='g', default='identicon', force_default=False, use_ssl=True, base_url=None)
 mail = Mail(app)
 
-from dudel.login import auth
+from dudel.access import Has, ANY, Not, HasScope
+from dudel.login import auth, require_access, check_access
 from dudel.commands import init, cron, test, seed
 import dudel.models
 import dudel.forms

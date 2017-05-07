@@ -7,6 +7,9 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 DEBUG = True
 THREADED = True
 
+# Login names of admin accounts
+ADMINS = ['admin']
+
 # Secret key, required for cookies etc.
 SECRET_KEY = "change me!!!"
 
