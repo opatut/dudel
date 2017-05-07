@@ -2,9 +2,9 @@
 x GET    /status
 
 x POST   /users           # Register
-  PUT    /users/<id>      # Edit profile / settings
-  GET    /users/<id>
-  GET    /users/me        # Currently logged in user
+x PUT    /users/<id>      # Edit profile / settings
+x GET    /users/<id>
+x GET    /users/me        # Currently logged in user
 
   POST   /polls
   GET    /polls/<id|slug>

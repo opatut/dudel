@@ -44,3 +44,21 @@ class UsersTest(TestCase):
             user = self.get('/users/me')
             self.assertIsNotNone(user)
             self.assertEqual(user['login'], 'admin')
+
+    def test_put(self):
+        with self.context():
+            u = User(login='foo', display_name='Foo Display', email='foo@example.com')
+            u.set_password('hunter2')
+            db.session.add(u)
+            db.session.commit()
+
+            updated = self.put('/users/{}'.format(u.id), dict(
+                email='bar@example.com',
+            ))
+
+            self.assertEqual(updated['login'], 'foo')
+            self.assertEqual(updated['email'], 'bar@example.com')
+            self.assertNotIn('password', updated)
+
+            db.session.refresh(u)
+            self.assertEqual(u.email, 'bar@example.com')

@@ -35,6 +35,18 @@ class UserSingle(Resource):
         schema = UserSchema()
         return schema.dump(user).data if user else None
 
+    @with_data(UserSchema(partial=True))
+    def put(self, data, user_id):
+        password = data.pop('password', None)
+        user = self._get_user(user_id)
+
+        for k, v in data.items(): setattr(user, k, v)
+        if password: user.set_password(password)
+        db.session.commit()
+
+        return UserSchema().dump(user).data
+
+
 class UserList(Resource):
     @with_data(UserSchema(partial=('id',)))
     def post(self, data):

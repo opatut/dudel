@@ -2,7 +2,7 @@ from dudel import ma
 from dudel.models import User
 
 class UserSchema(ma.Schema):
-    id = ma.Integer(required=True, missing=None)
+    id = ma.Integer(required=True, missing=None, dump_only=True)
     login = ma.String(required=True, missing=None)
     display_name = ma.String(required=True, missing=None)
     email = ma.Email(required=True, missing=None)
