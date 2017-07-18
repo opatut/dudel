@@ -1,3 +1,9 @@
+# Warning! This project is deprecated.
+
+I've been unable to maintain this project for some while now due to *not enough time*™. Some folks over at my university, where I also initially developed dudel, have taken the time to rewrite it using django, boosting the performance and generally improving the code base. A lot of dudel lives on in that new rewrite, [BitPoll](https://github.com/fsinfuhh/Bitpoll). Go check it out! :)
+
+---
+
 # Dudel
 
 A simple group scheduling and poll tool, following the example of doodle.com and similar services.
