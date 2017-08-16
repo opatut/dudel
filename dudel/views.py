@@ -123,6 +123,9 @@ def register():
     if form.validate_on_submit():
         user = User()
         form.populate_obj(user)
+        if get_user(user.username):
+            flash(gettext("Username already taken, sorry"), "error")
+            return redirect(url_for("register"))
         user.set_password(form.password1.data)
         db.session.add(user)
         db.session.commit()
