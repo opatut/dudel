@@ -1,6 +1,6 @@
 from flask import request, Markup
 from flask_babel import gettext, lazy_gettext
-from flask_wtf import Form, RecaptchaField
+from flask_wtf import FlaskForm, RecaptchaField
 from flask_wtf.recaptcha.validators import Recaptcha as RecaptchaValidator
 from flask_login import current_user
 
@@ -24,19 +24,19 @@ LANGUAGES = [('en', 'English'), ('de', 'Deutsch')]
 
 
 # Helper class for multiple forms on one page
-class MultiForm(Form):
+class MultiForm(FlaskForm):
     form_name = HiddenField("form name", validators=[Required()])
 
     def __init__(self, *args, **kwargs):
         self._form_name = type(self).__name__
-        Form.__init__(self, *args, **kwargs)
+        FlaskForm.__init__(self, *args, **kwargs)
 
     def is_submitted(self):
-        return Form.is_submitted(self) and request.form.get("form_name") == self._form_name
+        return FlaskForm.is_submitted(self) and request.form.get("form_name") == self._form_name
 
     def hidden_tag(self, *args, **kwargs):
         self.form_name.data = self._form_name
-        return Form.hidden_tag(self, *args, **kwargs)
+        return FlaskForm.hidden_tag(self, *args, **kwargs)
 
 
 class UniqueObject(object):
@@ -158,7 +158,7 @@ class CreatePollForm(PollForm):
                              choices=[("public", lazy_gettext("Public")), ("hidden", lazy_gettext("Hidden"))],
                              default="hidden")
 
-class CreateGroupForm(Form):
+class CreateGroupForm(FlaskForm):
     name = TextField(lazy_gettext("Name"), validators=[
         Required(),
         Length(min=3, max=80),
@@ -175,7 +175,7 @@ class CopyPollForm(PollForm):
     reset_ownership = BooleanField(lazy_gettext("Reset ownership"), default=True)
 
 
-class DateTimeSelectForm(Form):
+class DateTimeSelectForm(FlaskForm):
     dates = TextField(lazy_gettext("Dates"), validators=[Regexp("^([\d]{4}-[\d]{2}-[\d]{2},?)*$")])
     times = TextField(lazy_gettext("Times"), validators=[Regexp("^([\d]{2}:[\d]{2}(:[\d]{2})?,?)*$")])
 
@@ -231,7 +231,7 @@ class SettingsFormLdap(SettingsForm):
     pass
 
 
-class EditPollForm(Form):
+class EditPollForm(FlaskForm):
     title = TextField(lazy_gettext("Title"), validators=[Required(), Length(min=3, max=80)])
     description = TextAreaField(lazy_gettext("Description"))
     due_date = DateTimeField(lazy_gettext("Due date"), validators=[Optional()])
@@ -261,13 +261,13 @@ class EditPollForm(Form):
     send_mail = BooleanField(lazy_gettext("Send mail to participants about results"))
 
 
-class CreateVoteChoiceForm(Form):
+class CreateVoteChoiceForm(FlaskForm):
     value = RadioField(lazy_gettext("Value"), coerce=int, validators=[Optional()])
     amount = DecimalField(lazy_gettext("Amount"), validators=[Optional()], default=0)
     comment = TextField(lazy_gettext("Comment"))
     choice_id = HiddenField("choice id", validators=[Required()])
 
-class AmountRangeForm(Form):
+class AmountRangeForm(FlaskForm):
     minimum = DecimalField(lazy_gettext("Minimum"))
     maximum = DecimalField(lazy_gettext("Maximum"))
     step = DecimalField(lazy_gettext("Step"))
@@ -284,34 +284,34 @@ def not_logged_in(form, field):
     return current_user.is_anonymous()
 
 
-class CreateVoteForm(Form):
+class CreateVoteForm(FlaskForm):
     name = TextField(lazy_gettext("Your Name"), validators=[RequiredIf(anonymous_not_checked), Length(max=80)])
     anonymous = BooleanField(lazy_gettext("Post anonymous vote"))
     vote_choices = FieldList(FormField(CreateVoteChoiceForm))
     comment = TextAreaField(lazy_gettext("Comment"), validators=[Optional()])
 
 
-class PollPassword(Form):
+class PollPassword(FlaskForm):
     password = PasswordField(lazy_gettext("Poll password"), validators=[Required()])
 
 
-class CommentForm(Form):
+class CommentForm(FlaskForm):
     name = TextField(lazy_gettext("Your Name"), validators=[RequiredIf(not_logged_in), Length(max=80)])
     text = TextAreaField(lazy_gettext("Comment"))
     captcha = RecaptchaField(validators=[OptionalIf(logged_in), RecaptchaValidator()])
 
 
-class LanguageForm(Form):
+class LanguageForm(FlaskForm):
     language = SelectField(lazy_gettext("Language"), choices=LANGUAGES, option_widget=SelectButtonInput())
 
 
-class PollInviteForm(Form):
+class PollInviteForm(FlaskForm):
     member = TextField(lazy_gettext("Group or User"))
 
 
-class GroupAddMemberForm(Form):
+class GroupAddMemberForm(FlaskForm):
     member = TextField(lazy_gettext("User"))
 
 
-class VoteAssignForm(Form):
+class VoteAssignForm(FlaskForm):
     user = TextField(lazy_gettext("New vote owner"))
