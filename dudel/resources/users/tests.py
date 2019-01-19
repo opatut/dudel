@@ -1,6 +1,6 @@
 import json
 from dudel import db, auth
-from dudel.tests import TestCase
+from dudel.test import TestCase
 from dudel.models import User
 from pydash import pick
 

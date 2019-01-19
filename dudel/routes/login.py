@@ -1,6 +1,5 @@
 from flask import jsonify
 from dudel import app, auth
-from dudel.schema import StatusSchema
 
 @app.route("/login")
 def login():

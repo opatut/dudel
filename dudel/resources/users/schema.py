@@ -1,5 +1,4 @@
 from dudel import ma
-from dudel.models import User
 from dudel.login import check_access
 from dudel.access import Has
 
@@ -18,9 +17,3 @@ class UserSchema(ma.Schema):
             return ('id', 'login', 'display_name', 'email')
         else:
             return ('id', 'login', 'display_name')
-
-
-class StatusSchema(ma.Schema):
-    status = ma.String()
-    user = ma.Nested(UserSchema(), missing=None)
-

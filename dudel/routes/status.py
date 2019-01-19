@@ -1,6 +1,10 @@
 from flask import jsonify
-from dudel import app, auth
-from dudel.schema import StatusSchema
+from dudel import app, auth, ma
+from dudel.resources.users import UserSchema
+
+class StatusSchema(ma.Schema):
+    status = ma.String()
+    user = ma.Nested(UserSchema(), missing=None)
 
 @app.route("/status")
 def status():

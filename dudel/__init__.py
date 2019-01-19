@@ -21,15 +21,15 @@ migrate = Migrate(app, db)
 gravatar = Gravatar(app, size=48, rating='g', default='identicon', force_default=False, use_ssl=True, base_url=None)
 mail = Mail(app)
 
-from dudel.access import Has, ANY, Not, HasScope
-from dudel.login import auth, require_access, check_access
-from dudel.commands import init, cron, test, seed
-import dudel.models
-import dudel.forms
+from .access import Has, ANY, Not, HasScope
+from .login import auth, require_access, check_access
+from .commands import init, cron, test, seed
+from dudel.test import TestCase
+from dudel.models import *
 import dudel.routes
 
 app.cli.command()(init)
 app.cli.command()(cron)
 app.cli.command()(seed)
-app.cli.command(with_appcontext=False)(test)
+app.cli.command(with_appcontext=False, name='test')(test)
 

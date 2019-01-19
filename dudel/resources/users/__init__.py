@@ -2,10 +2,11 @@ from dudel import api, auth, db
 from dudel.login import set_auth
 from functools import wraps
 from flask_restful import Resource, reqparse
-from dudel.models import User
-from dudel.schema import UserSchema
 from pydash import omit
 from flask import request, abort
+
+from .schema import UserSchema
+from .tests import *
 
 def get_data(schema, *args, **kwargs):
     result = schema.load(request.get_json() or {}, *args, **kwargs)

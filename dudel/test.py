@@ -77,7 +77,3 @@ class TestCase(unittest.TestCase):
     put = _request('put')
     post = _request('post')
     delete = _request('delete')
-
-from .users import *
-from .access import *
-

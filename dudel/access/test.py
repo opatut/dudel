@@ -1,7 +1,8 @@
 from dudel import db
-from dudel.access import Has, ANY, Not
 from dudel.models import User, Poll
-from dudel.tests import TestCase
+from dudel.test import TestCase
+
+from . import Has, ANY, Not
 
 class TestCase(TestCase):
     def test_simple_has(self):
